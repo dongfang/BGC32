@@ -34,9 +34,9 @@
 // HJI int   debugRC = 0;
 // HJI int   debugOrient = 0;
 
-float pitch, Gyro_Pitch_angle, pitch_setpoint = 0.0f, pitch_Error_last,  pitch_angle_correction;
-float roll,  Gyro_Roll_angle,  roll_setpoint = 0.0f,  roll_Error_last,   roll_angle_correction;
-float yaw,   Gyro_Yaw_angle,   yaw_setpoint = 0.0f,   yaw_Error_last,    yaw_angle_correction;
+float /*pitch, Gyro_Pitch_angle,*/ pitch_setpoint = 0.0f, pitch_Error_last,  pitch_angle_correction;
+float /*roll,  Gyro_Roll_angle,*/  roll_setpoint = 0.0f,  roll_Error_last,    roll_angle_correction;
+float /*yaw,   Gyro_Yaw_angle,*/   yaw_setpoint = 0.0f,   yaw_Error_last,      yaw_angle_correction;
 
 float ADC1Ch13_yaw;
 
@@ -47,11 +47,11 @@ static float rollRCOffset = 0.0f, pitchRCOffset = 0.0f, yawRCOffset = 0.0f;
 float CameraOrient[3];    // HJI float CameraOrient[EULAR];
 float AccAngleSmooth[3];  // HJI float AccAngleSmooth[EULAR];
 
-float AccData[NUMAXIS]  = {0.0, 0.0, 0.0};
-float GyroData[NUMAXIS] = {0.0, 0.0, 0.0};
+float AccData[NUMAXIS]  = {0.0f, 0.0f, 0.0f};
+float GyroData[NUMAXIS] = {0.0f, 0.0f, 0.0f};
 
-float Step[NUMAXIS]     = {0.0, 0.0, 0.0};
-float RCSmooth[NUMAXIS] = {0.0, 0.0, 0.0};
+float Step[NUMAXIS]     = {0.0f, 0.0f, 0.0f};
+float RCSmooth[NUMAXIS] = {0.0f, 0.0f, 0.0f};
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -146,23 +146,23 @@ void Init_Orientation()
     {
         // HJI MPU6050_ACC_get(AccData); //Getting Accelerometer data
 
-    	readMPU6050();  // HJI
+      readMPU6050();  // HJI
 
-    	computeMPU6050TCBias();  // HJI
+      computeMPU6050TCBias();  // HJI
 
-    	sensors.accel500Hz[XAXIS] = -((float)rawAccel[XAXIS].value - accelTCBias[XAXIS]) * ACCEL_SCALE_FACTOR;  // HJI
-    	sensors.accel500Hz[YAXIS] = -((float)rawAccel[YAXIS].value - accelTCBias[YAXIS]) * ACCEL_SCALE_FACTOR;  // HJI
-    	sensors.accel500Hz[ZAXIS] =  ((float)rawAccel[ZAXIS].value - accelTCBias[ZAXIS]) * ACCEL_SCALE_FACTOR;  // HJI
+      sensors.accel500Hz[XAXIS] = -((float)rawAccel[XAXIS].value - accelTCBias[XAXIS]) * ACCEL_SCALE_FACTOR;  // HJI
+      sensors.accel500Hz[YAXIS] = -((float)rawAccel[YAXIS].value - accelTCBias[YAXIS]) * ACCEL_SCALE_FACTOR;  // HJI
+      sensors.accel500Hz[ZAXIS] =  ((float)rawAccel[ZAXIS].value - accelTCBias[ZAXIS]) * ACCEL_SCALE_FACTOR;  // HJI
 
         // HJI AccAngle[ROLL]  = -(atan2f(AccData[X_AXIS], AccData[Z_AXIS]));   //Calculating pitch ACC angle
-    	AccAngle[ROLL]  += -(atan2f(sensors.accel500Hz[YAXIS], sensors.accel500Hz[ZAXIS]));   // Calculating roll ACC angle HJI
+      AccAngle[ROLL]  += -(atan2f(sensors.accel500Hz[YAXIS], sensors.accel500Hz[ZAXIS]));   // Calculating roll ACC angle HJI
         // HJI AccAngle[PITCH] = +(atan2f(AccData[Y_AXIS], AccData[Z_AXIS]));   //Calculating roll ACC angle
-    	AccAngle[PITCH] += +(atan2f(sensors.accel500Hz[XAXIS], sensors.accel500Hz[ZAXIS]));   // Calculating pitch ACC angle HJI
+      AccAngle[PITCH] += +(atan2f(sensors.accel500Hz[XAXIS], sensors.accel500Hz[ZAXIS]));   // Calculating pitch ACC angle HJI
 
         // HJI AccAngleSmooth[ROLL]  = ((AccAngleSmooth[ROLL] * (float)(init_loops - 1))  + AccAngle[ROLL])  / (float)init_loops; //Averaging pitch ACC values
-    	AccAngleSmooth[ROLL ] = AccAngle[ROLL ] / (float)init_loops; //Averaging pitch ACC values HJI
+      AccAngleSmooth[ROLL ] = AccAngle[ROLL ] / (float)init_loops; //Averaging pitch ACC values HJI
         // HJI AccAngleSmooth[PITCH] = ((AccAngleSmooth[PITCH] * (float)(init_loops - 1)) + AccAngle[PITCH]) / (float)init_loops; //Averaging roll  ACC values
-    	AccAngleSmooth[PITCH] = AccAngle[PITCH] / (float)init_loops; //Averaging roll  ACC values HJI
+      AccAngleSmooth[PITCH] = AccAngle[PITCH] / (float)init_loops; //Averaging roll  ACC values HJI
         // HJI Delay_ms(1);
         delay(2);  // HJI
     }
@@ -180,8 +180,8 @@ void Init_Orientation()
 
 void Get_Orientation(float *SmoothAcc, float *Orient, float *AccData, float *GyroData, float dt)
 {
-	float AccAngle[3];  // HJI float AccAngle[EULAR];
-	float GyroRate[3];  // HJI float GyroRate[EULAR];
+  float AccAngle[3];  // HJI float AccAngle[EULAR];
+  float GyroRate[3];  // HJI float GyroRate[EULAR];
 
     // HJI AccAngle[ROLL]  = -(atan2f(AccData[X_AXIS], AccData[Z_AXIS]));   //Calculating pitch ACC angle
     AccAngle[ROLL ] = -(atan2f(AccData[YAXIS], AccData[ZAXIS]));   //Calculating roll ACC angle  HJI
@@ -193,7 +193,7 @@ void Get_Orientation(float *SmoothAcc, float *Orient, float *AccData, float *Gyr
 
     // HJI GyroRate[PITCH] =  GyroData[X_AXIS];
     GyroRate[PITCH] =  GyroData[YAXIS];  // HJI
-    Orient[PITCH] = ((Orient[PITCH]  + GyroRate[PITCH] * dt) + 0.0002f * (SmoothAcc[PITCH] - Orient[PITCH])); //Pitch Horizon
+    Orient[PITCH]   = (Orient[PITCH] + GyroRate[PITCH] * dt) + 0.0002f * (SmoothAcc[PITCH] - Orient[PITCH]);  //Pitch Horizon
 
     // HJI GyroRate[ROLL] = -GyroData[Z_AXIS] * sinf(Orient[PITCH]) + GyroData[Y_AXIS] * cosf(fabsf(Orient[PITCH]));
     GyroRate[ROLL] = -GyroData[YAW] * sinf(Orient[PITCH]) + GyroData[XAXIS] * cosf(fabsf(Orient[PITCH]));  // HJI
@@ -209,13 +209,13 @@ void Get_Orientation(float *SmoothAcc, float *Orient, float *AccData, float *Gyr
 void engineProcess(float dt)
 {
     // HJI static int loopCounter;
-	// HJI tStopWatch sw;
+  // HJI tStopWatch sw;
 
-	// HJI loopCounter++;
-	// HJI LEDon();
-	// HJI DEBUG_LEDoff();
+  // HJI loopCounter++;
+  // HJI LEDon();
+  // HJI DEBUG_LEDoff();
 
-	// HJI StopWatchInit(&sw);
+  // HJI StopWatchInit(&sw);
     // HJI MPU6050_ACC_get(AccData); // Getting Accelerometer data
     // HJI unsigned long tAccGet = StopWatchLap(&sw);
 
@@ -235,14 +235,14 @@ void engineProcess(float dt)
     // HJI }
 
     // Pitch adjustments
-    pitch_setpoint += Step[PITCH];
+    //pitch_setpoint += Step[PITCH];
     pitchRCOffset  += Step[PITCH] / 1000.0f;
 
     pitch_angle_correction = constrain((CameraOrient[PITCH] + pitchRCOffset) * 50.0f, -CORRECTION_STEP, CORRECTION_STEP);
     pitch_setpoint += pitch_angle_correction; // Pitch return to zero after collision
 
     // Roll Adjustments
-    roll_setpoint += Step[ROLL];
+    //roll_setpoint += Step[ROLL];
     rollRCOffset  += Step[ROLL] / 1000.0f;
 
     // include the config roll offset which is scaled to 0 = -10.0 degrees, 100 = 0.0 degrees, and 200 = 10.0 degrees
