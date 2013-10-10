@@ -1,0 +1,14 @@
+# Object files
+*.o
+
+# system Directories
+/Debug
+/Release
+/.settings
+/out
+
+.cproject
+.cproject.backup
+
+# batch files
+*.bat
