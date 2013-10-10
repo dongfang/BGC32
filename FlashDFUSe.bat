@@ -2,7 +2,7 @@
 set filename=%1%
 set FLASHTOOL=setup\dfu-util-static.exe
 
-if "%filename%" == "" set filename=out\STM32Gimbal.USB.bin
+if "%filename%" == "" set filename=out\BGC32Gimbal.USB.bin
 
 echo taking board into boot mode ...
 REM boot loader hack by ala42
