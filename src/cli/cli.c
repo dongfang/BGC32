@@ -226,9 +226,9 @@ void cliCom(void)
         	// HJI 		                           sensors.attitude500Hz[PITCH] * R2D,
         	// HJI 		                           sensors.attitude500Hz[YAW  ] * R2D);
 
-            cliPrintF("%7.2f, %7.2f, %7.2f\n", CameraOrient[ROLL ] * R2D,
-			                                   CameraOrient[PITCH] * R2D,
-                                               CameraOrient[YAW  ] * R2D);
+            cliPrintF("%7.2f, %7.2f, %7.2f\n", cameraOrient[ROLL ] * R2D,
+			                                   cameraOrient[PITCH] * R2D,
+                                               cameraOrient[YAW  ] * R2D);
 
             validCliCommand = false;
         	break;

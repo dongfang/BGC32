@@ -57,7 +57,7 @@ int main(void)
 
     systemInit();
 
-    Init_Orientation();  // HJI
+    initOrientation();
 
     systemReady = true;
 
@@ -120,29 +120,17 @@ int main(void)
 
        	 	dt500Hz = (float)timerValue * 0.0000005f;  // For integrations in 500 Hz loop
 
-       	    // HJI readMPU6050();
-
-       	    // HJI computeMPU6050TCBias();
-
-       	    // HJI sensors.accel500Hz[XAXIS] =  ((float)rawAccel[XAXIS].value - accelTCBias[XAXIS]) * ACCEL_SCALE_FACTOR;
-			// HJI sensors.accel500Hz[YAXIS] =  ((float)rawAccel[YAXIS].value - accelTCBias[YAXIS]) * ACCEL_SCALE_FACTOR;
-			// HJI sensors.accel500Hz[ZAXIS] = -((float)rawAccel[ZAXIS].value - accelTCBias[ZAXIS]) * ACCEL_SCALE_FACTOR;
-
-			sensors.accel500Hz[XAXIS] = -((float)accelData500Hz[XAXIS] - accelTCBias[XAXIS]) * ACCEL_SCALE_FACTOR;  // HJI
-			sensors.accel500Hz[YAXIS] = -((float)accelData500Hz[YAXIS] - accelTCBias[YAXIS]) * ACCEL_SCALE_FACTOR;  // HJI
-			sensors.accel500Hz[ZAXIS] =  ((float)accelData500Hz[ZAXIS] - accelTCBias[ZAXIS]) * ACCEL_SCALE_FACTOR;  // HJI
+       	    sensors.accel500Hz[XAXIS] =  ((float)accelData500Hz[XAXIS] - accelTCBias[XAXIS]) * ACCEL_SCALE_FACTOR;
+			sensors.accel500Hz[YAXIS] =  ((float)accelData500Hz[YAXIS] - accelTCBias[YAXIS]) * ACCEL_SCALE_FACTOR;
+			sensors.accel500Hz[ZAXIS] = -((float)accelData500Hz[ZAXIS] - accelTCBias[ZAXIS]) * ACCEL_SCALE_FACTOR;
 
 			// HJI sensors.accel500Hz[XAXIS] = firstOrderFilter(sensors.accel500Hz[XAXIS], &firstOrderFilters[ACCEL500HZ_X_LOWPASS]);
             // HJI sensors.accel500Hz[YAXIS] = firstOrderFilter(sensors.accel500Hz[YAXIS], &firstOrderFilters[ACCEL500HZ_Y_LOWPASS]);
             // HJI sensors.accel500Hz[ZAXIS] = firstOrderFilter(sensors.accel500Hz[ZAXIS], &firstOrderFilters[ACCEL500HZ_Z_LOWPASS]);
 
-            // HJI sensors.gyro500Hz[ROLL ] =  ((float)rawGyro[ROLL ].value - gyroRTBias[ROLL ] - gyroTCBias[ROLL ]) * GYRO_SCALE_FACTOR;
-			// HJI sensors.gyro500Hz[PITCH] =  ((float)rawGyro[PITCH].value - gyroRTBias[PITCH] - gyroTCBias[PITCH]) * GYRO_SCALE_FACTOR;
-            // HJI sensors.gyro500Hz[YAW  ] = -((float)rawGyro[YAW  ].value - gyroRTBias[YAW  ] - gyroTCBias[YAW  ]) * GYRO_SCALE_FACTOR;
-
-            sensors.gyro500Hz[ROLL ] = -((float)gyroData500Hz[ROLL ] - gyroRTBias[ROLL ] - gyroTCBias[ROLL ]) * GYRO_SCALE_FACTOR;  // HJI
-            sensors.gyro500Hz[PITCH] = -((float)gyroData500Hz[PITCH] - gyroRTBias[PITCH] - gyroTCBias[PITCH]) * GYRO_SCALE_FACTOR;  // HJI
-            sensors.gyro500Hz[YAW  ] =  ((float)gyroData500Hz[YAW  ] - gyroRTBias[YAW  ] - gyroTCBias[YAW  ]) * GYRO_SCALE_FACTOR;  // HJI
+            sensors.gyro500Hz[ROLL ] =  ((float)gyroData500Hz[ROLL ] - gyroRTBias[ROLL ] - gyroTCBias[ROLL ]) * GYRO_SCALE_FACTOR;
+			sensors.gyro500Hz[PITCH] =  ((float)gyroData500Hz[PITCH] - gyroRTBias[PITCH] - gyroTCBias[PITCH]) * GYRO_SCALE_FACTOR;
+            sensors.gyro500Hz[YAW  ] = -((float)gyroData500Hz[YAW  ] - gyroRTBias[YAW  ] - gyroTCBias[YAW  ]) * GYRO_SCALE_FACTOR;
 
             // HJI sensors.gyro500Hz[ROLL ] = firstOrderFilter(sensors.gyro500Hz[ROLL ], &firstOrderFilters[GYRO500HZ_R_LOWPASS]);
             // HJI sensors.gyro500Hz[PITCH] = firstOrderFilter(sensors.gyro500Hz[PITCH], &firstOrderFilters[GYRO500HZ_P_LOWPASS]);
