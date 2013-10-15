@@ -67,14 +67,12 @@ float updatePID(float command, float state, float deltaT, uint8_t iHold, struct 
 {
     float error;
     float dTerm;
-    float dTermFiltered;
-    float dAverage;
+    // HJI float dTermFiltered;
+    // HJI float dAverage;
 
     ///////////////////////////////////
 
     error = command - state;
-
-    // error = constrain(error, -eepromConfig.errorLimit, eepromConfig.errorLimit);  // For use with gimbal
 
     if (PIDparameters->type == ANGULAR)
         error = standardRadianFormat(error);
@@ -83,7 +81,7 @@ float updatePID(float command, float state, float deltaT, uint8_t iHold, struct 
 
     if (iHold == false)
     {
-    	PIDparameters->iTerm += error * deltaT; // * PIDparameters->P * 5.729578; // 5.729578 for 1000, 2.86478857 for 2000
+    	PIDparameters->iTerm += error * deltaT;
     	PIDparameters->iTerm = constrain(PIDparameters->iTerm, -PIDparameters->windupGuard, PIDparameters->windupGuard);
     }
 
@@ -106,24 +104,23 @@ float updatePID(float command, float state, float deltaT, uint8_t iHold, struct 
 
     ///////////////////////////////////
 
-    dTermFiltered = PIDparameters->lastDterm + deltaT / (rc + deltaT) * (dTerm - PIDparameters->lastDterm);
+    // HJI dTermFiltered = PIDparameters->lastDterm + (deltaT / (rc + deltaT)) * (dTerm - PIDparameters->lastDterm);
 
-    dAverage = (dTermFiltered + PIDparameters->lastDterm + PIDparameters->lastLastDterm) * 0.333333f;
+    // HJI dAverage = (dTermFiltered + PIDparameters->lastDterm + PIDparameters->lastLastDterm) * 0.333333f;
 
-    PIDparameters->lastLastDterm = PIDparameters->lastDterm;
-    PIDparameters->lastDterm = dTermFiltered;
+    // HJI PIDparameters->lastLastDterm = PIDparameters->lastDterm;
+    // HJI PIDparameters->lastDterm = dTermFiltered;
 
     ///////////////////////////////////
 
     if (PIDparameters->type == ANGULAR)
         return(PIDparameters->P * error                +
 	           PIDparameters->I * PIDparameters->iTerm +
-	           PIDparameters->D * dAverage);
+	           PIDparameters->D * dTerm); // HJI dAverage);
     else
-        return(PIDparameters->P * PIDparameters->B * command +
-               PIDparameters->I * PIDparameters->iTerm       +
-               PIDparameters->D * dAverage                   -
-               PIDparameters->P * state);
+        return(PIDparameters->P * ((PIDparameters->B * command) - state) +
+               PIDparameters->I * PIDparameters->iTerm +
+               PIDparameters->D * dTerm); // HJI dAverage);
 
     ///////////////////////////////////
 }

@@ -15,6 +15,8 @@ float pitch_setpoint = 0.0f, pitch_Error_last, pitch_angle_correction;
 float roll_setpoint = 0.0f,  roll_Error_last,  roll_angle_correction;
 float yaw_setpoint = 0.0f,   yaw_Error_last,   yaw_angle_correction;
 
+float pidCmd[3];
+
 float ADC1Ch13_yaw;
 
 static float rollRCOffset = 0.0f, pitchRCOffset = 0.0f, yawRCOffset = 0.0f;
@@ -24,54 +26,6 @@ float accAngleSmooth[3];
 
 float Step[NUMAXIS]     = {0.0f, 0.0f, 0.0f};
 float RCSmooth[NUMAXIS] = {0.0f, 0.0f, 0.0f};
-
-///////////////////////////////////////////////////////////////////////////////
-
-void roll_PID(void)
-{
-    float Error_current = roll_setpoint + cameraOrient[ROLL] * 1000.0f;
-    // HJI float KP = Error_current * (float)configData[1] / 1000.0;
-    float KP = Error_current * eepromConfig.PID[ROLL_PID].P / 1000.0f;
-    // HJI float KD = (float)configData[4] / 100.0 * (Error_current - roll_Error_last);
-    float KD = eepromConfig.PID[ROLL_PID].D / 100.0f * (Error_current - roll_Error_last);
-
-    roll_Error_last = Error_current;
-
-    // HJI SetRollMotor(KP + KD, configData[7]);
-    SetRollMotor(KP + KD, (int)eepromConfig.rollPower);
-}
-
-///////////////////////////////////////////////////////////////////////////////
-
-void pitch_PID(void)
-{
-    float Error_current = pitch_setpoint + cameraOrient[PITCH] * 1000.0f;
-    // HJI float KP = Error_current * (float)configData[0] / 1000.0;
-    float KP = Error_current * eepromConfig.PID[PITCH_PID].P / 1000.0f;
-    // HJI float KD = (float)configData[3] / 100.0 * (Error_current - pitch_Error_last);
-    float KD = eepromConfig.PID[PITCH_PID].D / 100.0f * (Error_current - pitch_Error_last);
-
-    pitch_Error_last = Error_current;
-
-    // HJI SetPitchMotor(KP + KD, configData[6]);
-    SetPitchMotor(KP + KD, (int)eepromConfig.pitchPower);
-}
-
-///////////////////////////////////////////////////////////////////////////////
-
-void yaw_PID(void)
-{
-    float Error_current = yaw_setpoint + cameraOrient[YAW] * 1000.0f;
-    // HJI float KP = Error_current * (float)configData[2] / 1000.0;
-    float KP = Error_current * eepromConfig.PID[YAW_PID].P / 1000.0f;
-    // HJI float KD = (float)configData[5] / 100.0 * (Error_current - yaw_Error_last);
-    float KD = eepromConfig.PID[YAW_PID].D / 100.0f * (Error_current - yaw_Error_last);
-
-    yaw_Error_last = Error_current;
-
-    // HJI SetYawMotor(KP + KD, configData[8]);
-    SetYawMotor(KP + KD, (int)eepromConfig.yawPower);
-}
 
 ///////////////////////////////////////////////////////////////////////////////
 /*
@@ -172,6 +126,12 @@ void engineProcess(float dt)
     pitch_angle_correction = constrain((cameraOrient[PITCH] + pitchRCOffset) * 50.0f, -CORRECTION_STEP, CORRECTION_STEP);
     pitch_setpoint += pitch_angle_correction; // Pitch return to zero after collision
 
+    pidCmd[PITCH] = updatePID(pitch_setpoint + cameraOrient[PITCH] * 1000.0f, 0.0f, dt, holdIntegrators, &eepromConfig.PID[PITCH_PID]);
+
+    SetPitchMotor(pidCmd[PITCH], (int)eepromConfig.pitchPower);
+
+    ///////////////////////////////////
+
     // Roll Adjustments
     //roll_setpoint += Step[ROLL];
     rollRCOffset  += Step[ROLL] / 1000.0f;
@@ -180,6 +140,12 @@ void engineProcess(float dt)
     // HJI roll_angle_correction = constrain((CameraOrient[ROLL] + rollRCOffset + ((configData[11] - 100) / 10.0) / R2D) * 50.0, -CORRECTION_STEP, CORRECTION_STEP);
     roll_angle_correction = constrain((cameraOrient[ROLL] + rollRCOffset) * 50.0f, -CORRECTION_STEP, CORRECTION_STEP);
     roll_setpoint += roll_angle_correction; //Roll return to zero after collision
+
+    pidCmd[ROLL] = updatePID(roll_setpoint + cameraOrient[ROLL] * 1000.0f, 0.0f, dt, holdIntegrators, &eepromConfig.PID[ROLL_PID]);
+
+    SetRollMotor(pidCmd[ROLL], (int)eepromConfig.rollPower);
+
+    ///////////////////////////////////
 
     // if we enabled AutoPan on Yaw
     // HJI if (configData[10] == '0')
@@ -202,10 +168,10 @@ void engineProcess(float dt)
     yaw_setpoint += yaw_angle_correction; // Yaw return to zero after collision
 #endif
 
-    // HJI unsigned long tCalc = StopWatchLap(&sw);
+    pidCmd[YAW] = updatePID(yaw_setpoint + cameraOrient[YAW] * 1000.0f, 0.0f, dt, holdIntegrators, &eepromConfig.PID[YAW_PID]);
 
-    pitch_PID();
-    roll_PID();
-    yaw_PID();
+    SetYawMotor(pidCmd[YAW], (int)eepromConfig.yawPower);
+
+    ///////////////////////////////////
 }
 
