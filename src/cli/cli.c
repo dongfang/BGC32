@@ -303,9 +303,9 @@ void cliCom(void)
         ///////////////////////////////
 
         case 'p': // Debug Counter
-            cliPrintF("Counter min %3d, %3d, %3d,  max %4d, %4d, %4d, count %3d, %3d, %3d\n", MinCnt[ROLL], MinCnt[PITCH], MinCnt[YAW],
-                                                                                              MaxCnt[ROLL], MaxCnt[PITCH], MaxCnt[YAW],
-                                                                                              IrqCnt[ROLL], IrqCnt[PITCH], IrqCnt[YAW]);
+            cliPrintF("Counter min %3d, %3d, %3d,  max %4d, %4d, %4d, count %3d, %3d, %3d\n", minCnt[ROLL], minCnt[PITCH], minCnt[YAW],
+                                                                                              maxCnt[ROLL], maxCnt[PITCH], maxCnt[YAW],
+                                                                                              irqCnt[ROLL], irqCnt[PITCH], irqCnt[YAW]);
             validCliCommand = false;
             break;
 

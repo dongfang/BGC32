@@ -109,9 +109,9 @@ static int rollPhase[3], pitchPhase[3], yawPhase[3];
 
 static int yawOff = 1;
 
-int MaxCnt[NUMAXIS];
-int MinCnt[NUMAXIS];
-int IrqCnt[NUMAXIS];
+int maxCnt[NUMAXIS];
+int minCnt[NUMAXIS];
+int irqCnt[NUMAXIS];
 
 uint8_t oddEvenFrame = 0;
 
@@ -121,16 +121,16 @@ uint8_t oddEvenFrame = 0;
 
 inline void updateCounter(uint8_t channel, int value)
 {
-    IrqCnt[channel]++;
+    irqCnt[channel]++;
 
-    if(value > MaxCnt[channel])
+    if(value > maxCnt[channel])
     {
-        MaxCnt[channel] = value;
+        maxCnt[channel] = value;
     }
 
-    if(value < MinCnt[channel])
+    if(value < minCnt[channel])
     {
-        MinCnt[channel] = value;
+        minCnt[channel] = value;
     }
 }
 
@@ -143,7 +143,7 @@ static void setupPWMIrq(uint8_t irq)
     NVIC_InitTypeDef NVIC_InitStructure;
 
     NVIC_InitStructure.NVIC_IRQChannel                   = irq;
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0; //Preemption Priority
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;       //Preemption Priority
     NVIC_InitStructure.NVIC_IRQChannelSubPriority        = 0;
     NVIC_InitStructure.NVIC_IRQChannelCmd                = ENABLE;
 
@@ -413,7 +413,7 @@ void activateIRQ(TIM_TypeDef *tim)
 //  Set Roll Axis PWM
 ///////////////////////////////////////////////////////////////////////////////
 
-void SetRollMotor(float phi, int power)
+void setRollMotor(float phi, int power)
 {
 	int pwm[3];
 
@@ -426,7 +426,7 @@ void SetRollMotor(float phi, int power)
 //  Set Pitch Axis PWM
 ///////////////////////////////////////////////////////////////////////////////
 
-void SetPitchMotor(float theta, int power)
+void setPitchMotor(float theta, int power)
 {
 	int pwm[3];
 
@@ -439,7 +439,7 @@ void SetPitchMotor(float theta, int power)
 //  Set Yaw Axis PWM
 ///////////////////////////////////////////////////////////////////////////////
 
-void SetYawMotor(float psi, int power)
+void setYawMotor(float psi, int power)
 {
 	int pwm[3];
 
@@ -474,9 +474,9 @@ void pwmMotorDriverInit(void)
 
 		GPIO_Init(GPIOB, &GPIO_InitStructure);
 
-		IrqCnt[ROLL] = 0;
-		MaxCnt[ROLL] = 0;
-		MinCnt[ROLL] = PWM_PERIOD + 1;
+		irqCnt[ROLL] = 0;
+		maxCnt[ROLL] = 0;
+		minCnt[ROLL] = PWM_PERIOD + 1;
 
 		timerPWMadvancedConfig(TIM8);
 
@@ -541,9 +541,9 @@ void pwmMotorDriverInit(void)
 
 	    GPIO_Init(GPIOC, &GPIO_InitStructure);
 
-	    IrqCnt[PITCH] = 0;
-		MaxCnt[PITCH] = 0;
-		MinCnt[PITCH] = PWM_PERIOD + 1;
+	    irqCnt[PITCH] = 0;
+		maxCnt[PITCH] = 0;
+		minCnt[PITCH] = PWM_PERIOD + 1;
 
 		timerPWMadvancedConfig(TIM1);
 
@@ -608,9 +608,9 @@ void pwmMotorDriverInit(void)
 
 	    GPIO_Init(GPIOB, &GPIO_InitStructure);
 
-	    IrqCnt[YAW] = 0;
-		MaxCnt[YAW] = 0;
-		MinCnt[YAW] = PWM_PERIOD + 1;
+	    irqCnt[YAW] = 0;
+		maxCnt[YAW] = 0;
+		minCnt[YAW] = PWM_PERIOD + 1;
 
 		timerPWMgeneralConfig(TIM5, TIM_OCPolarity_High);
 	    timerPWMgeneralConfig(TIM4, TIM_OCPolarity_Low);

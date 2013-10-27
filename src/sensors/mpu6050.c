@@ -140,7 +140,7 @@ void initMPU6050(void)
 
     delay(150);
 
-    i2cWrite(MPU6050_ADDRESS, MPU6050_PWR_MGMT_1,   0x00);                      // Clock Source
+    i2cWrite(MPU6050_ADDRESS, MPU6050_PWR_MGMT_1,   MPU_CLK_SEL_PLLGYROZ);      // Clock Source
     i2cWrite(MPU6050_ADDRESS, MPU6050_PWR_MGMT_2,   0x00);
     i2cWrite(MPU6050_ADDRESS, MPU6050_SMPLRT_DIV,   0x00);                      // Accel Sample Rate 1000 Hz, Gyro Sample Rate 8000 Hz
     i2cWrite(MPU6050_ADDRESS, MPU6050_CONFIG,       eepromConfig.dlpfSetting);  // Accel and Gyro DLPF Setting

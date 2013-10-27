@@ -128,7 +128,7 @@ void engineProcess(float dt)
 
     pidCmd[PITCH] = updatePID(pitch_setpoint + cameraOrient[PITCH] * 1000.0f, 0.0f, dt, holdIntegrators, &eepromConfig.PID[PITCH_PID]);
 
-    SetPitchMotor(pidCmd[PITCH], (int)eepromConfig.pitchPower);
+    setPitchMotor(pidCmd[PITCH], (int)eepromConfig.pitchPower);
 
     ///////////////////////////////////
 
@@ -143,7 +143,7 @@ void engineProcess(float dt)
 
     pidCmd[ROLL] = updatePID(roll_setpoint + cameraOrient[ROLL] * 1000.0f, 0.0f, dt, holdIntegrators, &eepromConfig.PID[ROLL_PID]);
 
-    SetRollMotor(pidCmd[ROLL], (int)eepromConfig.rollPower);
+    setRollMotor(pidCmd[ROLL], (int)eepromConfig.rollPower);
 
     ///////////////////////////////////
 
@@ -170,7 +170,7 @@ void engineProcess(float dt)
 
     pidCmd[YAW] = updatePID(yaw_setpoint + cameraOrient[YAW] * 1000.0f, 0.0f, dt, holdIntegrators, &eepromConfig.PID[YAW_PID]);
 
-    SetYawMotor(pidCmd[YAW], (int)eepromConfig.yawPower);
+    setYawMotor(pidCmd[YAW], (int)eepromConfig.yawPower);
 
     ///////////////////////////////////
 }

@@ -66,7 +66,7 @@
 #include "drv_gpio.h"
 // HJI #include "drv_i2c.h"
 #include "drv_i2cSoft.h"
-// HJI #include "drv_pwmMotors.h"
+#include "drv_pwmMotors.h"
 #include "drv_rx.h"
 #include "drv_system.h"
 #include "drv_timingFunctions.h"
