@@ -48,6 +48,7 @@
 #define ROLL_B_PIN    GPIO_Pin_7
 #define ROLL_C_GPIO   GPIOC
 #define ROLL_C_PIN    GPIO_Pin_8
+
 #define ROLL_AN_GPIO  GPIOA
 #define ROLL_AN_PIN   GPIO_Pin_7
 #define ROLL_BN_GPIO  GPIOB
@@ -65,6 +66,7 @@
 #define PITCH_B_PIN     GPIO_Pin_9
 #define PITCH_C_GPIO    GPIOA
 #define PITCH_C_PIN     GPIO_Pin_10
+
 #define PITCH_AN_GPIO   GPIOB
 #define PITCH_AN_PIN    GPIO_Pin_13
 #define PITCH_BN_GPIO   GPIOB
@@ -464,13 +466,17 @@ void pwmMotorDriverInit(void)
 	{
 		// Roll PWM Timer Initialization here
 
-		GPIO_InitStructure.GPIO_Pin   = ROLL_A_PIN | ROLL_B_PIN | ROLL_C_PIN;
+        GPIO_InitStructure.GPIO_Pin   = ROLL_A_PIN | ROLL_B_PIN | ROLL_C_PIN;
 		GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_AF_PP;
 		GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
 
+		GPIO_Init(GPIOC, &GPIO_InitStructure);
+
+		GPIO_InitStructure.GPIO_Pin   = ROLL_AN_PIN;
+
 		GPIO_Init(GPIOA, &GPIO_InitStructure);
 
-		GPIO_InitStructure.GPIO_Pin   = ROLL_AN_PIN | ROLL_BN_PIN | ROLL_CN_PIN;
+		GPIO_InitStructure.GPIO_Pin   = ROLL_BN_PIN | ROLL_CN_PIN;
 
 		GPIO_Init(GPIOB, &GPIO_InitStructure);
 
@@ -503,7 +509,11 @@ void pwmMotorDriverInit(void)
 
 		GPIO_Init(GPIOA, &GPIO_InitStructure);
 
-		GPIO_InitStructure.GPIO_Pin   = ROLL_AN_PIN  | ROLL_BN_PIN | ROLL_CN_PIN;
+		GPIO_InitStructure.GPIO_Pin   = ROLL_AN_PIN;
+
+		GPIO_Init(GPIOA, &GPIO_InitStructure);
+
+		GPIO_InitStructure.GPIO_Pin   = ROLL_BN_PIN | ROLL_CN_PIN;
 
 		GPIO_Init(GPIOB, &GPIO_InitStructure);
 
@@ -527,19 +537,15 @@ void pwmMotorDriverInit(void)
 	{
 		// Pitch PWM Timer Initialization here
 
-	    GPIO_InitStructure.GPIO_Pin   = PITCH_AN_PIN;
+        GPIO_InitStructure.GPIO_Pin   = PITCH_A_PIN | PITCH_B_PIN | PITCH_C_PIN;
 	    GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_AF_PP;
 	    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
 
 	    GPIO_Init(GPIOA, &GPIO_InitStructure);
 
-	    GPIO_InitStructure.GPIO_Pin   = PITCH_BN_PIN | PITCH_CN_PIN;
+	    GPIO_InitStructure.GPIO_Pin   = PITCH_AN_PIN | PITCH_BN_PIN | PITCH_CN_PIN;
 
 	    GPIO_Init(GPIOB, &GPIO_InitStructure);
-
-	    GPIO_InitStructure.GPIO_Pin   = PITCH_A_PIN | PITCH_B_PIN | PITCH_C_PIN;
-
-	    GPIO_Init(GPIOC, &GPIO_InitStructure);
 
 	    irqCnt[PITCH] = 0;
 		maxCnt[PITCH] = 0;
@@ -564,19 +570,15 @@ void pwmMotorDriverInit(void)
 	}
 	else
 	{
-		GPIO_InitStructure.GPIO_Pin   = PITCH_AN_PIN;
+		GPIO_InitStructure.GPIO_Pin   = PITCH_A_PIN | PITCH_B_PIN | PITCH_C_PIN;
 		GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_Out_PP;
 		GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
 
 		GPIO_Init(GPIOA, &GPIO_InitStructure);
 
-		GPIO_InitStructure.GPIO_Pin   = PITCH_BN_PIN | PITCH_CN_PIN;
+		GPIO_InitStructure.GPIO_Pin   = PITCH_AN_PIN | PITCH_BN_PIN | PITCH_CN_PIN;
 
 		GPIO_Init(GPIOB, &GPIO_InitStructure);
-
-		GPIO_InitStructure.GPIO_Pin   = PITCH_A_PIN | PITCH_B_PIN | PITCH_C_PIN;
-
-		GPIO_Init(GPIOC, &GPIO_InitStructure);
 
 		GPIO_ResetBits(PITCH_A_GPIO,  PITCH_A_PIN);
 		GPIO_ResetBits(PITCH_B_GPIO,  PITCH_B_PIN);

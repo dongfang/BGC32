@@ -75,8 +75,9 @@
 #include "mpu6050.h"
 
 #include "cli.h"
-// HJI #include "computeMotorCommands.h"
+#include "computeMotorCommands.h"
 #include "config.h"
+#include "evvgcCF.h"
 #include "fastTrig.h"
 #include "firstOrderFilter.h"
 #include "magCalibration.h"
@@ -85,8 +86,6 @@
 #include "pointingCommands.h"
 #include "utilities.h"
 
-#include "engine.h"  // HJI
-#include "pins.h"    // HJI
-#include "pwm.h"     // HJI
+//#include "engine.h"  // HJI
 
 ///////////////////////////////////////////////////////////////////////////////

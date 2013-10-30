@@ -245,10 +245,7 @@ void systemInit(void)
 
     NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);  // 2 bits for pre-emption priority, 2 bits for subpriority
 
-    // HJI pwmMotorDriverInit();
-
-    GPIO_Config();  // HJI
-    PWMConfig();    // HJI
+    pwmMotorDriverInit();
 
     cliInit();
     gpioInit();

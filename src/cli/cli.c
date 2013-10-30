@@ -222,14 +222,9 @@ void cliCom(void)
         ///////////////////////////////
 
         case 'h': // Attitudes
-        	// HJI cliPrintF("%9.4f, %9.4f, %9.4f\n", sensors.attitude500Hz[ROLL ] * R2D,
-        	// HJI 		                           sensors.attitude500Hz[PITCH] * R2D,
-        	// HJI 		                           sensors.attitude500Hz[YAW  ] * R2D);
-
-            cliPrintF("%7.2f, %7.2f, %7.2f\n", cameraOrient[ROLL ] * R2D,
-			                                   cameraOrient[PITCH] * R2D,
-                                               cameraOrient[YAW  ] * R2D);
-
+        	cliPrintF("%9.4f, %9.4f, %9.4f\n", sensors.attitude500Hz[ROLL ] * R2D,
+        	 		                           sensors.attitude500Hz[PITCH] * R2D,
+        	 		                           sensors.attitude500Hz[YAW  ] * R2D);
             validCliCommand = false;
         	break;
 
@@ -294,9 +289,9 @@ void cliCom(void)
         ///////////////////////////////
 
         case 'o': // Debug Orientation
-            cliPrintF("Pitch_setpoint:%12.4f | Roll_setpoint:%12.4f | Yaw_setpoint:%12.4f\n", pitch_setpoint * D2R / 1000.0f,
-                                                                                              roll_setpoint  * D2R / 1000.0f,
-                                                                                              yaw_setpoint   * D2R / 1000.0f);
+            cliPrintF("Pitch Setpoint:%12.4f | Roll Setpoint:%12.4f | Yaw Setpoint:%12.4f\n", pitchSetpoint * D2R / 1000.0f,
+                                                                                              rollSetpoint  * D2R / 1000.0f,
+                                                                                              yawSetpoint   * D2R / 1000.0f);
             validCliCommand = false;
             break;
 
@@ -396,7 +391,7 @@ void cliCom(void)
 
             cliPrint( "\nGimbal Axis Enable Flags Received....\n" );
 
-            // HJI pwmMotorDriverInit();
+            pwmMotorDriverInit();
 
           	cliQuery = 'i';
           	validCliCommand = false;

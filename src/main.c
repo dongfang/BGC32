@@ -146,11 +146,11 @@ int main(void)
 
             // HJI magDataUpdate = false;
 
-            // HJI computeMotorCommands(dt500Hz);
+            getOrientation(accAngleSmooth, sensors.attitude500Hz, sensors.accel500Hz, sensors.gyro500Hz, dt500Hz);
 
-            engineProcess(dt500Hz);
+            computeMotorCommands(dt500Hz);
 
-		    executionTime500Hz = micros() - currentTime;
+            executionTime500Hz = micros() - currentTime;
         }
 
         ///////////////////////////////
