@@ -38,13 +38,7 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 
-#define PITCH_UP_LIMIT   (-50.0f * D2R)
-#define PITCH_DOWN_LIMIT ( 90.0f * D2R)
-#define CORRECTION_STEP     1.0f
-
-extern float pitchSetpoint;
-extern float rollSetpoint;
-extern float yawSetpoint;
+extern float pidCmd[3];
 
 ///////////////////////////////////////////////////////////////////////////////
 // Compute Motor Commands

@@ -166,6 +166,8 @@ typedef struct eepromConfig_t
 
     float   rateLimit;
 
+    uint8_t yawAutoPan;
+
 } eepromConfig_t;
 
 extern eepromConfig_t eepromConfig;

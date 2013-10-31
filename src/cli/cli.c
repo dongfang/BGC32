@@ -130,7 +130,7 @@ void readCliPID(unsigned char PIDid)
 
 void cliCom(void)
 {
-	uint8_t temp1, temp2, temp3;
+	uint8_t temp1, temp2, temp3, temp4;
 
 	if ((cliAvailable() && !validCliCommand))
     	cliQuery = cliRead();
@@ -234,6 +234,7 @@ void cliCom(void)
            	cliPrintF("Gimbal Roll Axis:  %s\n", eepromConfig.rollEnabled  ? "Enabled" : "Disabled");
            	cliPrintF("Gimbal Pitch Axis: %s\n", eepromConfig.pitchEnabled ? "Enabled" : "Disabled");
            	cliPrintF("Gimbal Yaw Axis:   %s\n", eepromConfig.yawEnabled   ? "Enabled" : "Disabled");
+           	cliPrintF("Yaw AutoPan:       %s\n", eepromConfig.yawAutoPan   ? "Enabled" : "Disabled");
 
            	cliQuery = 'x';
           	validCliCommand = false;
@@ -253,7 +254,7 @@ void cliCom(void)
         ///////////////////////////////
 
         case 'k': // Gimbal Rate Limit
-           	cliPrintF("Gimbal Rate Limit: %7.3f\n", eepromConfig.rateLimit);
+           	cliPrintF("Gimbal Rate Limit: %7.3f\n", eepromConfig.rateLimit * R2D);
 
            	cliQuery = 'x';
            	validCliCommand = false;
@@ -289,9 +290,9 @@ void cliCom(void)
         ///////////////////////////////
 
         case 'o': // Debug Orientation
-            cliPrintF("Pitch Setpoint:%12.4f | Roll Setpoint:%12.4f | Yaw Setpoint:%12.4f\n", pitchSetpoint * D2R / 1000.0f,
-                                                                                              rollSetpoint  * D2R / 1000.0f,
-                                                                                              yawSetpoint   * D2R / 1000.0f);
+            cliPrintF("Roll PID:%12.4f | Pitch PID:%12.4f | Yaw PID:%12.4f\n", pidCmd[ROLL],
+                                                                               pidCmd[PITCH],
+                                                                               pidCmd[YAW]);
             validCliCommand = false;
             break;
 
@@ -341,7 +342,7 @@ void cliCom(void)
 
         case 'A': // Read Roll PID Values
             readCliPID(ROLL_PID);
-            cliPrint( "\nRoll Rate PID Received....\n" );
+            cliPrint("\nRoll Rate PID Received....\n");
 
         	cliQuery = 'a';
         	validCliCommand = false;
@@ -351,7 +352,7 @@ void cliCom(void)
 
         case 'B': // Read Pitch PID Values
             readCliPID(PITCH_PID);
-            cliPrint( "\nPitch Rate PID Received....\n" );
+            cliPrint("\nPitch Rate PID Received....\n");
 
         	cliQuery = 'a';
         	validCliCommand = false;
@@ -361,7 +362,7 @@ void cliCom(void)
 
         case 'C': // Read Yaw PID Values
             readCliPID(YAW_PID);
-            cliPrint( "\nYaw Rate PID Received....\n" );
+            cliPrint("\nYaw Rate PID Received....\n");
 
         	cliQuery = 'a';
         	validCliCommand = false;
@@ -373,6 +374,7 @@ void cliCom(void)
     		temp1 = (uint8_t)readFloatCLI();
     		temp2 = (uint8_t)readFloatCLI();
             temp3 = (uint8_t)readFloatCLI();
+            temp4 = (uint8_t)readFloatCLI();
 
             if (temp1 == 0)
             	eepromConfig.rollEnabled = false;
@@ -389,7 +391,12 @@ void cliCom(void)
             else
             	eepromConfig.yawEnabled = true;
 
-            cliPrint( "\nGimbal Axis Enable Flags Received....\n" );
+            if (temp4 == 0)
+                eepromConfig.yawAutoPan = false;
+            else
+                eepromConfig.yawAutoPan = true;
+
+            cliPrint("\nGimbal Axis Enable Flags Received....\n");
 
             pwmMotorDriverInit();
 
@@ -404,7 +411,7 @@ void cliCom(void)
         	eepromConfig.pitchPower = readFloatCLI();
         	eepromConfig.yawPower   = readFloatCLI();
 
-        	cliPrint( "\nGimbal Axis Power Levels Received....\n" );
+        	cliPrint("\nGimbal Axis Power Levels Received....\n");
 
           	cliQuery = 'j';
           	validCliCommand = false;
@@ -413,9 +420,9 @@ void cliCom(void)
         ///////////////////////////////
 
         case 'K': // Read Gimbal Rate Limit
-        	eepromConfig.rateLimit = readFloatCLI();
+        	eepromConfig.rateLimit = readFloatCLI() * D2R;
 
-           	cliPrint( "\nGimbal Rate Limit Received....\n" );
+           	cliPrint("\nGimbal Rate Limit Received....\n");
 
            	cliQuery = 'k';
            	validCliCommand = false;
@@ -426,7 +433,7 @@ void cliCom(void)
         case 'L': // Read Gimbal IMU Orientation
         	eepromConfig.imuOrientation = (uint8_t)readFloatCLI();
 
-           	cliPrint( "\nGimbal IMU Orientation Received....\n" );
+           	cliPrint("\nGimbal IMU Orientation Received....\n");
 
            	orientIMU();
 
@@ -439,7 +446,7 @@ void cliCom(void)
         case 'M': // Read Test Phase
         	testPhase = readFloatCLI() * D2R;
 
-           	cliPrint( "\nTest Phase Received....\n" );
+           	cliPrint("\nTest Phase Received....\n");
 
            	cliQuery = 'm';
            	validCliCommand = false;
@@ -450,7 +457,7 @@ void cliCom(void)
         case 'N': // Read Test Phase Delta
         	testPhaseDelta = readFloatCLI() * D2R;
 
-           	cliPrint( "\nTest Phase Delta Received....\n" );
+           	cliPrint("\nTest Phase Delta Received....\n");
 
            	cliQuery = 'n';
            	validCliCommand = false;
@@ -491,7 +498,7 @@ void cliCom(void)
         ///////////////////////////////
 
         case 'V': // Reset EEPROM Parameters
-            cliPrint( "\nEEPROM Parameters Reset....\n" );
+            cliPrint("\nEEPROM Parameters Reset....\n");
             checkFirstTime(true);
             cliPrint("\nSystem Rebooting....\n\n");
             delay(1000);
@@ -557,7 +564,7 @@ void cliCom(void)
    		    cliPrint("'f' 500 Hz Gyros                   'F' Not Used\n");
    		    cliPrint("'g' 10 hz Mag Data                 'G' Not used\n");
    		    cliPrint("'h' Attitudes                      'H' Not Used\n");
-   		    cliPrint("'i' Gimbal Axis Enable Flags       'I' Set Gimbal Axis Enable Flags IR;P;Y\n");
+   		    cliPrint("'i' Gimbal Axis Enable Flags       'I' Set Gimbal Axis Enable Flags IR;P;Y;YAP\n");
    		    cliPrint("'j' Gimbal Axis Power Settings     'J' Set Gimbal Axis Power Levels HR;P;Y\n");
    		    cliPrint("'k' Gimbal Rate Limit              'K' Set Gimbal Rate Limit\n");
    		    cliPrint("'l' Gimbal IMU Orientation         'L' Set Gimbal IMU Orientation   LX, X = 1 thru 4\n");

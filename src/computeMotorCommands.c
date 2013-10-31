@@ -38,38 +38,49 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 
-float pitchSetpoint = 0.0f, pitchErrorLast, pitchAngleCorrection;
-float rollSetpoint = 0.0f,  rollErrorLast,  rollAngleCorrection;
-float yawSetpoint = 0.0f,   yawErrorLast,   yawAngleCorrection;
+float rollSetpoint  = 0.0f;
+float pitchSetpoint = 0.0f;
+float yawSetpoint   = 0.0f;
 
 float pidCmd[3];
 
-float ADC1Ch13_yaw;
+float pidCmdPrev[3] = {0.0f, 0.0f, 0.0f};
 
-static float rollRCOffset = 0.0f, pitchRCOffset = 0.0f, yawRCOffset = 0.0f;
+float outputRate[3];
 
-float accAngleSmooth[3];
+#define YAP_DEADBAND     2.00f  // in radians with respect to one motor pole, actual angle is (DEADBAND / numberPoles) * R2D
+#define MOTORPOS2SETPNT  0.35f  // scaling factor for how fast it should move
+#define AUTOPANSMOOTH   40.00f
 
-float Step[NUMAXIS]     = {0.0f, 0.0f, 0.0f};
-float RCSmooth[NUMAXIS] = {0.0f, 0.0f, 0.0f};
+float centerPoint = 0.0f;
+float stepSmooth  = 0.0f;
+float step        = 0.0f;
 
 ///////////////////////////////////////////////////////////////////////////////
-//  Limit the Pitch Angle
+// Yaw AutoPan
 ///////////////////////////////////////////////////////////////////////////////
 
-float limitPitch(float step, float pitch)
+float autoPan(float motorPos, float setpoint)
 {
-    if (pitch < PITCH_UP_LIMIT && step > 0.0f)
+    if (motorPos < centerPoint - YAP_DEADBAND)
+    {
+        centerPoint = YAP_DEADBAND;
+        step = MOTORPOS2SETPNT * motorPos; //  dampening
+    }
+    else if (motorPos > centerPoint + YAP_DEADBAND)
+    {
+        centerPoint = -YAP_DEADBAND;
+        step = MOTORPOS2SETPNT * motorPos; //  dampening
+    }
+    else
     {
         step = 0.0f;
+        centerPoint = 0.0f;
     }
 
-    if (pitch > PITCH_DOWN_LIMIT && step < 0.0f)
-    {
-        step = 0.0f;
-    }
+    stepSmooth = (stepSmooth * (AUTOPANSMOOTH - 1.0f) + step) / AUTOPANSMOOTH;
 
-    return step;
+    return (setpoint -= stepSmooth);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -82,27 +93,21 @@ void computeMotorCommands(float dt)
 
 	///////////////////////////////////
 
-    // if we enable RC control
-    // HJI if (configData[9] == '1')
-    // HJI {
-    // HJI     // Get the RX values and Averages
-    // HJI     Get_RC_Step(Step, RCSmooth);                                  // Get RC movement on all three AXIS
-    // HJI     Step[PITCH] = limitPitch(Step[PITCH], sensors.attitude500Hz[PITCH]);  // limit pitch to defined limits in header
-    // HJI }
-
-	///////////////////////////////////
-
 	if (eepromConfig.rollEnabled == true)
 	{
-	    //roll_setpoint += Step[ROLL];
-	    rollRCOffset  += Step[ROLL] / 1000.0f;
+	    rollSetpoint = 0.0f;
 
-	    // include the config roll offset which is scaled to 0 = -10.0 degrees, 100 = 0.0 degrees, and 200 = 10.0 degrees
-	    // HJI roll_angle_correction = constrain((CameraOrient[ROLL] + rollRCOffset + ((configData[11] - 100) / 10.0) / R2D) * 50.0, -CORRECTION_STEP, CORRECTION_STEP);
-	    rollAngleCorrection = constrain((sensors.attitude500Hz[ROLL] + rollRCOffset) * 50.0f, -CORRECTION_STEP, CORRECTION_STEP);
-	    rollSetpoint += rollAngleCorrection; //Roll return to zero after collision
+	    pidCmd[ROLL] = updatePID(rollSetpoint, -sensors.attitude500Hz[ROLL], dt, holdIntegrators, &eepromConfig.PID[ROLL_PID]);
 
-	    pidCmd[ROLL] = updatePID(rollSetpoint + sensors.attitude500Hz[ROLL] * 1000.0f, 0.0f, dt, holdIntegrators, &eepromConfig.PID[ROLL_PID]);
+	    outputRate[ROLL] = pidCmd[ROLL] - pidCmdPrev[ROLL];
+
+	    if (outputRate[ROLL] > eepromConfig.rateLimit)
+	        pidCmd[ROLL] = pidCmdPrev[ROLL] + eepromConfig.rateLimit;
+
+	    if (outputRate[ROLL] < -eepromConfig.rateLimit)
+	        pidCmd[ROLL] = pidCmdPrev[ROLL] - eepromConfig.rateLimit;
+
+	    pidCmdPrev[ROLL] = pidCmd[ROLL];
 
 	    setRollMotor(pidCmd[ROLL], (int)eepromConfig.rollPower);
     }
@@ -111,43 +116,46 @@ void computeMotorCommands(float dt)
 
     if (eepromConfig.pitchEnabled == true)
     {
-        //pitch_setpoint += Step[PITCH];
-        pitchRCOffset  += Step[PITCH] / 1000.0f;
+        pitchSetpoint = 0.0f;
 
-        pitchAngleCorrection = constrain((sensors.attitude500Hz[PITCH] + pitchRCOffset) * 50.0f, -CORRECTION_STEP, CORRECTION_STEP);
-        pitchSetpoint += pitchAngleCorrection; // Pitch return to zero after collision
+        pidCmd[PITCH] = updatePID(pitchSetpoint, -sensors.attitude500Hz[PITCH], dt, holdIntegrators, &eepromConfig.PID[PITCH_PID]);
 
-        pidCmd[PITCH] = updatePID(pitchSetpoint + sensors.attitude500Hz[PITCH] * 1000.0f, 0.0f, dt, holdIntegrators, &eepromConfig.PID[PITCH_PID]);
+	    outputRate[PITCH] = pidCmd[PITCH] - pidCmdPrev[PITCH];
 
-        setPitchMotor(pidCmd[PITCH], (int)eepromConfig.pitchPower);
+	    if (outputRate[PITCH] > eepromConfig.rateLimit)
+	        pidCmd[PITCH] = pidCmdPrev[PITCH] + eepromConfig.rateLimit;
+
+	    if (outputRate[PITCH] < -eepromConfig.rateLimit)
+	        pidCmd[PITCH] = pidCmdPrev[PITCH] - eepromConfig.rateLimit;
+
+	    pidCmdPrev[PITCH] = pidCmd[PITCH];
+
+	    setPitchMotor(pidCmd[PITCH], (int)eepromConfig.pitchPower);
     }
 
     ///////////////////////////////////
 
-    // if we enabled AutoPan on Yaw
-    // HJI if (configData[10] == '0')
-    // HJI {
-    // HJI     ADC1Ch13_yaw = ((ADC1Ch13_yaw * 99.0) + ((float)(readADC1(13) - 2000) / 4000.0)) / 100.0;  // Average ADC value
-    // HJI }
+    if (eepromConfig.yawEnabled == true)
+    {
+        if (eepromConfig.yawAutoPan == true)                  // If yaw auto pan enabled
+            yawSetpoint = autoPan(pidCmd[YAW], yawSetpoint);
+        else                                                  // Else RC control
+            yawSetpoint = 0.0f;
 
-    // Yaw Adjustments
-    yawSetpoint += Step[YAW];
-    yawRCOffset  += Step[YAW] / 1000.0f;
+        pidCmd[YAW] = updatePID(yawSetpoint, -sensors.attitude500Hz[YAW], dt, holdIntegrators, &eepromConfig.PID[YAW_PID]);
 
-    // if AutoPan is enabled
-    // HJI if (configData[10] == '0')
-    // HJI {
-    // HJI     CameraOrient[YAW] = CameraOrient[YAW] + 0.01 * (ADC1Ch13_yaw - CameraOrient[YAW]);
-    // HJI }
+	    outputRate[YAW] = pidCmd[YAW] - pidCmdPrev[YAW];
 
-#if 0
-    yaw_angle_correction = constrain((CameraOrient[YAW] + yawRCOffset) * 50.0, -CORRECTION_STEP, CORRECTION_STEP);
-    yaw_setpoint += yaw_angle_correction; // Yaw return to zero after collision
-#endif
+	    if (outputRate[YAW] > eepromConfig.rateLimit)
+	        pidCmd[YAW] = pidCmdPrev[YAW] + eepromConfig.rateLimit;
 
-    pidCmd[YAW] = updatePID(yawSetpoint + sensors.attitude500Hz[YAW] * 1000.0f, 0.0f, dt, holdIntegrators, &eepromConfig.PID[YAW_PID]);
+	    if (outputRate[YAW] < -eepromConfig.rateLimit)
+	        pidCmd[YAW] = pidCmdPrev[YAW] - eepromConfig.rateLimit;
 
-    setYawMotor(pidCmd[YAW], (int)eepromConfig.yawPower);
+	    pidCmdPrev[YAW] = pidCmd[YAW];
+
+        setYawMotor(pidCmd[YAW], (int)eepromConfig.yawPower);
+    }
 
     ///////////////////////////////////
 

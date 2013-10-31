@@ -192,7 +192,9 @@ void checkFirstTime(bool eepromReset)
 
         eepromConfig.imuOrientation = 3;
 
-        eepromConfig.rateLimit = 0.001;
+        eepromConfig.rateLimit = 90 * D2R;
+
+        eepromConfig.yawAutoPan = false;
 
         writeEEPROM();
 	}
