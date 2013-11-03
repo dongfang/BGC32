@@ -40,7 +40,9 @@
 // Process Pilot Commands Defines and Variables
 ///////////////////////////////////////////////////////////////////////////////
 
-float    rxCommand[3] = { 0.0f, 0.0f, 0.0f };
+float    pointingCmd[3] = { 0.0f, 0.0f, 0.0f };
+
+float    rxCommand[3]   = { 0.0f, 0.0f, 0.0f };
 
 uint8_t  commandInDetent[3]         = { true, true, true };
 uint8_t  previousCommandInDetent[3] = { true, true, true };
@@ -62,7 +64,7 @@ void processPointingCommands(void)
         rxCommand[ROLL]  -= eepromConfig.midCommand;                  // Roll Range    -1000:1000
         rxCommand[PITCH] -= eepromConfig.midCommand;                  // Pitch Range   -1000:1000
         rxCommand[YAW]   -= eepromConfig.midCommand;                  // Yaw Range     -1000:1000
-}
+    }
 
     // Set past command in detent values
     for (channel = 0; channel < 3; channel++)
@@ -89,6 +91,71 @@ void processPointingCommands(void)
   	        }
         }
     }
+
+    ///////////////////////////////////
+
+    rxCommand[ROLL]  *=  0.001f;  // Roll Range  -1:1
+    rxCommand[PITCH] *= -0.001f;  // Pitch Range -1:1
+    rxCommand[YAW]   *=  0.001f;  // Yaw Range   -1:1
+
+    ///////////////////////////////////
+
+    if (eepromConfig.rollRateCmdInput == true)
+    {
+        if ((rxCommand[ROLL] > 0.0f) && (pointingCmd[ROLL] <=  eepromConfig.gimbalRollRightLimit))
+            pointingCmd[ROLL] += rxCommand[ROLL] * eepromConfig.gimbalRollRate * 0.02f;  // Constant DT of 0.02 good enough here
+
+        if ((rxCommand[ROLL] < 0.0f) && (pointingCmd[ROLL] >= -eepromConfig.gimbalRollLeftLimit))
+            pointingCmd[ROLL] += rxCommand[ROLL] * eepromConfig.gimbalRollRate * 0.02f;  // Constant DT of 0.02 good enough here
+	}
+	else
+	{
+        if (rxCommand[ROLL] > 0.0f)
+            pointingCmd[ROLL] = rxCommand[ROLL] * eepromConfig.gimbalRollRightLimit;
+
+        if (rxCommand[ROLL] < 0.0f)
+            pointingCmd[ROLL] = rxCommand[ROLL] * eepromConfig.gimbalRollLeftLimit;
+	}
+
+	///////////////////////////////////
+
+	if (eepromConfig.pitchRateCmdInput == true)
+	{
+        if ((rxCommand[PITCH] > 0.0f) && (pointingCmd[PITCH] <=  eepromConfig.gimbalPitchUpLimit))
+            pointingCmd[PITCH] += rxCommand[PITCH] * eepromConfig.gimbalPitchRate * 0.02f;  // Constant DT of 0.02 good enough here
+
+        if ((rxCommand[PITCH] < 0.0f) && (pointingCmd[PITCH] >= -eepromConfig.gimbalPitchDownLimit))
+            pointingCmd[PITCH] += rxCommand[PITCH] * eepromConfig.gimbalPitchRate * 0.02f;  // Constant DT of 0.02 good enough here
+	}
+	else
+	{
+        if (rxCommand[PITCH] > 0.0f)
+            pointingCmd[PITCH] = rxCommand[PITCH] * eepromConfig.gimbalPitchUpLimit;
+
+        if (rxCommand[PITCH] < 0.0f)
+            pointingCmd[PITCH] = rxCommand[PITCH] * eepromConfig.gimbalPitchDownLimit;
+	}
+
+	///////////////////////////////////
+
+	if (eepromConfig.yawRateCmdInput == true)
+	{
+        if ((rxCommand[YAW] > 0.0f) && (pointingCmd[YAW] <=  eepromConfig.gimbalYawRightLimit))
+            pointingCmd[YAW] += rxCommand[YAW] * eepromConfig.gimbalYawRate * 0.02f;  // Constant DT of 0.02 good enough here
+
+        if ((rxCommand[YAW] < 0.0f) && (pointingCmd[YAW] >= -eepromConfig.gimbalYawLeftLimit))
+            pointingCmd[YAW] += rxCommand[YAW] * eepromConfig.gimbalYawRate * 0.02f;  // Constant DT of 0.02 good enough here
+	}
+	else
+	{
+        if (rxCommand[YAW] > 0.0f)
+            pointingCmd[YAW] = rxCommand[YAW] * eepromConfig.gimbalYawRightLimit;
+
+        if (rxCommand[YAW] < 0.0f)
+            pointingCmd[YAW] = rxCommand[YAW] * eepromConfig.gimbalYawLeftLimit;
+	}
+
+	///////////////////////////////////
 }
 
 ///////////////////////////////////////////////////////////////////////////////

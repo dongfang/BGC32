@@ -40,11 +40,9 @@
 
 eepromConfig_t eepromConfig;
 
-char           numberString[12];
-
 sensors_t      sensors;
 
-float          testPhase = -1.0f * D2R;
+float          testPhase      = -1.0f * D2R;
 float          testPhaseDelta = 10.0f * D2R;
 
 uint16_t       timerValue;

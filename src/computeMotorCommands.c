@@ -38,15 +38,13 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 
-float rollSetpoint  = 0.0f;
-float pitchSetpoint = 0.0f;
-float yawSetpoint   = 0.0f;
-
 float pidCmd[3];
 
 float pidCmdPrev[3] = {0.0f, 0.0f, 0.0f};
 
 float outputRate[3];
+
+float yawCmd;
 
 #define YAP_DEADBAND     2.00f  // in radians with respect to one motor pole, actual angle is (DEADBAND / numberPoles) * R2D
 #define MOTORPOS2SETPNT  0.35f  // scaling factor for how fast it should move
@@ -95,9 +93,7 @@ void computeMotorCommands(float dt)
 
 	if (eepromConfig.rollEnabled == true)
 	{
-	    rollSetpoint = 0.0f;
-
-	    pidCmd[ROLL] = updatePID(rollSetpoint, -sensors.attitude500Hz[ROLL], dt, holdIntegrators, &eepromConfig.PID[ROLL_PID]);
+	    pidCmd[ROLL] = updatePID(-pointingCmd[ROLL], -sensors.attitude500Hz[ROLL], dt, holdIntegrators, &eepromConfig.PID[ROLL_PID]);
 
 	    outputRate[ROLL] = pidCmd[ROLL] - pidCmdPrev[ROLL];
 
@@ -116,9 +112,7 @@ void computeMotorCommands(float dt)
 
     if (eepromConfig.pitchEnabled == true)
     {
-        pitchSetpoint = 0.0f;
-
-        pidCmd[PITCH] = updatePID(pitchSetpoint, -sensors.attitude500Hz[PITCH], dt, holdIntegrators, &eepromConfig.PID[PITCH_PID]);
+        pidCmd[PITCH] = updatePID(-pointingCmd[PITCH], -sensors.attitude500Hz[PITCH], dt, holdIntegrators, &eepromConfig.PID[PITCH_PID]);
 
 	    outputRate[PITCH] = pidCmd[PITCH] - pidCmdPrev[PITCH];
 
@@ -138,11 +132,11 @@ void computeMotorCommands(float dt)
     if (eepromConfig.yawEnabled == true)
     {
         if (eepromConfig.yawAutoPan == true)                  // If yaw auto pan enabled
-            yawSetpoint = autoPan(pidCmd[YAW], yawSetpoint);
+            yawCmd = autoPan(pidCmd[YAW], yawCmd);
         else                                                  // Else RC control
-            yawSetpoint = 0.0f;
+            yawCmd = -pointingCmd[YAW];
 
-        pidCmd[YAW] = updatePID(yawSetpoint, -sensors.attitude500Hz[YAW], dt, holdIntegrators, &eepromConfig.PID[YAW_PID]);
+        pidCmd[YAW] = updatePID(yawCmd, -sensors.attitude500Hz[YAW], dt, holdIntegrators, &eepromConfig.PID[YAW_PID]);
 
 	    outputRate[YAW] = pidCmd[YAW] - pidCmdPrev[YAW];
 

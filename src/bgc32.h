@@ -47,8 +47,6 @@
 
 #define SQR(x)  ((x) * (x))
 
-extern char    numberString[12];
-
 extern float   testPhase;
 extern float   testPhaseDelta;
 
@@ -161,12 +159,26 @@ typedef struct eepromConfig_t
     uint8_t rollEnabled;
     uint8_t pitchEnabled;
     uint8_t yawEnabled;
+    uint8_t yawAutoPan;
 
     uint8_t imuOrientation;
 
     float   rateLimit;
 
-    uint8_t yawAutoPan;
+    uint8_t rollRateCmdInput;
+    uint8_t pitchRateCmdInput;
+    uint8_t yawRateCmdInput;
+
+    float   gimbalRollRate;
+	float   gimbalPitchRate;
+	float   gimbalYawRate;
+
+	float   gimbalRollLeftLimit;
+    float   gimbalRollRightLimit;
+    float   gimbalPitchDownLimit;
+    float   gimbalPitchUpLimit;
+    float   gimbalYawLeftLimit;
+    float   gimbalYawRightLimit;
 
 } eepromConfig_t;
 

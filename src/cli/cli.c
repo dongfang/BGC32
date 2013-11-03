@@ -130,8 +130,6 @@ void readCliPID(unsigned char PIDid)
 
 void cliCom(void)
 {
-	uint8_t temp1, temp2, temp3, temp4;
-
 	if ((cliAvailable() && !validCliCommand))
     	cliQuery = cliRead();
 
@@ -181,15 +179,33 @@ void cliCom(void)
 
         case 'c': // Loop Execution Times
            	cliPrintF("%7ld, %7ld, %7ld, %7ld, %7ld, %7ld, %7ld, %7ld\n", executionTime1000Hz,
-           	        			                                    executionTime500Hz,
-           	        			                                    executionTime100Hz,
-           	        			                                    executionTime50Hz,
-           	        			                                    executionTime10Hz,
-           	        			                                    executionTime5Hz,
-           	        			                                    executionTime1Hz,
-           	        			                                    i2cGetErrorCounter());
+           	        			                                          executionTime500Hz,
+           	        			                                          executionTime100Hz,
+           	        			                                          executionTime50Hz,
+           	        			                                          executionTime10Hz,
+           	        			                                          executionTime5Hz,
+           	        			                                          executionTime1Hz,
+           	        			                                          i2cGetErrorCounter());
         	validCliCommand = false;
         	break;
+
+        ///////////////////////////////
+
+        case 'd': // RC Parameters
+           	cliPrintF("\n       RC Response    Max Rate    Left/Down Limit    Right/Up Limit\n");
+
+           	cliPrintF("Roll:     %s         %4.1f", eepromConfig.rollRateCmdInput  ? "Rate" : "Att ", eepromConfig.gimbalRollRate * R2D);
+           	cliPrintF("          %5.1f              %5.1f\n", eepromConfig.gimbalRollLeftLimit * R2D, eepromConfig.gimbalRollRightLimit * R2D);
+
+           	cliPrintF("Pitch:    %s         %4.1f", eepromConfig.pitchRateCmdInput ? "Rate" : "Att ", eepromConfig.gimbalPitchRate * R2D);
+           	cliPrintF("          %5.1f              %5.1f\n", eepromConfig.gimbalPitchDownLimit * R2D, eepromConfig.gimbalPitchUpLimit * R2D);
+
+           	cliPrintF("Yaw:      %s         %4.1f", eepromConfig.yawRateCmdInput   ? "Rate" : "Att ", eepromConfig.gimbalYawRate * R2D);
+           	cliPrintF("          %5.1f              %5.1f\n", eepromConfig.gimbalYawLeftLimit * R2D, eepromConfig.gimbalYawRightLimit * R2D);
+
+   			cliQuery = 'x';
+          	validCliCommand = false;
+          	break;
 
         ///////////////////////////////
 
@@ -289,16 +305,16 @@ void cliCom(void)
 
         ///////////////////////////////
 
-        case 'o': // Debug Orientation
-            cliPrintF("Roll PID:%12.4f | Pitch PID:%12.4f | Yaw PID:%12.4f\n", pidCmd[ROLL],
-                                                                               pidCmd[PITCH],
-                                                                               pidCmd[YAW]);
+        case 'o': // PID Outputs
+            cliPrintF("%12.4f, %12.4f, %12.4f\n", pidCmd[ROLL],
+                                                  pidCmd[PITCH],
+                                                  pidCmd[YAW]);
             validCliCommand = false;
             break;
 
         ///////////////////////////////
 
-        case 'p': // Debug Counter
+        case 'p': // Counters
             cliPrintF("Counter min %3d, %3d, %3d,  max %4d, %4d, %4d, count %3d, %3d, %3d\n", minCnt[ROLL], minCnt[PITCH], minCnt[YAW],
                                                                                               maxCnt[ROLL], maxCnt[PITCH], maxCnt[YAW],
                                                                                               irqCnt[ROLL], irqCnt[PITCH], irqCnt[YAW]);
@@ -318,9 +334,9 @@ void cliCom(void)
         ///////////////////////////////
 
         case 't': // Pointing Commands
-        	cliPrintF("%8.2f, ", rxCommand[ROLL]);
-        	cliPrintF("%8.2f, ", rxCommand[PITCH]);
-        	cliPrintF("%8.2f\n", rxCommand[YAW]);
+        	cliPrintF("%8.2f, ", pointingCmd[ROLL]  * R2D);
+        	cliPrintF("%8.2f, ", pointingCmd[PITCH] * R2D);
+        	cliPrintF("%8.2f\n", pointingCmd[YAW]   * R2D);
 
         	validCliCommand = false;
         	break;
@@ -370,31 +386,53 @@ void cliCom(void)
 
         ///////////////////////////////
 
+        case 'D': // Read Roll RC Parameters
+            eepromConfig.rollRateCmdInput     = (uint8_t)readFloatCLI();
+            eepromConfig.gimbalRollRate       = readFloatCLI() * D2R;
+            eepromConfig.gimbalRollLeftLimit  = readFloatCLI() * D2R;
+		    eepromConfig.gimbalRollRightLimit = readFloatCLI() * D2R;
+
+            cliPrint("\nRoll RC Parameters Received....\n");
+
+        	cliQuery = 'd';
+        	validCliCommand = false;
+        	break;
+
+        ///////////////////////////////
+
+        case 'E': // Read Pitch RC Parameters
+            eepromConfig.pitchRateCmdInput     = (uint8_t)readFloatCLI();
+            eepromConfig.gimbalPitchRate       = readFloatCLI() * D2R;
+            eepromConfig.gimbalPitchDownLimit  = readFloatCLI() * D2R;
+		    eepromConfig.gimbalPitchUpLimit    = readFloatCLI() * D2R;
+
+            cliPrint("\nPitch RC Parameters Received....\n");
+
+        	cliQuery = 'd';
+        	validCliCommand = false;
+        	break;
+
+        ///////////////////////////////
+
+        case 'F': // Read Yaw RC Parameters
+            eepromConfig.yawRateCmdInput     = (uint8_t)readFloatCLI();
+            eepromConfig.gimbalYawRate       = readFloatCLI() * D2R;
+            eepromConfig.gimbalYawLeftLimit  = readFloatCLI() * D2R;
+		    eepromConfig.gimbalYawRightLimit = readFloatCLI() * D2R;
+
+            cliPrint("\nYaw RC Parameters Received....\n");
+
+        	cliQuery = 'd';
+        	validCliCommand = false;
+        	break;
+
+        ///////////////////////////////
+
         case 'I': // Read Gimbal Axis Enable Flags
-    		temp1 = (uint8_t)readFloatCLI();
-    		temp2 = (uint8_t)readFloatCLI();
-            temp3 = (uint8_t)readFloatCLI();
-            temp4 = (uint8_t)readFloatCLI();
-
-            if (temp1 == 0)
-            	eepromConfig.rollEnabled = false;
-            else
-            	eepromConfig.rollEnabled = true;
-
-            if (temp2 == 0)
-            	eepromConfig.pitchEnabled = false;
-            else
-            	eepromConfig.pitchEnabled = true;
-
-            if (temp3 == 0)
-            	eepromConfig.yawEnabled = false;
-            else
-            	eepromConfig.yawEnabled = true;
-
-            if (temp4 == 0)
-                eepromConfig.yawAutoPan = false;
-            else
-                eepromConfig.yawAutoPan = true;
+    		eepromConfig.rollEnabled  = (uint8_t)readFloatCLI();
+    		eepromConfig.pitchEnabled = (uint8_t)readFloatCLI();
+            eepromConfig.yawEnabled   = (uint8_t)readFloatCLI();
+            eepromConfig.yawAutoPan   = (uint8_t)readFloatCLI();
 
             cliPrint("\nGimbal Axis Enable Flags Received....\n");
 
@@ -559,10 +597,10 @@ void cliCom(void)
    		    cliPrint("'a' Rate PIDs                      'A' Set Roll Rate PID Data       AB;P;I;D;windupGuard;dErrorCalc\n");
    		    cliPrint("'b' Loop Delta Times               'B' Set Pitch Rate PID Data      BB;P;I;D;windupGuard;dErrorCalc\n");
    		    cliPrint("'c' Loop Execution Times           'C' Set Yaw Rate PID Data        CB;P;I;D;windupGuard;dErrorCalc\n");
-   		    cliPrint("'d' Not Used                       'D' Not Used\n");
-   		    cliPrint("'e' 500 Hz Accels                  'E' Not Used\n");
-   		    cliPrint("'f' 500 Hz Gyros                   'F' Not Used\n");
-   		    cliPrint("'g' 10 hz Mag Data                 'G' Not used\n");
+   		    cliPrint("'d' RC Parameters                  'D' Set Roll RC Parameters       DResponse;Rate;Left Limit;Right Limit\n");
+   		    cliPrint("'e' 500 Hz Accels                  'E' Set Pitch RC Parameters      EResponse;Rate;Down Limit;Up Limit\n");;
+   		    cliPrint("'f' 500 Hz Gyros                   'F' Set Yaw RC Parameters        FResponse;Rate;Left Limit;Right Limit\n");
+   		    cliPrint("'g' 10 hz Mag Data                 'G' Not Used\n");
    		    cliPrint("'h' Attitudes                      'H' Not Used\n");
    		    cliPrint("'i' Gimbal Axis Enable Flags       'I' Set Gimbal Axis Enable Flags IR;P;Y;YAP\n");
    		    cliPrint("'j' Gimbal Axis Power Settings     'J' Set Gimbal Axis Power Levels HR;P;Y\n");
@@ -583,12 +621,12 @@ void cliCom(void)
    		    cliPrint("\n");
    		    cliPrint("'m' Test Phase                     'M' Set Test Phase\n");
    		    cliPrint("'n' Test Phase Delta               'N' Set Test Phase Delta\n");
-   		    cliPrint("'o' Debug Orientation              'O' Not Used\n");
-   		    cliPrint("'p' Debug Counter                  'P' Sensor CLI\n");
+   		    cliPrint("'o' PID Outputs                    'O' Not Used\n");
+   		    cliPrint("'p' Counters                       'P' Sensor CLI\n");
    		    cliPrint("'q' Not Used                       'Q' Not Used\n");
    		    cliPrint("'r' Not Used                       'R' Reset and Enter Bootloader\n");
-   		    cliPrint("'s' Receiver Commands              'S' Reset\n");
-   		    cliPrint("'t' Not Used                       'T' Not Used\n");
+   		    cliPrint("'s' Raw Receiver Commands          'S' Reset\n");
+   		    cliPrint("'t' Pointing Commands              'T' Not Used\n");
    		    cliPrint("'u' Not Used                       'U' Not Used\n");
    		    cliPrint("'v' Not Used                       'V' Reset EEPROM Parameters\n");
    		    cliPrint("'w' Not Used                       'W' Write EEPROM Parameters\n");

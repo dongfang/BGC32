@@ -43,6 +43,8 @@
 #define DEADBAND       24
 #define DEADBAND_SLOPE (1000/(1000-DEADBAND))
 
+extern float pointingCmd[3];
+
 extern float rxCommand[3];
 
 ///////////////////////////////////////////////////////////////////////////////

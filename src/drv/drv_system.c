@@ -230,10 +230,11 @@ void systemInit(void)
                            RCC_APB2Periph_GPIOC | RCC_APB2Periph_AFIO  |
                            RCC_APB2Periph_TIM1  | RCC_APB2Periph_TIM8, ENABLE);
 
-    RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2  | RCC_APB1Periph_TIM3  |
+    // HJI RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2  | RCC_APB1Periph_TIM3  |
+    RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3  |
                            RCC_APB1Periph_TIM4  | RCC_APB1Periph_TIM5  |
                            RCC_APB1Periph_TIM6, ENABLE);
-    //HJI                       RCC_APB1Periph_TIM6  | RCC_APB1Periph_I2C2, ENABLE);
+    // HJI                       RCC_APB1Periph_TIM6  | RCC_APB1Periph_I2C2, ENABLE);
 
     GPIO_PinRemapConfig(GPIO_Remap_SWJ_NoJTRST, ENABLE);
     GPIO_PinRemapConfig(GPIO_Remap_SWJ_JTAGDisable, ENABLE);  // JTAG-DP Disabled and SW-DP Enabled
@@ -257,7 +258,8 @@ void systemInit(void)
     LED1_ON;
 
     i2cInit(I2C2);
-    rxInit();
+    rcInit();
+    // HJI rxInit();
     timingFunctionsInit();
 
     BKPInit();
