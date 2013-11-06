@@ -53,160 +53,99 @@
 // GX2 = -A / (1 + A)
 // GX3 = (1 - A) / (1 + A)
 
-///////////////////////////////////////
-
-#define ACCEL500HZ_X_LOWPASS_TAU         0.05f
-#define ACCEL500HZ_X_LOWPASS_SAMPLE_TIME 0.002f
-#define ACCEL500HZ_X_LOWPASS_A           (2.0f * ACCEL500HZ_X_LOWPASS_TAU / ACCEL500HZ_X_LOWPASS_SAMPLE_TIME)
-#define ACCEL500HZ_X_LOWPASS_GX1         (1.0f / (1.0f + ACCEL500HZ_X_LOWPASS_A))
-#define ACCEL500HZ_X_LOWPASS_GX2         (1.0f / (1.0f + ACCEL500HZ_X_LOWPASS_A))
-#define ACCEL500HZ_X_LOWPASS_GX3         ((1.0f - ACCEL500HZ_X_LOWPASS_A) / (1.0f + ACCEL500HZ_X_LOWPASS_A))
-
-///////////////////////////////////////
-
-#define ACCEL500HZ_Y_LOWPASS_TAU         0.05f
-#define ACCEL500HZ_Y_LOWPASS_SAMPLE_TIME 0.002f
-#define ACCEL500HZ_Y_LOWPASS_A           (2.0f * ACCEL500HZ_Y_LOWPASS_TAU / ACCEL500HZ_Y_LOWPASS_SAMPLE_TIME)
-#define ACCEL500HZ_Y_LOWPASS_GX1         (1.0f / (1.0f + ACCEL500HZ_Y_LOWPASS_A))
-#define ACCEL500HZ_Y_LOWPASS_GX2         (1.0f / (1.0f + ACCEL500HZ_Y_LOWPASS_A))
-#define ACCEL500HZ_Y_LOWPASS_GX3         ((1.0f - ACCEL500HZ_Y_LOWPASS_A) / (1.0f + ACCEL500HZ_Y_LOWPASS_A))
-
-///////////////////////////////////////
-
-#define ACCEL500HZ_Z_LOWPASS_TAU         0.05f
-#define ACCEL500HZ_Z_LOWPASS_SAMPLE_TIME 0.002f
-#define ACCEL500HZ_Z_LOWPASS_A           (2.0f * ACCEL500HZ_Z_LOWPASS_TAU / ACCEL500HZ_Z_LOWPASS_SAMPLE_TIME)
-#define ACCEL500HZ_Z_LOWPASS_GX1         (1.0f / (1.0f + ACCEL500HZ_Z_LOWPASS_A))
-#define ACCEL500HZ_Z_LOWPASS_GX2         (1.0f / (1.0f + ACCEL500HZ_Z_LOWPASS_A))
-#define ACCEL500HZ_Z_LOWPASS_GX3         ((1.0f - ACCEL500HZ_Z_LOWPASS_A) / (1.0f + ACCEL500HZ_Z_LOWPASS_A))
-
-///////////////////////////////////////
-
-#define GYRO500HZ_R_LOWPASS_TAU         0.05f
-#define GYRO500HZ_R_LOWPASS_SAMPLE_TIME 0.002f
-#define GYRO500HZ_R_LOWPASS_A           (2.0f * GYRO500HZ_R_LOWPASS_TAU / GYRO500HZ_R_LOWPASS_SAMPLE_TIME)
-#define GYRO500HZ_R_LOWPASS_GX1         (1.0f / (1.0f + GYRO500HZ_R_LOWPASS_A))
-#define GYRO500HZ_R_LOWPASS_GX2         (1.0f / (1.0f + GYRO500HZ_R_LOWPASS_A))
-#define GYRO500HZ_R_LOWPASS_GX3         ((1.0f - GYRO500HZ_R_LOWPASS_A) / (1.0f + GYRO500HZ_R_LOWPASS_A))
-
-///////////////////////////////////////
-
-#define GYRO500HZ_P_LOWPASS_TAU         0.05f
-#define GYRO500HZ_P_LOWPASS_SAMPLE_TIME 0.002f
-#define GYRO500HZ_P_LOWPASS_A           (2.0f * GYRO500HZ_P_LOWPASS_TAU / GYRO500HZ_P_LOWPASS_SAMPLE_TIME)
-#define GYRO500HZ_P_LOWPASS_GX1         (1.0f / (1.0f + GYRO500HZ_P_LOWPASS_A))
-#define GYRO500HZ_P_LOWPASS_GX2         (1.0f / (1.0f + GYRO500HZ_P_LOWPASS_A))
-#define GYRO500HZ_P_LOWPASS_GX3         ((1.0f - GYRO500HZ_P_LOWPASS_A) / (1.0f + GYRO500HZ_P_LOWPASS_A))
-
-///////////////////////////////////////
-
-#define GYRO500HZ_Y_LOWPASS_TAU         0.05f
-#define GYRO500HZ_Y_LOWPASS_SAMPLE_TIME 0.002f
-#define GYRO500HZ_Y_LOWPASS_A           (2.0f * GYRO500HZ_Y_LOWPASS_TAU / GYRO500HZ_Y_LOWPASS_SAMPLE_TIME)
-#define GYRO500HZ_Y_LOWPASS_GX1         (1.0f / (1.0f + GYRO500HZ_Y_LOWPASS_A))
-#define GYRO500HZ_Y_LOWPASS_GX2         (1.0f / (1.0f + GYRO500HZ_Y_LOWPASS_A))
-#define GYRO500HZ_Y_LOWPASS_GX3         ((1.0f - GYRO500HZ_Y_LOWPASS_A) / (1.0f + GYRO500HZ_Y_LOWPASS_A))
-
-///////////////////////////////////////
-
-#define ACCEL100HZ_X_LOWPASS_TAU         0.05f
-#define ACCEL100HZ_X_LOWPASS_SAMPLE_TIME 0.01f
-#define ACCEL100HZ_X_LOWPASS_A           (2.0f * ACCEL100HZ_X_LOWPASS_TAU / ACCEL100HZ_X_LOWPASS_SAMPLE_TIME)
-#define ACCEL100HZ_X_LOWPASS_GX1         (1.0f / (1.0f + ACCEL100HZ_X_LOWPASS_A))
-#define ACCEL100HZ_X_LOWPASS_GX2         (1.0f / (1.0f + ACCEL100HZ_X_LOWPASS_A))
-#define ACCEL100HZ_X_LOWPASS_GX3         ((1.0f - ACCEL100HZ_X_LOWPASS_A) / (1.0f + ACCEL100HZ_X_LOWPASS_A))
-
-///////////////////////////////////////
-
-#define ACCEL100HZ_Y_LOWPASS_TAU         0.05f
-#define ACCEL100HZ_Y_LOWPASS_SAMPLE_TIME 0.01f
-#define ACCEL100HZ_Y_LOWPASS_A           (2.0f * ACCEL100HZ_Y_LOWPASS_TAU / ACCEL100HZ_Y_LOWPASS_SAMPLE_TIME)
-#define ACCEL100HZ_Y_LOWPASS_GX1         (1.0f / (1.0f + ACCEL100HZ_Y_LOWPASS_A))
-#define ACCEL100HZ_Y_LOWPASS_GX2         (1.0f / (1.0f + ACCEL100HZ_Y_LOWPASS_A))
-#define ACCEL100HZ_Y_LOWPASS_GX3         ((1.0f - ACCEL100HZ_Y_LOWPASS_A) / (1.0f + ACCEL100HZ_Y_LOWPASS_A))
-
-///////////////////////////////////////
-
-#define ACCEL100HZ_Z_LOWPASS_TAU         0.05f
-#define ACCEL100HZ_Z_LOWPASS_SAMPLE_TIME 0.01f
-#define ACCEL100HZ_Z_LOWPASS_A           (2.0f * ACCEL100HZ_Z_LOWPASS_TAU / ACCEL100HZ_Z_LOWPASS_SAMPLE_TIME)
-#define ACCEL100HZ_Z_LOWPASS_GX1         (1.0f / (1.0f + ACCEL100HZ_Z_LOWPASS_A))
-#define ACCEL100HZ_Z_LOWPASS_GX2         (1.0f / (1.0f + ACCEL100HZ_Z_LOWPASS_A))
-#define ACCEL100HZ_Z_LOWPASS_GX3         ((1.0f - ACCEL100HZ_Z_LOWPASS_A) / (1.0f + ACCEL100HZ_Z_LOWPASS_A))
-
 ///////////////////////////////////////////////////////////////////////////////
 
 void initFirstOrderFilter(void)
 {
-    firstOrderFilters[ACCEL500HZ_X_LOWPASS].gx1 = ACCEL500HZ_X_LOWPASS_GX1;
-    firstOrderFilters[ACCEL500HZ_X_LOWPASS].gx2 = ACCEL500HZ_X_LOWPASS_GX2;
-    firstOrderFilters[ACCEL500HZ_X_LOWPASS].gx3 = ACCEL500HZ_X_LOWPASS_GX3;
-    firstOrderFilters[ACCEL500HZ_X_LOWPASS].previousInput  = 0.0f;
-    firstOrderFilters[ACCEL500HZ_X_LOWPASS].previousOutput = 0.0f;
+    float a;
+
+    a = 2.0f * eepromConfig.rollAttitude500HzLowPassTau * 500.0f;
+
+    firstOrderFilters[ROLL_ATTITUDE_500HZ_LOWPASS].gx1 = 1.0f / (1.0f + a);
+    firstOrderFilters[ROLL_ATTITUDE_500HZ_LOWPASS].gx2 = 1.0f / (1.0f + a);
+    firstOrderFilters[ROLL_ATTITUDE_500HZ_LOWPASS].gx3 = (1.0f - a) / (1.0f + a);
+    firstOrderFilters[ROLL_ATTITUDE_500HZ_LOWPASS].previousInput  = 0.0f;
+    firstOrderFilters[ROLL_ATTITUDE_500HZ_LOWPASS].previousOutput = 0.0f;
 
     ///////////////////////////////////
 
-    firstOrderFilters[ACCEL500HZ_Y_LOWPASS].gx1 = ACCEL500HZ_Y_LOWPASS_GX1;
-	firstOrderFilters[ACCEL500HZ_Y_LOWPASS].gx2 = ACCEL500HZ_Y_LOWPASS_GX2;
-	firstOrderFilters[ACCEL500HZ_Y_LOWPASS].gx3 = ACCEL500HZ_Y_LOWPASS_GX3;
-	firstOrderFilters[ACCEL500HZ_Y_LOWPASS].previousInput  = 0.0f;
-    firstOrderFilters[ACCEL500HZ_Y_LOWPASS].previousOutput = 0.0f;
+    a = 2.0f * eepromConfig.pitchAttitude500HzLowPassTau * 500.0f;
+
+    firstOrderFilters[PITCH_ATTITUDE_500HZ_LOWPASS].gx1 = 1.0f / (1.0f + a);
+	firstOrderFilters[PITCH_ATTITUDE_500HZ_LOWPASS].gx2 = 1.0f / (1.0f + a);
+	firstOrderFilters[PITCH_ATTITUDE_500HZ_LOWPASS].gx3 = (1.0f - a) / (1.0f + a);
+	firstOrderFilters[PITCH_ATTITUDE_500HZ_LOWPASS].previousInput  = 0.0f;
+    firstOrderFilters[PITCH_ATTITUDE_500HZ_LOWPASS].previousOutput = 0.0f;
 
     ///////////////////////////////////
 
-    firstOrderFilters[ACCEL500HZ_Z_LOWPASS].gx1 = ACCEL500HZ_Z_LOWPASS_GX1;
-	firstOrderFilters[ACCEL500HZ_Z_LOWPASS].gx2 = ACCEL500HZ_Z_LOWPASS_GX2;
-	firstOrderFilters[ACCEL500HZ_Z_LOWPASS].gx3 = ACCEL500HZ_Z_LOWPASS_GX3;
-	firstOrderFilters[ACCEL500HZ_Z_LOWPASS].previousInput  = -accelOneG;
-    firstOrderFilters[ACCEL500HZ_Z_LOWPASS].previousOutput = -accelOneG;
+    a = 2.0f * eepromConfig.yawAttitude500HzLowPassTau * 500.0f;
+
+    firstOrderFilters[YAW_ATTITUDE_500HZ_LOWPASS].gx1 = 1.0f / (1.0f + a);
+	firstOrderFilters[YAW_ATTITUDE_500HZ_LOWPASS].gx2 = 1.0f / (1.0f + a);
+	firstOrderFilters[YAW_ATTITUDE_500HZ_LOWPASS].gx3 = (1.0f - a) / (1.0f + a);
+	firstOrderFilters[YAW_ATTITUDE_500HZ_LOWPASS].previousInput  = 0.0f;
+    firstOrderFilters[YAW_ATTITUDE_500HZ_LOWPASS].previousOutput = 0.0f;
 
     ///////////////////////////////////
 
-    firstOrderFilters[GYRO500HZ_R_LOWPASS].gx1 = GYRO500HZ_R_LOWPASS_GX1;
-	firstOrderFilters[GYRO500HZ_R_LOWPASS].gx2 = GYRO500HZ_R_LOWPASS_GX2;
-	firstOrderFilters[GYRO500HZ_R_LOWPASS].gx3 = GYRO500HZ_R_LOWPASS_GX3;
-	firstOrderFilters[GYRO500HZ_R_LOWPASS].previousInput  = 0.0f;
-    firstOrderFilters[GYRO500HZ_R_LOWPASS].previousOutput = 0.0f;
+    a = 2.0f * eepromConfig.rollRatePointingCmd50HzLowPassTau * 50.0f;
+
+    firstOrderFilters[ROLL_RATE_POINTING_50HZ_LOWPASS].gx1 = 1.0f / (1.0f + a);
+	firstOrderFilters[ROLL_RATE_POINTING_50HZ_LOWPASS].gx2 = 1.0f / (1.0f + a);
+	firstOrderFilters[ROLL_RATE_POINTING_50HZ_LOWPASS].gx3 = (1.0f - a) / (1.0f + a);
+	firstOrderFilters[ROLL_RATE_POINTING_50HZ_LOWPASS].previousInput  = 0.0f;
+    firstOrderFilters[ROLL_RATE_POINTING_50HZ_LOWPASS].previousOutput = 0.0f;
 
     ///////////////////////////////////
 
-    firstOrderFilters[GYRO500HZ_P_LOWPASS].gx1 = GYRO500HZ_P_LOWPASS_GX1;
-	firstOrderFilters[GYRO500HZ_P_LOWPASS].gx2 = GYRO500HZ_P_LOWPASS_GX2;
-	firstOrderFilters[GYRO500HZ_P_LOWPASS].gx3 = GYRO500HZ_P_LOWPASS_GX3;
-	firstOrderFilters[GYRO500HZ_P_LOWPASS].previousInput  = 0.0f;
-    firstOrderFilters[GYRO500HZ_P_LOWPASS].previousOutput = 0.0f;
+    a = 2.0f * eepromConfig.pitchRatePointingCmd50HzLowPassTau * 50.0f;
+
+    firstOrderFilters[PITCH_RATE_POINTING_50HZ_LOWPASS].gx1 = 1.0f / (1.0f + a);
+	firstOrderFilters[PITCH_RATE_POINTING_50HZ_LOWPASS].gx2 = 1.0f / (1.0f + a);
+	firstOrderFilters[PITCH_RATE_POINTING_50HZ_LOWPASS].gx3 = (1.0f - a) / (1.0f + a);
+	firstOrderFilters[PITCH_RATE_POINTING_50HZ_LOWPASS].previousInput  = 0.0f;
+    firstOrderFilters[PITCH_RATE_POINTING_50HZ_LOWPASS].previousOutput = 0.0f;
 
     ///////////////////////////////////
 
-    firstOrderFilters[GYRO500HZ_Y_LOWPASS].gx1 = GYRO500HZ_Y_LOWPASS_GX1;
-	firstOrderFilters[GYRO500HZ_Y_LOWPASS].gx2 = GYRO500HZ_Y_LOWPASS_GX2;
-	firstOrderFilters[GYRO500HZ_Y_LOWPASS].gx3 = GYRO500HZ_Y_LOWPASS_GX3;
-	firstOrderFilters[GYRO500HZ_Y_LOWPASS].previousInput  = 0.0f;
-    firstOrderFilters[GYRO500HZ_Y_LOWPASS].previousOutput = 0.0f;
+    a = 2.0f * eepromConfig.yawRatePointingCmd50HzLowPassTau * 50.0f;
+
+    firstOrderFilters[YAW_RATE_POINTING_50HZ_LOWPASS].gx1 = 1.0f / (1.0f + a);
+	firstOrderFilters[YAW_RATE_POINTING_50HZ_LOWPASS].gx2 = 1.0f / (1.0f + a);
+	firstOrderFilters[YAW_RATE_POINTING_50HZ_LOWPASS].gx3 = (1.0f - a) / (1.0f + a);
+	firstOrderFilters[YAW_RATE_POINTING_50HZ_LOWPASS].previousInput  = 0.0f;
+    firstOrderFilters[YAW_RATE_POINTING_50HZ_LOWPASS].previousOutput = 0.0f;
 
     ///////////////////////////////////
 
-    firstOrderFilters[ACCEL100HZ_X_LOWPASS].gx1 = ACCEL100HZ_X_LOWPASS_GX1;
-    firstOrderFilters[ACCEL100HZ_X_LOWPASS].gx2 = ACCEL100HZ_X_LOWPASS_GX2;
-    firstOrderFilters[ACCEL100HZ_X_LOWPASS].gx3 = ACCEL100HZ_X_LOWPASS_GX3;
-    firstOrderFilters[ACCEL100HZ_X_LOWPASS].previousInput  = 0.0f;
-    firstOrderFilters[ACCEL100HZ_X_LOWPASS].previousOutput = 0.0f;
+    a = 2.0f * eepromConfig.rollAttPointingCmd50HzLowPassTau * 50.0f;
+
+    firstOrderFilters[ROLL_ATT_POINTING_50HZ_LOWPASS].gx1 = 1.0f / (1.0f + a);
+    firstOrderFilters[ROLL_ATT_POINTING_50HZ_LOWPASS].gx2 = 1.0f / (1.0f + a);
+    firstOrderFilters[ROLL_ATT_POINTING_50HZ_LOWPASS].gx3 = (1.0f - a) / (1.0f + a);
+    firstOrderFilters[ROLL_ATT_POINTING_50HZ_LOWPASS].previousInput  = 0.0f;
+    firstOrderFilters[ROLL_ATT_POINTING_50HZ_LOWPASS].previousOutput = 0.0f;
 
     ///////////////////////////////////
 
-    firstOrderFilters[ACCEL100HZ_Y_LOWPASS].gx1 = ACCEL100HZ_Y_LOWPASS_GX1;
-	firstOrderFilters[ACCEL100HZ_Y_LOWPASS].gx2 = ACCEL100HZ_Y_LOWPASS_GX2;
-	firstOrderFilters[ACCEL100HZ_Y_LOWPASS].gx3 = ACCEL100HZ_Y_LOWPASS_GX3;
-	firstOrderFilters[ACCEL100HZ_Y_LOWPASS].previousInput  = 0.0f;
-    firstOrderFilters[ACCEL100HZ_Y_LOWPASS].previousOutput = 0.0f;
+    a = 2.0f * eepromConfig.pitchAttPointingCmd50HzLowPassTau * 50.0f;
+
+    firstOrderFilters[PITCH_ATT_POINTING_50HZ_LOWPASS].gx1 = 1.0f / (1.0f + a);
+	firstOrderFilters[PITCH_ATT_POINTING_50HZ_LOWPASS].gx2 = 1.0f / (1.0f + a);
+	firstOrderFilters[PITCH_ATT_POINTING_50HZ_LOWPASS].gx3 = (1.0f - a) / (1.0f + a);
+	firstOrderFilters[PITCH_ATT_POINTING_50HZ_LOWPASS].previousInput  = 0.0f;
+    firstOrderFilters[PITCH_ATT_POINTING_50HZ_LOWPASS].previousOutput = 0.0f;
 
     ///////////////////////////////////
 
-    firstOrderFilters[ACCEL100HZ_Z_LOWPASS].gx1 = ACCEL100HZ_Z_LOWPASS_GX1;
-	firstOrderFilters[ACCEL100HZ_Z_LOWPASS].gx2 = ACCEL100HZ_Z_LOWPASS_GX2;
-	firstOrderFilters[ACCEL100HZ_Z_LOWPASS].gx3 = ACCEL100HZ_Z_LOWPASS_GX3;
-	firstOrderFilters[ACCEL100HZ_Z_LOWPASS].previousInput  = -accelOneG;
-    firstOrderFilters[ACCEL100HZ_Z_LOWPASS].previousOutput = -accelOneG;
+    a = 2.0f * eepromConfig.yawAttPointingCmd50HzLowPassTau * 50.0f;
+
+    firstOrderFilters[YAW_ATT_POINTING_50HZ_LOWPASS].gx1 = 1.0f / (1.0f + a);
+	firstOrderFilters[YAW_ATT_POINTING_50HZ_LOWPASS].gx2 = 1.0f / (1.0f + a);
+	firstOrderFilters[YAW_ATT_POINTING_50HZ_LOWPASS].gx3 = (1.0f - a) / (1.0f + a);
+	firstOrderFilters[YAW_ATT_POINTING_50HZ_LOWPASS].previousInput  = 0.0f;
+    firstOrderFilters[YAW_ATT_POINTING_50HZ_LOWPASS].previousOutput = 0.0f;
 
     ///////////////////////////////////
 

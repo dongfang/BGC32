@@ -23,7 +23,10 @@ void rcInit(void)
 
 	__disable_irq();
 
-    //EXTI IN GPIO Config
+	GPIO_PinRemapConfig(GPIO_Remap_SWJ_NoJTRST,     ENABLE);
+	GPIO_PinRemapConfig(GPIO_Remap_SWJ_JTAGDisable, ENABLE);               // JTAG-DP Disabled and SW-DP Enabled
+
+	//EXTI IN GPIO Config
 
     GPIO_InitStructure.GPIO_Pin   = GPIO_Pin_3 | GPIO_Pin_4 | GPIO_Pin_5;  // PB3-Pitch, PB4-Roll, PB5-Yaw
     GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_IPD;  			           // Set to Input Pull Down

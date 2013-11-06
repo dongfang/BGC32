@@ -40,6 +40,13 @@ void initOrientation()
     cliPrintF("\nInitial Gimbal Angles: Roll %7.2f, Pitch %7.2f, Yaw %7.2f\n\n", sensors.attitude500Hz[ROLL ] * R2D,
                                                                                  sensors.attitude500Hz[PITCH] * R2D,
                                                                                  sensors.attitude500Hz[YAW  ] * R2D);
+
+    firstOrderFilters[ROLL_ATTITUDE_500HZ_LOWPASS ].previousInput  = sensors.attitude500Hz[ROLL ];
+    firstOrderFilters[ROLL_ATTITUDE_500HZ_LOWPASS ].previousOutput = sensors.attitude500Hz[ROLL ];
+	firstOrderFilters[PITCH_ATTITUDE_500HZ_LOWPASS].previousInput  = sensors.attitude500Hz[PITCH];
+    firstOrderFilters[PITCH_ATTITUDE_500HZ_LOWPASS].previousOutput = sensors.attitude500Hz[PITCH];
+	firstOrderFilters[YAW_ATTITUDE_500HZ_LOWPASS  ].previousInput  = sensors.attitude500Hz[YAW  ];
+    firstOrderFilters[YAW_ATTITUDE_500HZ_LOWPASS  ].previousOutput = sensors.attitude500Hz[YAW  ];
 }
 
 ///////////////////////////////////////////////////////////////////////////////

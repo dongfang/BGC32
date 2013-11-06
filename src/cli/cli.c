@@ -323,6 +323,26 @@ void cliCom(void)
 
         ///////////////////////////////
 
+        case 'q': // Filter Time Constants
+           	cliPrintF("\n       Attitude TC    Rate Cmd TC    Att Cmd TC\n");
+
+           	cliPrintF("Roll:    %5.2f           %5.2f          %5.2f\n", eepromConfig.rollAttitude500HzLowPassTau,
+           	                                                             eepromConfig.rollRatePointingCmd50HzLowPassTau,
+           	                                                             eepromConfig.rollAttPointingCmd50HzLowPassTau);
+
+           	cliPrintF("Pitch:   %5.2f           %5.2f          %5.2f\n", eepromConfig.pitchAttitude500HzLowPassTau,
+           	                                                             eepromConfig.pitchRatePointingCmd50HzLowPassTau,
+           	                                                             eepromConfig.pitchAttPointingCmd50HzLowPassTau);
+
+           	cliPrintF("Yaw:     %5.2f           %5.2f          %5.2f\n", eepromConfig.yawAttitude500HzLowPassTau,
+           	                                                             eepromConfig.yawRatePointingCmd50HzLowPassTau,
+           	                                                             eepromConfig.yawAttPointingCmd50HzLowPassTau);
+   			cliQuery = 'x';
+          	validCliCommand = false;
+          	break;
+
+        ///////////////////////////////
+
         case 's': // Raw Receiver Commands
         	cliPrintF("%4i, ", rxRead(ROLL));
         	cliPrintF("%4i, ", rxRead(PITCH));
@@ -512,6 +532,23 @@ void cliCom(void)
 
         ///////////////////////////////
 
+        case 'Q': // Read Roll Filter Time Constants
+            eepromConfig.rollAttitude500HzLowPassTau       = readFloatCLI();
+            eepromConfig.rollRatePointingCmd50HzLowPassTau = readFloatCLI();
+		    eepromConfig.rollAttPointingCmd50HzLowPassTau  = readFloatCLI();
+
+		    initFirstOrderFilter();
+		    firstOrderFilters[ROLL_ATTITUDE_500HZ_LOWPASS ].previousInput  = sensors.attitude500Hz[ROLL ];
+		    firstOrderFilters[ROLL_ATTITUDE_500HZ_LOWPASS ].previousOutput = sensors.attitude500Hz[ROLL ];
+
+		    cliPrint("\nRoll Filter Time Constants Received....\n");
+
+        	cliQuery = 'q';
+        	validCliCommand = false;
+        	break;
+
+        ///////////////////////////////
+
         case 'R': // Reset to Bootloader
         	cliPrint("Entering Bootloader....\n\n");
         	delay(1000);
@@ -528,10 +565,37 @@ void cliCom(void)
 
         ///////////////////////////////
 
-        case 'T': // Not Used
-            cliQuery = 'x';
-           	validCliCommand = false;
-           	break;
+        case 'T': // Read Pitch Filter Time Constants
+            eepromConfig.pitchAttitude500HzLowPassTau       = readFloatCLI();
+            eepromConfig.pitchRatePointingCmd50HzLowPassTau = readFloatCLI();
+		    eepromConfig.pitchAttPointingCmd50HzLowPassTau  = readFloatCLI();
+
+		    initFirstOrderFilter();
+			firstOrderFilters[PITCH_ATTITUDE_500HZ_LOWPASS].previousInput  = sensors.attitude500Hz[PITCH];
+		    firstOrderFilters[PITCH_ATTITUDE_500HZ_LOWPASS].previousOutput = sensors.attitude500Hz[PITCH];
+
+            cliPrint("\nPitch Filter Time Constants Received....\n");
+
+        	cliQuery = 'q';
+        	validCliCommand = false;
+        	break;
+
+        ///////////////////////////////
+
+        case 'U': // Read Yaw Filter Time Constants
+            eepromConfig.yawAttitude500HzLowPassTau       = readFloatCLI();
+            eepromConfig.yawRatePointingCmd50HzLowPassTau = readFloatCLI();
+		    eepromConfig.yawAttPointingCmd50HzLowPassTau  = readFloatCLI();
+
+		    initFirstOrderFilter();
+			firstOrderFilters[YAW_ATTITUDE_500HZ_LOWPASS  ].previousInput  = sensors.attitude500Hz[YAW  ];
+		    firstOrderFilters[YAW_ATTITUDE_500HZ_LOWPASS  ].previousOutput = sensors.attitude500Hz[YAW  ];
+
+            cliPrint("\nYaw Filter Time Constants Received....\n");
+
+        	cliQuery = 'q';
+        	validCliCommand = false;
+        	break;
 
         ///////////////////////////////
 
@@ -623,11 +687,11 @@ void cliCom(void)
    		    cliPrint("'n' Test Phase Delta               'N' Set Test Phase Delta\n");
    		    cliPrint("'o' PID Outputs                    'O' Not Used\n");
    		    cliPrint("'p' Counters                       'P' Sensor CLI\n");
-   		    cliPrint("'q' Not Used                       'Q' Not Used\n");
+   		    cliPrint("'q' Filter Time Constants          'Q' Set Roll Filters             QAtt;RateCmd;AttCmd\n");
    		    cliPrint("'r' Not Used                       'R' Reset and Enter Bootloader\n");
    		    cliPrint("'s' Raw Receiver Commands          'S' Reset\n");
-   		    cliPrint("'t' Pointing Commands              'T' Not Used\n");
-   		    cliPrint("'u' Not Used                       'U' Not Used\n");
+   		    cliPrint("'t' Pointing Commands              'T' Set Pitch Filters            TAtt;RateCmd;AttCmd\n");
+   		    cliPrint("'u' Not Used                       'U' Set Yaw Filters              UAtt;RateCmd;AttCmd\n");
    		    cliPrint("'v' Not Used                       'V' Reset EEPROM Parameters\n");
    		    cliPrint("'w' Not Used                       'W' Write EEPROM Parameters\n");
    		    cliPrint("'x' Terminate CLI Communication    'X' Not Used\n");

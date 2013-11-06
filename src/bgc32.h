@@ -180,6 +180,18 @@ typedef struct eepromConfig_t
     float   gimbalYawLeftLimit;
     float   gimbalYawRightLimit;
 
+    float   rollAttitude500HzLowPassTau;
+    float   pitchAttitude500HzLowPassTau;
+    float   yawAttitude500HzLowPassTau;
+
+    float   rollRatePointingCmd50HzLowPassTau;
+    float   pitchRatePointingCmd50HzLowPassTau;
+    float   yawRatePointingCmd50HzLowPassTau;
+
+    float   rollAttPointingCmd50HzLowPassTau;
+    float   pitchAttPointingCmd50HzLowPassTau;
+    float   yawAttPointingCmd50HzLowPassTau;
+
 } eepromConfig_t;
 
 extern eepromConfig_t eepromConfig;

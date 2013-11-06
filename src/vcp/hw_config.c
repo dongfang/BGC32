@@ -16,8 +16,8 @@
   *
   *        http://www.st.com/software_license_agreement_liberty_v2
   *
-  * Unless required by applicable law or agreed to in writing, software 
-  * distributed under the License is distributed on an "AS IS" BASIS, 
+  * Unless required by applicable law or agreed to in writing, software
+  * distributed under the License is distributed on an "AS IS" BASIS,
   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   * See the License for the specific language governing permissions and
   * limitations under the License.
@@ -61,23 +61,23 @@ void Set_System(void)
 {
 #if !defined(STM32L1XX_MD) && !defined(STM32L1XX_HD) && !defined(STM32L1XX_MD_PLUS)
   GPIO_InitTypeDef GPIO_InitStructure;
-#endif /* STM32L1XX_MD && STM32L1XX_XD */  
+#endif /* STM32L1XX_MD && STM32L1XX_XD */
 
 #if defined(USB_USE_EXTERNAL_PULLUP)
   GPIO_InitTypeDef  GPIO_InitStructure;
-#endif /* USB_USE_EXTERNAL_PULLUP */ 
-  
-  /*!< At this stage the microcontroller clock setting is already configured, 
+#endif /* USB_USE_EXTERNAL_PULLUP */
+
+  /*!< At this stage the microcontroller clock setting is already configured,
        this is done through SystemInit() function which is called from startup
        file (startup_stm32f10x_xx.s) before to branch to application main.
        To reconfigure the default setting of SystemInit() function, refer to
        system_stm32f10x.c file
-     */   
+     */
 #if defined(STM32L1XX_MD) || defined(STM32L1XX_HD)|| defined(STM32L1XX_MD_PLUS) || defined(STM32F37X) || defined(STM32F30X)
   /* Enable the SYSCFG module clock */
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_SYSCFG, ENABLE);
-#endif /* STM32L1XX_XD */ 
-   
+#endif /* STM32L1XX_XD */
+
 #if defined(STM32F30X)                                       // HJI
     /*Pull down PA12 to create USB Disconnect Pulse*/        // HJI
     RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOA, ENABLE);      // HJI
@@ -99,9 +99,10 @@ void Set_System(void)
 	/*Pull down PA15 to create USB Disconnect Pulse*/        // HJI
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);    // HJI
 
+	GPIO_PinRemapConfig(GPIO_Remap_SWJ_NoJTRST,     ENABLE); // HJI
 	GPIO_PinRemapConfig(GPIO_Remap_SWJ_JTAGDisable, ENABLE); // HJI
 
-	GPIO_InitStructure.GPIO_Pin   = GPIO_Pin_15;             // HJI
+    GPIO_InitStructure.GPIO_Pin   = GPIO_Pin_15;             // HJI
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;        // HJI
 	GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_Out_OD;        // HJI
 
@@ -112,7 +113,6 @@ void Set_System(void)
 	delay(200);                                              // HJI
 
 	GPIO_SetBits(GPIOA, GPIO_Pin_15);                        // HJI
-
 #endif
 
 #if defined(STM32F37X) || defined(STM32F30X)
@@ -125,13 +125,13 @@ void Set_System(void)
     GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
     GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
     GPIO_Init(GPIOA, &GPIO_InitStructure);
-  
+
     /*SET PA11,12 for USB: USB_DM,DP*/
     GPIO_PinAFConfig(GPIOA, GPIO_PinSource11, GPIO_AF_14);
     GPIO_PinAFConfig(GPIOA, GPIO_PinSource12, GPIO_AF_14);
-  
+
     #endif /* STM32F37X  && STM32F30X)*/
- 
+
     /* Configure the EXTI line 18 connected internally to the USB IP */
     EXTI_ClearITPendingBit(EXTI_Line18);
     EXTI_InitStructure.EXTI_Line = EXTI_Line18;
@@ -150,7 +150,7 @@ void Set_USBClock(void)
 {
     /* Select USBCLK source */
     RCC_USBCLKConfig(RCC_USBCLKSource_PLLCLK_1Div5);
-  
+
     /* Enable the USB clock */
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_USB, ENABLE);
 }
@@ -203,18 +203,18 @@ NVIC_InitTypeDef NVIC_InitStructure;
 
   /* 2 bit for pre-emption priority, 2 bits for subpriority */
   NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
- 
+
   /* Enable the USB interrupt */
   NVIC_InitStructure.NVIC_IRQChannel = USB_LP_CAN1_RX0_IRQn;
   NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 2;
   NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
   NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
   NVIC_Init(&NVIC_InitStructure);
-  
+
   /* Enable the USB Wake-up interrupt */
   NVIC_InitStructure.NVIC_IRQChannel = USBWakeUp_IRQn;
   NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
-  NVIC_Init(&NVIC_InitStructure);   
+  NVIC_Init(&NVIC_InitStructure);
 }
 
 /*******************************************************************************
@@ -231,7 +231,7 @@ void Get_SerialNum(void)
   Device_Serial0 = *(uint32_t*)ID1;
   Device_Serial1 = *(uint32_t*)ID2;
   Device_Serial2 = *(uint32_t*)ID3;
- 
+
   Device_Serial0 += Device_Serial2;
 
   if (Device_Serial0 != 0)
@@ -251,7 +251,7 @@ void Get_SerialNum(void)
 static void IntToUnicode (uint32_t value , uint8_t *pbuf , uint8_t len)
 {
   uint8_t idx = 0;
-  
+
   for( idx = 0 ; idx < len ; idx ++)
   {
     if( ((value >> 28)) < 0xA )
@@ -260,18 +260,18 @@ static void IntToUnicode (uint32_t value , uint8_t *pbuf , uint8_t len)
     }
     else
     {
-      pbuf[2* idx] = (value >> 28) + 'A' - 10; 
+      pbuf[2* idx] = (value >> 28) + 'A' - 10;
     }
-    
+
     value = value << 4;
-    
+
     pbuf[ 2* idx + 1] = 0;
   }
 }
 
 /*******************************************************************************
 * Function Name  : Send DATA .
-* Description    : send the data received from the STM32 to the PC through USB  
+* Description    : send the data received from the STM32 to the PC through USB
 * Input          : None.
 * Output         : None.
 * Return         : None.
@@ -310,7 +310,7 @@ uint32_t CDC_Send_DATA (uint8_t *ptrBuffer, uint8_t sendLength)
 * Return         : None.
 *******************************************************************************/
 uint32_t CDC_Receive_DATA(uint8_t* recvBuf, uint32_t len)
-{ 
+{
     static uint8_t offset = 0;
     uint8_t i;
 
