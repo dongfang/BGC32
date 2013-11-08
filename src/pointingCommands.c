@@ -102,7 +102,7 @@ void processPointingCommands(void)
 
     if (eepromConfig.rollRateCmdInput == true)
     {
-        if ((rxCommand[ROLL] > 0.0f) && (pointingCmd[ROLL] <=  eepromConfig.gimbalRollRightLimit))
+        if ((rxCommand[ROLL] >= 0.0f) && (pointingCmd[ROLL] <=  eepromConfig.gimbalRollRightLimit))
             pointingCmd[ROLL] += rxCommand[ROLL] * eepromConfig.gimbalRollRate * 0.02f;  // Constant DT of 0.02 good enough here
 
         if ((rxCommand[ROLL] < 0.0f) && (pointingCmd[ROLL] >= -eepromConfig.gimbalRollLeftLimit))
@@ -112,10 +112,9 @@ void processPointingCommands(void)
     }
 	else
 	{
-        if (rxCommand[ROLL] > 0.0f)
+        if (rxCommand[ROLL] >= 0.0f)
             pointingCmd[ROLL] = rxCommand[ROLL] * eepromConfig.gimbalRollRightLimit;
-
-        if (rxCommand[ROLL] < 0.0f)
+        else
             pointingCmd[ROLL] = rxCommand[ROLL] * eepromConfig.gimbalRollLeftLimit;
 
         pointingCmd[ROLL] = firstOrderFilter(pointingCmd[ROLL], &firstOrderFilters[ROLL_ATT_POINTING_50HZ_LOWPASS]);
@@ -125,7 +124,7 @@ void processPointingCommands(void)
 
 	if (eepromConfig.pitchRateCmdInput == true)
 	{
-        if ((rxCommand[PITCH] > 0.0f) && (pointingCmd[PITCH] <=  eepromConfig.gimbalPitchUpLimit))
+        if ((rxCommand[PITCH] >= 0.0f) && (pointingCmd[PITCH] <=  eepromConfig.gimbalPitchUpLimit))
             pointingCmd[PITCH] += rxCommand[PITCH] * eepromConfig.gimbalPitchRate * 0.02f;  // Constant DT of 0.02 good enough here
 
         if ((rxCommand[PITCH] < 0.0f) && (pointingCmd[PITCH] >= -eepromConfig.gimbalPitchDownLimit))
@@ -135,7 +134,7 @@ void processPointingCommands(void)
 }
 	else
 	{
-        if (rxCommand[PITCH] > 0.0f)
+        if (rxCommand[PITCH] >= 0.0f)
             pointingCmd[PITCH] = rxCommand[PITCH] * eepromConfig.gimbalPitchUpLimit;
 
         if (rxCommand[PITCH] < 0.0f)
@@ -148,7 +147,7 @@ void processPointingCommands(void)
 
 	if (eepromConfig.yawRateCmdInput == true)
 	{
-        if ((rxCommand[YAW] > 0.0f) && (pointingCmd[YAW] <=  eepromConfig.gimbalYawRightLimit))
+        if ((rxCommand[YAW] >= 0.0f) && (pointingCmd[YAW] <=  eepromConfig.gimbalYawRightLimit))
             pointingCmd[YAW] += rxCommand[YAW] * eepromConfig.gimbalYawRate * 0.02f;  // Constant DT of 0.02 good enough here
 
         if ((rxCommand[YAW] < 0.0f) && (pointingCmd[YAW] >= -eepromConfig.gimbalYawLeftLimit))
@@ -158,7 +157,7 @@ void processPointingCommands(void)
     }
 	else
 	{
-        if (rxCommand[YAW] > 0.0f)
+        if (rxCommand[YAW] >= 0.0f)
             pointingCmd[YAW] = rxCommand[YAW] * eepromConfig.gimbalYawRightLimit;
 
         if (rxCommand[YAW] < 0.0f)

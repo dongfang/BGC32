@@ -38,11 +38,13 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 
+float mechanical2electricalDegrees[3] = { 1.0f, 1.0f, 1.0f };
+
+float outputRate[3];
+
 float pidCmd[3];
 
 float pidCmdPrev[3] = {0.0f, 0.0f, 0.0f};
-
-float outputRate[3];
 
 float yawCmd;
 
@@ -93,7 +95,9 @@ void computeMotorCommands(float dt)
 
 	if (eepromConfig.rollEnabled == true)
 	{
-	    pidCmd[ROLL] = updatePID(-pointingCmd[ROLL], -sensors.attitude500Hz[ROLL], dt, holdIntegrators, &eepromConfig.PID[ROLL_PID]);
+	    pidCmd[ROLL] = updatePID(-pointingCmd[ROLL] * mechanical2electricalDegrees[ROLL],
+	                             -sensors.attitude500Hz[ROLL] * mechanical2electricalDegrees[ROLL],
+	                             dt, holdIntegrators, &eepromConfig.PID[ROLL_PID]);
 
 	    outputRate[ROLL] = pidCmd[ROLL] - pidCmdPrev[ROLL];
 
@@ -112,7 +116,9 @@ void computeMotorCommands(float dt)
 
     if (eepromConfig.pitchEnabled == true)
     {
-        pidCmd[PITCH] = updatePID(-pointingCmd[PITCH], -sensors.attitude500Hz[PITCH], dt, holdIntegrators, &eepromConfig.PID[PITCH_PID]);
+        pidCmd[PITCH] = updatePID(pointingCmd[PITCH] * mechanical2electricalDegrees[PITCH],
+                                  sensors.attitude500Hz[PITCH] * mechanical2electricalDegrees[PITCH],
+                                  dt, holdIntegrators, &eepromConfig.PID[PITCH_PID]);
 
 	    outputRate[PITCH] = pidCmd[PITCH] - pidCmdPrev[PITCH];
 
@@ -136,7 +142,9 @@ void computeMotorCommands(float dt)
         else                                                  // Else RC control
             yawCmd = -pointingCmd[YAW];
 
-        pidCmd[YAW] = updatePID(yawCmd, -sensors.attitude500Hz[YAW], dt, holdIntegrators, &eepromConfig.PID[YAW_PID]);
+        pidCmd[YAW] = updatePID( yawCmd * mechanical2electricalDegrees[YAW],
+                                -sensors.attitude500Hz[YAW] * mechanical2electricalDegrees[YAW],
+                                dt, holdIntegrators, &eepromConfig.PID[YAW_PID]);
 
 	    outputRate[YAW] = pidCmd[YAW] - pidCmdPrev[YAW];
 

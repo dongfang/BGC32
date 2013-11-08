@@ -305,10 +305,12 @@ void cliCom(void)
 
         ///////////////////////////////
 
-        case 'o': // PID Outputs
-            cliPrintF("%12.4f, %12.4f, %12.4f\n", pidCmd[ROLL],
-                                                  pidCmd[PITCH],
-                                                  pidCmd[YAW]);
+        case 'o': // Motor Poles
+            cliPrintF("Roll Motor Poles:  %3.0f \n", eepromConfig.rollMotorPoles);
+            cliPrintF("Pitch Motor Poles: %3.0f \n", eepromConfig.pitchMotorPoles);
+            cliPrintF("Yaw Motor Poles:   %3.0f \n", eepromConfig.yawMotorPoles);
+
+            cliQuery = 'x';
             validCliCommand = false;
             break;
 
@@ -360,6 +362,15 @@ void cliCom(void)
 
         	validCliCommand = false;
         	break;
+
+        ///////////////////////////////
+
+        case 'u': // PID Outputs
+            cliPrintF("%12.4f, %12.4f, %12.4f\n", pidCmd[ROLL],
+                                                  pidCmd[PITCH],
+                                                  pidCmd[YAW]);
+            validCliCommand = false;
+            break;
 
         ///////////////////////////////
 
@@ -521,7 +532,20 @@ void cliCom(void)
            	validCliCommand = false;
            	break;
 
-        ///////////////////////////////
+         ///////////////////////////////
+
+        case 'O': // Set Motor Poles
+        	eepromConfig.rollMotorPoles  = readFloatCLI();
+        	eepromConfig.pitchMotorPoles = readFloatCLI();
+        	eepromConfig.yawMotorPoles   = readFloatCLI();
+
+           	cliPrint("\nMotor Pole Counts Received....\n");
+
+           	cliQuery = 'o';
+           	validCliCommand = false;
+           	break;
+
+       ///////////////////////////////
 
         case 'P': // Sensor CLI
            	sensorCLI();
@@ -685,13 +709,13 @@ void cliCom(void)
    		    cliPrint("\n");
    		    cliPrint("'m' Test Phase                     'M' Set Test Phase\n");
    		    cliPrint("'n' Test Phase Delta               'N' Set Test Phase Delta\n");
-   		    cliPrint("'o' PID Outputs                    'O' Not Used\n");
+   		    cliPrint("'o' Motor Pole Counts              'O' Set Motor Pole Counts        ORPC;PPC;YPC\n");
    		    cliPrint("'p' Counters                       'P' Sensor CLI\n");
    		    cliPrint("'q' Filter Time Constants          'Q' Set Roll Filters             QAtt;RateCmd;AttCmd\n");
    		    cliPrint("'r' Not Used                       'R' Reset and Enter Bootloader\n");
    		    cliPrint("'s' Raw Receiver Commands          'S' Reset\n");
    		    cliPrint("'t' Pointing Commands              'T' Set Pitch Filters            TAtt;RateCmd;AttCmd\n");
-   		    cliPrint("'u' Not Used                       'U' Set Yaw Filters              UAtt;RateCmd;AttCmd\n");
+   		    cliPrint("'u' PID Outputs                    'U' Set Yaw Filters              UAtt;RateCmd;AttCmd\n");
    		    cliPrint("'v' Not Used                       'V' Reset EEPROM Parameters\n");
    		    cliPrint("'w' Not Used                       'W' Write EEPROM Parameters\n");
    		    cliPrint("'x' Terminate CLI Communication    'X' Not Used\n");

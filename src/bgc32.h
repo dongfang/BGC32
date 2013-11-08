@@ -163,6 +163,10 @@ typedef struct eepromConfig_t
 
     uint8_t imuOrientation;
 
+    float   rollMotorPoles;
+    float   pitchMotorPoles;
+    float   yawMotorPoles;
+
     float   rateLimit;
 
     uint8_t rollRateCmdInput;
