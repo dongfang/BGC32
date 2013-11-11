@@ -126,17 +126,19 @@ int main(void)
 			sensors.gyro500Hz[PITCH] =  ((float)gyroData500Hz[PITCH] - gyroRTBias[PITCH] - gyroTCBias[PITCH]) * GYRO_SCALE_FACTOR;
             sensors.gyro500Hz[YAW  ] = -((float)gyroData500Hz[YAW  ] - gyroRTBias[YAW  ] - gyroTCBias[YAW  ]) * GYRO_SCALE_FACTOR;
 
-            // HJI magDataUpdate = false;  // HJI No mag in this configuration
+            #if 0
+                magDataUpdate = false;  // HJI No mag in this configuration
 
-            // HJI MargAHRSupdate( sensors.gyro500Hz[ROLL],   sensors.gyro500Hz[PITCH],  sensors.gyro500Hz[YAW],
-            // HJI                 sensors.accel500Hz[XAXIS], sensors.accel500Hz[YAXIS], sensors.accel500Hz[ZAXIS],
-            // HJI                 sensors.mag10Hz[XAXIS],    sensors.mag10Hz[YAXIS],    sensors.mag10Hz[ZAXIS],
-            // HJI                 magDataUpdate,
-            // HJI                 dt500Hz );
+                MargAHRSupdate( sensors.gyro500Hz[ROLL],   sensors.gyro500Hz[PITCH],  sensors.gyro500Hz[YAW],
+                                sensors.accel500Hz[XAXIS], sensors.accel500Hz[YAXIS], sensors.accel500Hz[ZAXIS],
+                                sensors.mag10Hz[XAXIS],    sensors.mag10Hz[YAXIS],    sensors.mag10Hz[ZAXIS],
+                                magDataUpdate,
+                                dt500Hz );
 
-            // HJI magDataUpdate = false;
-
-            getOrientation(accAngleSmooth, sensors.attitude500Hz, sensors.accel500Hz, sensors.gyro500Hz, dt500Hz);
+                magDataUpdate = false;
+            #else
+                getOrientation(accAngleSmooth, sensors.attitude500Hz, sensors.accel500Hz, sensors.gyro500Hz, dt500Hz);
+            #endif
 
 			sensors.attitude500Hz[ROLL ] = firstOrderFilter(sensors.attitude500Hz[ROLL ], &firstOrderFilters[ROLL_ATTITUDE_500HZ_LOWPASS ]);
             sensors.attitude500Hz[PITCH] = firstOrderFilter(sensors.attitude500Hz[PITCH], &firstOrderFilters[PITCH_ATTITUDE_500HZ_LOWPASS]);

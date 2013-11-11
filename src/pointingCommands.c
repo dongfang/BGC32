@@ -120,6 +120,8 @@ void processPointingCommands(void)
         pointingCmd[ROLL] = firstOrderFilter(pointingCmd[ROLL], &firstOrderFilters[ROLL_ATT_POINTING_50HZ_LOWPASS]);
 	}
 
+    pointingCmd[ROLL] = constrain(pointingCmd[ROLL], -eepromConfig.gimbalYawLeftLimit, eepromConfig.gimbalRollRightLimit);
+
 	///////////////////////////////////
 
 	if (eepromConfig.pitchRateCmdInput == true)
@@ -143,6 +145,8 @@ void processPointingCommands(void)
         pointingCmd[PITCH] = firstOrderFilter(pointingCmd[PITCH], &firstOrderFilters[PITCH_ATT_POINTING_50HZ_LOWPASS]);
 	}
 
+	pointingCmd[PITCH] = constrain(pointingCmd[PITCH], -eepromConfig.gimbalPitchDownLimit, eepromConfig.gimbalPitchUpLimit);
+
 	///////////////////////////////////
 
 	if (eepromConfig.yawRateCmdInput == true)
@@ -165,6 +169,8 @@ void processPointingCommands(void)
 
         pointingCmd[YAW] = firstOrderFilter(pointingCmd[YAW], &firstOrderFilters[YAW_ATT_POINTING_50HZ_LOWPASS]);
     }
+
+	pointingCmd[YAW] = constrain(pointingCmd[YAW], -eepromConfig.gimbalYawLeftLimit, eepromConfig.gimbalYawRightLimit);
 
 	///////////////////////////////////
 }

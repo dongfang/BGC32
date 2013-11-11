@@ -58,6 +58,10 @@ void readEEPROM(void)
 	mechanical2electricalDegrees[ROLL ] = eepromConfig.rollMotorPoles  / 2.0f;
 	mechanical2electricalDegrees[PITCH] = eepromConfig.pitchMotorPoles / 2.0f;
 	mechanical2electricalDegrees[YAW  ] = eepromConfig.yawMotorPoles   / 2.0f;
+
+	electrical2mechanicalDegrees[ROLL ] = 1.0f / mechanical2electricalDegrees[ROLL ];
+	electrical2mechanicalDegrees[PITCH] = 1.0f / mechanical2electricalDegrees[PITCH];
+	electrical2mechanicalDegrees[YAW  ] = 1.0f / mechanical2electricalDegrees[YAW  ];
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -163,9 +167,9 @@ void checkFirstTime(bool eepromReset)
         eepromConfig.PID[ROLL_PID].type            =    OTHER;
 
         eepromConfig.PID[PITCH_PID].B              =    1.0f;
-        eepromConfig.PID[PITCH_PID].P              =   10.0f;
+        eepromConfig.PID[PITCH_PID].P              =    2.5f;
         eepromConfig.PID[PITCH_PID].I              =    5.0f;
-        eepromConfig.PID[PITCH_PID].D              =    0.1f;
+        eepromConfig.PID[PITCH_PID].D              =    0.05f;
         eepromConfig.PID[PITCH_PID].iTerm          =    0.0f;
         eepromConfig.PID[PITCH_PID].windupGuard    = 1000.0f;  // PWMs
         eepromConfig.PID[PITCH_PID].lastDcalcValue =    0.0f;
@@ -187,7 +191,7 @@ void checkFirstTime(bool eepromReset)
         eepromConfig.PID[YAW_PID].type             =    OTHER;
 
         eepromConfig.rollPower    = 55.0f;
-		eepromConfig.pitchPower   = 35.0f;
+		eepromConfig.pitchPower   = 55.0f;
 		eepromConfig.yawPower     = 55.0f;
 
 		eepromConfig.rollEnabled  = false;
@@ -201,7 +205,7 @@ void checkFirstTime(bool eepromReset)
         eepromConfig.pitchMotorPoles = 14.0f;
         eepromConfig.yawMotorPoles   = 14.0f;
 
-        eepromConfig.rateLimit = 90 * D2R;  // Note this is rate limiting electrical degrees of rotation, not mechanical
+        eepromConfig.rateLimit = 45.0f * D2R;  // Note this is rate limiting electrical degrees of rotation, not mechanical
 
         eepromConfig.rollRateCmdInput  = true;
 		eepromConfig.pitchRateCmdInput = true;

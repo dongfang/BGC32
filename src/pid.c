@@ -41,16 +41,11 @@
 
 uint8_t holdIntegrators = true;
 
-#define F_CUT 20.0f
-float rc;
-
 ///////////////////////////////////////////////////////////////////////////////
 
 void initPID(void)
 {
     uint8_t index;
-
-    rc = 1.0f / ( TWO_PI * F_CUT );
 
     for (index = 0; index < NUMBER_OF_PIDS; index++)
     {
@@ -67,8 +62,7 @@ float updatePID(float command, float state, float deltaT, uint8_t iHold, struct 
 {
     float error;
     float dTerm;
-    // HJI float dTermFiltered;
-    // HJI float dAverage;
+    float dAverage;
 
     ///////////////////////////////////
 
@@ -104,23 +98,21 @@ float updatePID(float command, float state, float deltaT, uint8_t iHold, struct 
 
     ///////////////////////////////////
 
-    // HJI dTermFiltered = PIDparameters->lastDterm + (deltaT / (rc + deltaT)) * (dTerm - PIDparameters->lastDterm);
+    dAverage = (dTerm + PIDparameters->lastDterm + PIDparameters->lastLastDterm) * 0.333333f;
 
-    // HJI dAverage = (dTermFiltered + PIDparameters->lastDterm + PIDparameters->lastLastDterm) * 0.333333f;
-
-    // HJI PIDparameters->lastLastDterm = PIDparameters->lastDterm;
-    // HJI PIDparameters->lastDterm = dTermFiltered;
+    PIDparameters->lastLastDterm = PIDparameters->lastDterm;
+    PIDparameters->lastDterm = dTerm;
 
     ///////////////////////////////////
 
     if (PIDparameters->type == ANGULAR)
         return(PIDparameters->P * error                +
 	           PIDparameters->I * PIDparameters->iTerm +
-	           PIDparameters->D * dTerm); // HJI dAverage);
+	           PIDparameters->D * dAverage);
     else
         return(PIDparameters->P * ((PIDparameters->B * command) - state) +
                PIDparameters->I * PIDparameters->iTerm +
-               PIDparameters->D * dTerm); // HJI dAverage);
+               PIDparameters->D * dAverage);
 
     ///////////////////////////////////
 }

@@ -39,6 +39,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 float mechanical2electricalDegrees[3] = { 1.0f, 1.0f, 1.0f };
+float electrical2mechanicalDegrees[3] = { 1.0f, 1.0f, 1.0f };
 
 float outputRate[3];
 
@@ -95,8 +96,8 @@ void computeMotorCommands(float dt)
 
 	if (eepromConfig.rollEnabled == true)
 	{
-	    pidCmd[ROLL] = updatePID(-pointingCmd[ROLL] * mechanical2electricalDegrees[ROLL],
-	                             -sensors.attitude500Hz[ROLL] * mechanical2electricalDegrees[ROLL],
+	    pidCmd[ROLL] = updatePID(pointingCmd[ROLL] * mechanical2electricalDegrees[ROLL],
+	                             sensors.attitude500Hz[ROLL] * mechanical2electricalDegrees[ROLL],
 	                             dt, holdIntegrators, &eepromConfig.PID[ROLL_PID]);
 
 	    outputRate[ROLL] = pidCmd[ROLL] - pidCmdPrev[ROLL];
@@ -137,9 +138,9 @@ void computeMotorCommands(float dt)
 
     if (eepromConfig.yawEnabled == true)
     {
-        if (eepromConfig.yawAutoPan == true)                  // If yaw auto pan enabled
-            yawCmd = autoPan(pidCmd[YAW], yawCmd);
-        else                                                  // Else RC control
+        if (eepromConfig.yawAutoPan == true)
+            yawCmd = autoPan(pidCmd[YAW] * electrical2mechanicalDegrees[YAW], yawCmd);
+        else
             yawCmd = -pointingCmd[YAW];
 
         pidCmd[YAW] = updatePID( yawCmd * mechanical2electricalDegrees[YAW],

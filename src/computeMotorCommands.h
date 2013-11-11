@@ -39,6 +39,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 extern float mechanical2electricalDegrees[3];
+extern float electrical2mechanicalDegrees[3];
 
 extern float pidCmd[3];
 

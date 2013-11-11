@@ -64,11 +64,9 @@
 
 #include "drv_cli.h"
 #include "drv_gpio.h"
-// HJI #include "drv_i2c.h"
 #include "drv_i2cSoft.h"
 #include "drv_pwmMotors.h"
 #include "drv_rc.h"
-// HJI #include "drv_rx.h"
 #include "drv_system.h"
 #include "drv_timingFunctions.h"
 
@@ -82,7 +80,7 @@
 #include "fastTrig.h"
 #include "firstOrderFilter.h"
 #include "magCalibration.h"
-// HJI #include "MargAHRS.h"
+#include "MargAHRS.h"
 #include "mpu6050Calibration.h"
 #include "pointingCommands.h"
 #include "utilities.h"
