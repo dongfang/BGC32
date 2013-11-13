@@ -24,7 +24,7 @@ void initOrientation()
         sensors.accel500Hz[YAXIS] =  ((float)rawAccel[YAXIS].value - accelTCBias[YAXIS]) * ACCEL_SCALE_FACTOR;
         sensors.accel500Hz[ZAXIS] = -((float)rawAccel[ZAXIS].value - accelTCBias[ZAXIS]) * ACCEL_SCALE_FACTOR;
 
-        accAngle[ROLL]  += atan2f(-sensors.accel500Hz[YAXIS], -sensors.accel500Hz[ZAXIS]);
+        accAngle[ROLL ] += atan2f(-sensors.accel500Hz[YAXIS], -sensors.accel500Hz[ZAXIS]);
         accAngle[PITCH] += atan2f( sensors.accel500Hz[XAXIS], -sensors.accel500Hz[ZAXIS]);
 
         accAngleSmooth[ROLL ] = accAngle[ROLL ] / (float)initLoops;

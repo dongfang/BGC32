@@ -247,7 +247,13 @@ void systemInit(void)
 
     LED2_ON;
 
-    delay(20000);  // 20 sec delay for sensor stabilization - probably not long enough.....
+    delay(10000);  // 10 seconds of 20 second delay for sensor stabilization
+
+    #if defined(__DATE__) && defined(__TIME__)
+        cliPrintF("\nBGC32 Firmware V%s, Build Date " __DATE__ " "__TIME__" \n", __BGC32_VERSION);
+    #endif
+
+    delay(10000);  // Remaining 10 seconds of 20 second delay for sensor stabilization - probably not long enough..
 
     LED1_ON;
 

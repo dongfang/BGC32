@@ -61,6 +61,13 @@ float step        = 0.0f;
 // Yaw AutoPan
 ///////////////////////////////////////////////////////////////////////////////
 
+//  Inputs:
+//    motorPos is electrical degrees
+//    setpoint is electrical degrees
+//
+//  Outputs:
+//    autoPan is electrical degrees
+
 float autoPan(float motorPos, float setpoint)
 {
     if (motorPos < centerPoint - YAP_DEADBAND)
@@ -97,7 +104,7 @@ void computeMotorCommands(float dt)
 	if (eepromConfig.rollEnabled == true)
 	{
 	    pidCmd[ROLL] = updatePID(pointingCmd[ROLL] * mechanical2electricalDegrees[ROLL],
-	                             sensors.attitude500Hz[ROLL] * mechanical2electricalDegrees[ROLL],
+	                             -sensors.attitude500Hz[ROLL] * mechanical2electricalDegrees[ROLL],
 	                             dt, holdIntegrators, &eepromConfig.PID[ROLL_PID]);
 
 	    outputRate[ROLL] = pidCmd[ROLL] - pidCmdPrev[ROLL];
@@ -138,13 +145,13 @@ void computeMotorCommands(float dt)
 
     if (eepromConfig.yawEnabled == true)
     {
-        if (eepromConfig.yawAutoPan == true)
-            yawCmd = autoPan(pidCmd[YAW] * electrical2mechanicalDegrees[YAW], yawCmd);
+        if (eepromConfig.yawAutoPanEnabled == true)
+            yawCmd = autoPan(pidCmd[YAW], yawCmd * mechanical2electricalDegrees[YAW]) * electrical2mechanicalDegrees[YAW];
         else
             yawCmd = -pointingCmd[YAW];
 
         pidCmd[YAW] = updatePID( yawCmd * mechanical2electricalDegrees[YAW],
-                                -sensors.attitude500Hz[YAW] * mechanical2electricalDegrees[YAW],
+                                sensors.attitude500Hz[YAW] * mechanical2electricalDegrees[YAW],
                                 dt, holdIntegrators, &eepromConfig.PID[YAW_PID]);
 
 	    outputRate[YAW] = pidCmd[YAW] - pidCmdPrev[YAW];

@@ -38,6 +38,12 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 
+#define __BGC32_VERSION "1.0"
+
+//#define MARG
+
+///////////////////////////////////////////////////////////////////////////////
+
 #define     PI 3.14159265f
 #define TWO_PI 6.28318531f
 
@@ -159,7 +165,10 @@ typedef struct eepromConfig_t
     uint8_t rollEnabled;
     uint8_t pitchEnabled;
     uint8_t yawEnabled;
-    uint8_t yawAutoPan;
+
+    uint8_t rollAutoPanEnabled;
+    uint8_t pitchAutoPanEnabled;
+    uint8_t yawAutoPanEnabled;
 
     uint8_t imuOrientation;
 

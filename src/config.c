@@ -45,7 +45,7 @@
 // use the last KB for sensor config storage
 #define FLASH_WRITE_EEPROM_CONFIG_ADDR  (0x08000000 + (uint32_t)FLASH_PAGE_SIZE * (FLASH_PAGE_COUNT - 1))
 
-static uint8_t checkNewEEPROMConf = 8;
+static uint8_t checkNewEEPROMConf = 9;
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -197,7 +197,10 @@ void checkFirstTime(bool eepromReset)
 		eepromConfig.rollEnabled  = false;
 		eepromConfig.pitchEnabled = false;
         eepromConfig.yawEnabled   = false;
-        eepromConfig.yawAutoPan   = false;
+
+        eepromConfig.rollAutoPanEnabled  = false;
+        eepromConfig.pitchAutoPanEnabled = false;
+        eepromConfig.yawAutoPanEnabled   = false;
 
         eepromConfig.imuOrientation = 4;
 

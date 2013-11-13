@@ -104,6 +104,8 @@
 
 ///////////////////////////////////////
 
+static int pwmMotorDriverInitDone = false;
+
 int timer1timer8deadTimeRegister = 200; // this is not just a delay value, check CPU reference manual for TIMx_BDTR DTG bit 0-7
 int timer4timer5deadTimeDelay    = 80;  // in 18MHz ticks
 
@@ -372,44 +374,6 @@ void setPWMFastTable(int *pwm, float angle, float power)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-//  Set PWM Via Table Lookup
-///////////////////////////////////////////////////////////////////////////////
-
-/*
-void setPWMFastTable(int *pwm, float angle, float power, uint8_t reverse)
-{
-    if (testPhase >= 0)
-    {
-        angle = testPhase;
-    }
-
-    int angleInt = (int)round(angle / M_TWOPI * SINARRAYSIZE);
-
-    angleInt = angleInt % SINARRAYSIZE;
-
-    if (angleInt < 0)
-    {
-        angleInt = SINARRAYSIZE + angleInt;
-    }
-
-    int iPower = 5 * (int)power;
-
-    if (reverse == false)
-    {
-        pwm[0] = (sinDataI16[ angleInt                               % SINARRAYSIZE] * iPower + SINARRAYSCALE / 2) / SINARRAYSCALE + PWM_PERIOD / 2;
-        pwm[1] = (sinDataI16[(angleInt +  1 * SINARRAYSIZE / 3)      % SINARRAYSIZE] * iPower + SINARRAYSCALE / 2) / SINARRAYSCALE + PWM_PERIOD / 2;
-        pwm[2] = (sinDataI16[(angleInt + (2 * SINARRAYSIZE + 1) / 3) % SINARRAYSIZE] * iPower + SINARRAYSCALE / 2) / SINARRAYSCALE + PWM_PERIOD / 2;
-    }
-    else
-    {
-        pwm[0] = -(sinDataI16[ angleInt                               % SINARRAYSIZE] * iPower + SINARRAYSCALE / 2) / SINARRAYSCALE + PWM_PERIOD / 2;
-        pwm[1] = -(sinDataI16[(angleInt -  1 * SINARRAYSIZE / 3)      % SINARRAYSIZE] * iPower + SINARRAYSCALE / 2) / SINARRAYSCALE + PWM_PERIOD / 2;
-        pwm[2] = -(sinDataI16[(angleInt - (2 * SINARRAYSIZE + 1) / 3) % SINARRAYSIZE] * iPower + SINARRAYSCALE / 2) / SINARRAYSCALE + PWM_PERIOD / 2;
-    }
-}
-*/
-
-///////////////////////////////////////////////////////////////////////////////
 //  Set PWM
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -523,7 +487,6 @@ void forceMotorUpdate(void)
 //  Initialize PWM Motor Drivers
 ///////////////////////////////////////////////////////////////////////////////
 
-static int pwmMotorDriverInitDone = false;
 void pwmMotorDriverInit(void)
 {
     if (pwmMotorDriverInitDone)
@@ -532,10 +495,6 @@ void pwmMotorDriverInit(void)
         // make sure this init function is not called twice
         return;
     }
-
-#if 0
-    cliPrint("\npwmMotorDriverInit\n");
-#endif
 
     GPIO_InitTypeDef         GPIO_InitStructure;
 

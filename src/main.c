@@ -55,7 +55,9 @@ int main(void)
 
     systemInit();
 
-    initOrientation();
+    #ifndef MARG
+        initOrientation();
+    #endif
 
     systemReady = true;
 
@@ -126,7 +128,7 @@ int main(void)
 			sensors.gyro500Hz[PITCH] =  ((float)gyroData500Hz[PITCH] - gyroRTBias[PITCH] - gyroTCBias[PITCH]) * GYRO_SCALE_FACTOR;
             sensors.gyro500Hz[YAW  ] = -((float)gyroData500Hz[YAW  ] - gyroRTBias[YAW  ] - gyroTCBias[YAW  ]) * GYRO_SCALE_FACTOR;
 
-            #if 0
+            #ifdef MARG
                 magDataUpdate = false;  // HJI No mag in this configuration
 
                 MargAHRSupdate( sensors.gyro500Hz[ROLL],   sensors.gyro500Hz[PITCH],  sensors.gyro500Hz[YAW],
