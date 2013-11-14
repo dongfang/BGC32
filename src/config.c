@@ -55,6 +55,8 @@ void readEEPROM(void)
 
 	memcpy(&eepromConfig, (char *)FLASH_WRITE_EEPROM_CONFIG_ADDR, sizeof(eepromConfig_t));
 
+	accConfidenceDecay = 1.0f / sqrt(eepromConfig.accelCutoff);
+
 	mechanical2electricalDegrees[ROLL ] = eepromConfig.rollMotorPoles  / 2.0f;
 	mechanical2electricalDegrees[PITCH] = eepromConfig.pitchMotorPoles / 2.0f;
 	mechanical2electricalDegrees[YAW  ] = eepromConfig.yawMotorPoles   / 2.0f;

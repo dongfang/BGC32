@@ -69,6 +69,7 @@
 #include "drv_rc.h"
 #include "drv_system.h"
 #include "drv_timingFunctions.h"
+#include "ringbuffer.h"
 
 #include "hmc5883.h"
 #include "mpu6050.h"

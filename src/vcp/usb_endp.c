@@ -27,6 +27,8 @@
 
 
 /* Includes ------------------------------------------------------------------*/
+#include "board.h"
+
 #include "usb_lib.h"
 #include "usb_desc.h"
 #include "usb_mem.h"
@@ -57,7 +59,10 @@ __IO uint32_t receiveLength;             // HJI
 
 void EP1_IN_Callback (void)
 {
-    packetSent = 0;  // HJI
+    USBCallBackCalled = 1;
+    packetSent = 0;
+    lastCallbackTime = millis();
+    USBPushTXData();
 }
 
 /*******************************************************************************

@@ -40,6 +40,53 @@
 
 #define USB_TIMEOUT  50
 
+tRingBuffer RingBufferUSBTX;
+
+int USBCallBackCalled = 0;
+
+unsigned long lastCallbackTime;
+
+///////////////////////////////////////////////////////////////////////////////
+
+int usbOverrun(void)
+{
+    return (RingBufferUSBTX.Overrun);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+void USBPushTXData(void)
+{
+    tRingBuffer *rb = &RingBufferUSBTX;
+    uint8_t *p = rb->Buffer + rb->Read;
+    int len = rb->Write - rb->Read;
+
+    if (len != 0)
+    {
+        if (len < 0)
+        {
+            len = RingBufferSize(rb) - rb->Read;
+        }
+
+        len = CDC_Send_DATA(p, len);
+        rb->Read = (rb->Read + len) % RingBufferSize(rb);
+    }
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+void USBPushTX(void)
+{
+    if (packetSent)
+    {
+        return; // transfer will be handled by next callback
+    }
+
+    // something hangs, retrigger send
+    lastCallbackTime = millis();
+    USBPushTXData();
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 // CLI Initialization
 ///////////////////////////////////////////////////////////////////////////////
@@ -50,6 +97,8 @@ void cliInit(void)
 	Set_USBClock();
 	USB_Interrupts_Config();
 	USB_Init();
+
+	RingBufferInit(&RingBufferUSBTX, &USBPushTX);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -86,33 +135,11 @@ uint8_t cliRead(void)
 void cliPrint(char *str)
 {
     uint32_t len;
-    uint32_t oldTxed;
-    uint32_t start;
-    uint32_t txed;
 
-    if (!(usbIsConnected() && usbIsConfigured()) || !str)
-    {
-	    return;
-	}
+    len = strlen(str);
 
-	len     = strlen(str);
-
-	txed    = 0;
-	oldTxed = 0;
-
-	start   = millis();
-
-	while (txed < len && (millis() - start < USB_TIMEOUT))
-	{
-	    txed += CDC_Send_DATA((uint8_t*)str + txed, len - txed);
-
-	    if (oldTxed != txed)
-	    {
-	        start = millis();
-	    }
-
-	    oldTxed = txed;
-	}
+	if (usbIsConnected())
+	    RingBufferPutBlock(&RingBufferUSBTX, (uint8_t *)str, len, 0);
 }
 
 ///////////////////////////////////////////////////////////////////////////////

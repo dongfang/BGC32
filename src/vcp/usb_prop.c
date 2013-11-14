@@ -16,8 +16,8 @@
   *
   *        http://www.st.com/software_license_agreement_liberty_v2
   *
-  * Unless required by applicable law or agreed to in writing, software 
-  * distributed under the License is distributed on an "AS IS" BASIS, 
+  * Unless required by applicable law or agreed to in writing, software
+  * distributed under the License is distributed on an "AS IS" BASIS,
   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   * See the License for the specific language governing permissions and
   * limitations under the License.
@@ -186,7 +186,7 @@ void Virtual_Com_Port_Reset(void)
 
   /* Set this device to response on default address */
   SetDeviceAddress(0);
-  
+
   bDeviceState = ATTACHED;
 }
 
@@ -254,6 +254,8 @@ void Virtual_Com_Port_Status_Out(void)
 *******************************************************************************/
 RESULT Virtual_Com_Port_Data_Setup(uint8_t RequestNo)
 {
+  SetVCPConnectMode(eVCPConnectData);
+
   uint8_t    *(*CopyRoutine)(uint16_t);
 
   CopyRoutine = NULL;
@@ -294,6 +296,7 @@ RESULT Virtual_Com_Port_Data_Setup(uint8_t RequestNo)
 *******************************************************************************/
 RESULT Virtual_Com_Port_NoData_Setup(uint8_t RequestNo)
 {
+  SetVCPConnectMode(eVCPConnectNoData);
 
   if (Type_Recipient == (CLASS_REQUEST | INTERFACE_RECIPIENT))
   {
