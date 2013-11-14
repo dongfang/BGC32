@@ -123,8 +123,10 @@ void SysTick_Handler(void)
 
             ///////////////////////////////
 
-            if (((frameCounter + 1) % COUNT_500HZ) == 0)
+            if ((frameCounter % COUNT_500HZ) == 0)
             {
+                frame_500Hz = true;
+
                 readMPU6050();
 
                 accelData500Hz[XAXIS] = rawAccel[XAXIS].value;
@@ -134,11 +136,6 @@ void SysTick_Handler(void)
                 gyroData500Hz[ROLL ] = rawGyro[ROLL ].value;
                 gyroData500Hz[PITCH] = rawGyro[PITCH].value;
                 gyroData500Hz[YAW  ] = rawGyro[YAW  ].value;
-            }
-
-            if ((frameCounter % COUNT_500HZ) == 0)
-            {
-                frame_500Hz = true;
             }
 
             ///////////////////////////////
@@ -252,6 +249,15 @@ void systemInit(void)
     #if defined(__DATE__) && defined(__TIME__)
         cliPrintF("\nBGC32 Firmware V%s, Build Date " __DATE__ " "__TIME__" \n", __BGC32_VERSION);
     #endif
+
+    if ((RCC->CR & RCC_CR_HSERDY) != RESET)
+    {
+        cliPrintF("\nRunning on external HSE clock, clock rate is %dMHz\n", SystemCoreClock / 1000000);
+    }
+    else
+    {
+        cliPrintF("\nERROR: Running on internal HSI clock, clock rate is %dMHz\n", SystemCoreClock / 1000000);
+    }
 
     delay(10000);  // Remaining 10 seconds of 20 second delay for sensor stabilization - probably not long enough..
 
