@@ -37,12 +37,12 @@ void initOrientation()
     sensors.attitude500Hz[ROLL ] = accAngleSmooth[ROLL ];
     sensors.attitude500Hz[YAW  ] = 0.0f;
 
-    firstOrderFilters[ROLL_ATTITUDE_500HZ_LOWPASS ].previousInput  = sensors.attitude500Hz[ROLL ];
-    firstOrderFilters[ROLL_ATTITUDE_500HZ_LOWPASS ].previousOutput = sensors.attitude500Hz[ROLL ];
-	firstOrderFilters[PITCH_ATTITUDE_500HZ_LOWPASS].previousInput  = sensors.attitude500Hz[PITCH];
-    firstOrderFilters[PITCH_ATTITUDE_500HZ_LOWPASS].previousOutput = sensors.attitude500Hz[PITCH];
-	firstOrderFilters[YAW_ATTITUDE_500HZ_LOWPASS  ].previousInput  = sensors.attitude500Hz[YAW  ];
-    firstOrderFilters[YAW_ATTITUDE_500HZ_LOWPASS  ].previousOutput = sensors.attitude500Hz[YAW  ];
+    //firstOrderFilters[ROLL_ATTITUDE_500HZ_LOWPASS ].previousInput  = sensors.attitude500Hz[ROLL ];
+    //firstOrderFilters[ROLL_ATTITUDE_500HZ_LOWPASS ].previousOutput = sensors.attitude500Hz[ROLL ];
+	//firstOrderFilters[PITCH_ATTITUDE_500HZ_LOWPASS].previousInput  = sensors.attitude500Hz[PITCH];
+    //firstOrderFilters[PITCH_ATTITUDE_500HZ_LOWPASS].previousOutput = sensors.attitude500Hz[PITCH];
+	//firstOrderFilters[YAW_ATTITUDE_500HZ_LOWPASS  ].previousInput  = sensors.attitude500Hz[YAW  ];
+    //firstOrderFilters[YAW_ATTITUDE_500HZ_LOWPASS  ].previousOutput = sensors.attitude500Hz[YAW  ];
 }
 
 ///////////////////////////////////////////////////////////////////////////////
