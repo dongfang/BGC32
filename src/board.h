@@ -64,7 +64,7 @@
 
 #include "drv_cli.h"
 #include "drv_gpio.h"
-#include "drv_i2cSoft.h"
+#include "drv_i2c.h"
 #include "drv_pwmMotors.h"
 #include "drv_rc.h"
 #include "drv_system.h"

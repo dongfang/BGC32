@@ -211,25 +211,25 @@ void cliCom(void)
 
         case 'b': // Loop Delta Times
             cliPrintF("%7ld, %7ld, %7ld, %7ld, %7ld, %7ld, %7ld\n", deltaTime1000Hz,
-                      deltaTime500Hz,
-                      deltaTime100Hz,
-                      deltaTime50Hz,
-                      deltaTime10Hz,
-                      deltaTime5Hz,
-                      deltaTime1Hz);
+                                                                    deltaTime500Hz,
+                                                                    deltaTime100Hz,
+                                                                    deltaTime50Hz,
+                                                                    deltaTime10Hz,
+                                                                    deltaTime5Hz,
+                                                                    deltaTime1Hz);
             break;
 
         ///////////////////////////////
 
         case 'c': // Loop Execution Times
             cliPrintF("%7ld, %7ld, %7ld, %7ld, %7ld, %7ld, %7ld, %7ld\n", executionTime1000Hz,
-                      executionTime500Hz,
-                      executionTime100Hz,
-                      executionTime50Hz,
-                      executionTime10Hz,
-                      executionTime5Hz,
-                      executionTime1Hz,
-                      i2cGetErrorCounter());
+                                                                          executionTime500Hz,
+                                                                          executionTime100Hz,
+                                                                          executionTime50Hz,
+                                                                          executionTime10Hz,
+                                                                          executionTime5Hz,
+                                                                          executionTime1Hz,
+                                                                          i2cGetErrorCounter());
             break;
 
         ///////////////////////////////
@@ -278,8 +278,8 @@ void cliCom(void)
 
         case 'h': // Attitudes
             cliPrintF("%9.4f, %9.4f, %9.4f\n", sensors.attitude500Hz[ROLL ] * R2D,
-                      sensors.attitude500Hz[PITCH] * R2D,
-                      sensors.attitude500Hz[YAW  ] * R2D);
+                                               sensors.attitude500Hz[PITCH] * R2D,
+                                               sensors.attitude500Hz[YAW  ] * R2D);
             break;
 
         ///////////////////////////////

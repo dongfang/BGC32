@@ -129,12 +129,10 @@ int main(void)
             sensors.gyro500Hz[YAW  ] = -((float)gyroData500Hz[YAW  ] - gyroRTBias[YAW  ] - gyroTCBias[YAW  ]) * GYRO_SCALE_FACTOR;
 
             #ifdef MARG
-                magDataUpdate = false;  // HJI No mag in this configuration
-
                 MargAHRSupdate( sensors.gyro500Hz[ROLL],   sensors.gyro500Hz[PITCH],  sensors.gyro500Hz[YAW],
                                 sensors.accel500Hz[XAXIS], sensors.accel500Hz[YAXIS], sensors.accel500Hz[ZAXIS],
                                 sensors.mag10Hz[XAXIS],    sensors.mag10Hz[YAXIS],    sensors.mag10Hz[ZAXIS],
-                                magDataUpdate,
+                                false,  //magDataUpdate,
                                 dt500Hz );
 
                 magDataUpdate = false;
@@ -142,9 +140,9 @@ int main(void)
                 getOrientation(accAngleSmooth, sensors.attitude500Hz, sensors.accel500Hz, sensors.gyro500Hz, dt500Hz);
             #endif
 
-			sensors.attitude500Hz[ROLL ] = firstOrderFilter(sensors.attitude500Hz[ROLL ], &firstOrderFilters[ROLL_ATTITUDE_500HZ_LOWPASS ]);
-            sensors.attitude500Hz[PITCH] = firstOrderFilter(sensors.attitude500Hz[PITCH], &firstOrderFilters[PITCH_ATTITUDE_500HZ_LOWPASS]);
-            sensors.attitude500Hz[YAW  ] = firstOrderFilter(sensors.attitude500Hz[YAW  ], &firstOrderFilters[YAW_ATTITUDE_500HZ_LOWPASS  ]);
+			//sensors.attitude500Hz[ROLL ] = firstOrderFilter(sensors.attitude500Hz[ROLL ], &firstOrderFilters[ROLL_ATTITUDE_500HZ_LOWPASS ]);
+            //sensors.attitude500Hz[PITCH] = firstOrderFilter(sensors.attitude500Hz[PITCH], &firstOrderFilters[PITCH_ATTITUDE_500HZ_LOWPASS]);
+            //sensors.attitude500Hz[YAW  ] = firstOrderFilter(sensors.attitude500Hz[YAW  ], &firstOrderFilters[YAW_ATTITUDE_500HZ_LOWPASS  ]);
 
             computeMotorCommands(dt500Hz);
 
