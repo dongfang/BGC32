@@ -107,10 +107,10 @@ uint8_t readMag(void)
     rawMag[XAXIS].bytes[0] = I2C_Buffer_Rx[5];
 
     // check for valid data
-	if (rawMag[XAXIS].value == -4096 || rawMag[YAXIS].value == -4096 || rawMag[ZAXIS].value == -4096)
-	    return false;
-	else
-	    return true;
+    if (rawMag[XAXIS].value == -4096 || rawMag[YAXIS].value == -4096 || rawMag[ZAXIS].value == -4096)
+        return false;
+    else
+        return true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -134,11 +134,11 @@ void initMag(void)
 
     for (i = 0; i < 10; i++)
     {
-    	i2cWrite(HMC5883_ADDRESS, HMC5883_MODE_REG, OP_MODE_SINGLE);
+        i2cWrite(HMC5883_ADDRESS, HMC5883_MODE_REG, OP_MODE_SINGLE);
 
         delay(20);
 
-        while ( (I2C_Buffer_Rx[0] & STATUS_RDY) == 0x00 )
+        while ((I2C_Buffer_Rx[0] & STATUS_RDY) == 0x00)
             i2cRead(HMC5883_ADDRESS, HMC5883_STATUS_REG, 1, I2C_Buffer_Rx);
 
         readMag();

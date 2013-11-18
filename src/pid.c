@@ -49,11 +49,11 @@ void initPID(void)
 
     for (index = 0; index < NUMBER_OF_PIDS; index++)
     {
-    	eepromConfig.PID[index].iTerm          = 0.0f;
-    	eepromConfig.PID[index].lastDcalcValue = 0.0f;
-    	eepromConfig.PID[index].lastDterm      = 0.0f;
-    	eepromConfig.PID[index].lastLastDterm  = 0.0f;
-	}
+        eepromConfig.PID[index].iTerm          = 0.0f;
+        eepromConfig.PID[index].lastDcalcValue = 0.0f;
+        eepromConfig.PID[index].lastDterm      = 0.0f;
+        eepromConfig.PID[index].lastLastDterm  = 0.0f;
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -75,26 +75,26 @@ float updatePID(float command, float state, float deltaT, uint8_t iHold, struct 
 
     if (iHold == false)
     {
-    	PIDparameters->iTerm += error * deltaT;
-    	PIDparameters->iTerm = constrain(PIDparameters->iTerm, -PIDparameters->windupGuard, PIDparameters->windupGuard);
+        PIDparameters->iTerm += error * deltaT;
+        PIDparameters->iTerm = constrain(PIDparameters->iTerm, -PIDparameters->windupGuard, PIDparameters->windupGuard);
     }
 
     ///////////////////////////////////
 
     if (PIDparameters->dErrorCalc == D_ERROR)  // Calculate D term from error
     {
-		dTerm = (error - PIDparameters->lastDcalcValue) / deltaT;
+        dTerm = (error - PIDparameters->lastDcalcValue) / deltaT;
         PIDparameters->lastDcalcValue = error;
-	}
-	else                                       // Calculate D term from state
-	{
-		dTerm = (PIDparameters->lastDcalcValue - state) / deltaT;
+    }
+    else                                       // Calculate D term from state
+    {
+        dTerm = (PIDparameters->lastDcalcValue - state) / deltaT;
 
-		if (PIDparameters->type == ANGULAR)
-		    dTerm = standardRadianFormat(dTerm);
+        if (PIDparameters->type == ANGULAR)
+            dTerm = standardRadianFormat(dTerm);
 
-		PIDparameters->lastDcalcValue = state;
-	}
+        PIDparameters->lastDcalcValue = state;
+    }
 
     ///////////////////////////////////
 
@@ -106,13 +106,13 @@ float updatePID(float command, float state, float deltaT, uint8_t iHold, struct 
     ///////////////////////////////////
 
     if (PIDparameters->type == ANGULAR)
-        return(PIDparameters->P * error                +
-	           PIDparameters->I * PIDparameters->iTerm +
-	           PIDparameters->D * dAverage);
+        return (PIDparameters->P * error                +
+                PIDparameters->I * PIDparameters->iTerm +
+                PIDparameters->D * dAverage);
     else
-        return(PIDparameters->P * ((PIDparameters->B * command) - state) +
-               PIDparameters->I * PIDparameters->iTerm +
-               PIDparameters->D * dAverage);
+        return (PIDparameters->P * ((PIDparameters->B * command) - state) +
+                PIDparameters->I * PIDparameters->iTerm +
+                PIDparameters->D * dAverage);
 
     ///////////////////////////////////
 }
@@ -121,7 +121,7 @@ float updatePID(float command, float state, float deltaT, uint8_t iHold, struct 
 
 void setPIDintegralError(uint8_t IDPid, float value)
 {
-	eepromConfig.PID[IDPid].iTerm = value;
+    eepromConfig.PID[IDPid].iTerm = value;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -131,7 +131,7 @@ void zeroPIDintegralError(void)
     uint8_t index;
 
     for (index = 0; index < NUMBER_OF_PIDS; index++)
-         setPIDintegralError(index, 0.0f);
+        setPIDintegralError(index, 0.0f);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -150,7 +150,7 @@ void zeroPIDstates(void)
     uint8_t index;
 
     for (index = 0; index < NUMBER_OF_PIDS; index++)
-         setPIDstates(index, 0.0f);
+        setPIDstates(index, 0.0f);
 }
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -19,18 +19,18 @@ void rcInit(void)
     GPIO_InitTypeDef         GPIO_InitStructure;
     TIM_TimeBaseInitTypeDef  TIM_TimeBaseInitStructure;
 
-	///////////////////////////////////
+    ///////////////////////////////////
 
-	__disable_irq();
+    __disable_irq_nested();
 
-	GPIO_PinRemapConfig(GPIO_Remap_SWJ_NoJTRST,     ENABLE);
-	GPIO_PinRemapConfig(GPIO_Remap_SWJ_JTAGDisable, ENABLE);               // JTAG-DP Disabled and SW-DP Enabled
+    GPIO_PinRemapConfig(GPIO_Remap_SWJ_NoJTRST,     ENABLE);
+    GPIO_PinRemapConfig(GPIO_Remap_SWJ_JTAGDisable, ENABLE);               // JTAG-DP Disabled and SW-DP Enabled
 
-	//EXTI IN GPIO Config
+    //EXTI IN GPIO Config
 
     GPIO_InitStructure.GPIO_Pin   = GPIO_Pin_3 | GPIO_Pin_4 | GPIO_Pin_5;  // PB3-Pitch, PB4-Roll, PB5-Yaw
-    GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_IPD;  			           // Set to Input Pull Down
-    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;    	  	           // GPIO Speed
+    GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_IPD;                         // Set to Input Pull Down
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;                      // GPIO Speed
 
     GPIO_Init(GPIOB, &GPIO_InitStructure);
 
@@ -55,15 +55,15 @@ void rcInit(void)
     ///////////////////////////////////
 
     TIM_TimeBaseInitStructure.TIM_Prescaler     = 36 - 1; // 2 MHz
-	TIM_TimeBaseInitStructure.TIM_CounterMode   = TIM_CounterMode_Up;
-	TIM_TimeBaseInitStructure.TIM_Period        = 0xFFFF;
-	TIM_TimeBaseInitStructure.TIM_ClockDivision = TIM_CKD_DIV1;
+    TIM_TimeBaseInitStructure.TIM_CounterMode   = TIM_CounterMode_Up;
+    TIM_TimeBaseInitStructure.TIM_Period        = 0xFFFF;
+    TIM_TimeBaseInitStructure.TIM_ClockDivision = TIM_CKD_DIV1;
 
-	TIM_TimeBaseInit(TIM3, &TIM_TimeBaseInitStructure);
+    TIM_TimeBaseInit(TIM3, &TIM_TimeBaseInitStructure);
 
-	TIM_Cmd(TIM3, ENABLE);
+    TIM_Cmd(TIM3, ENABLE);
 
-	__enable_irq();
+    __enable_irq_nested();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -87,7 +87,7 @@ void EXTI3_IRQHandler(void) //EXTernal interrupt routine PB3
             rc3pulseWidth = 3000;
 
         rcActive = true;
-	}
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -111,8 +111,8 @@ void EXTI4_IRQHandler(void) //EXTernal interrupt routine PB4
             rc4pulseWidth = 3000;
 
         rcActive = true;
-	}
- }
+    }
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -142,14 +142,14 @@ void EXTI9_5_IRQHandler(void) //EXTernal interrupt routine PB5
 
 uint16_t rxRead(uint8_t channel)
 {
-    if      (channel == 0)  // Roll
-       return rc4pulseWidth;
+    if (channel == 0)       // Roll
+        return rc4pulseWidth;
     else if (channel == 1)  // Pitch
-       return rc3pulseWidth;
+        return rc3pulseWidth;
     else if (channel == 2)  // Yaw
-       return rc5pulseWidth;
+        return rc5pulseWidth;
     else
-       return 3000;
+        return 3000;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

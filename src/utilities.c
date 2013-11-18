@@ -60,23 +60,23 @@ float constrain(float input, float minValue, float maxValue)
 
 void matrixMultiply(uint8_t aRows, uint8_t aCols_bRows, uint8_t bCols, int16_t matrixC[], int16_t matrixA[], int16_t matrixB[])
 {
-  uint8_t i,j,k;
+    uint8_t i, j, k;
 
-  for (i = 0; i < aRows * bCols; i++)
-  {
-    matrixC[i] = 0.0;
-  }
-
-  for (i = 0; i < aRows; i++)
-  {
-    for (j = 0; j < aCols_bRows; j++)
+    for (i = 0; i < aRows * bCols; i++)
     {
-      for (k = 0;  k < bCols; k++)
-      {
-       matrixC[i * bCols + k] += matrixA[i * aCols_bRows + j] * matrixB[j * bCols + k];
-      }
+        matrixC[i] = 0.0;
     }
-  }
+
+    for (i = 0; i < aRows; i++)
+    {
+        for (j = 0; j < aCols_bRows; j++)
+        {
+            for (k = 0;  k < bCols; k++)
+            {
+                matrixC[i * bCols + k] += matrixA[i * aCols_bRows + j] * matrixB[j * bCols + k];
+            }
+        }
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -325,7 +325,7 @@ float standardRadianFormat(float angle)
 #define white_space(c) ((c) == ' ' || (c) == '\t')
 #define valid_digit(c) ((c) >= '0' && (c) <= '9')
 
-float stringToFloat(const char *p)
+float stringToFloat(const uint8_t *p)
 {
     int frac = 0;
     double sign, value, scale;

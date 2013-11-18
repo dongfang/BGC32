@@ -57,13 +57,14 @@ void mpu6050Calibration(void)
 
     mpu6050Calibrating = true;
 
-    cliPrint("\nMPU6050 Calibration:\n");
+    cliPrintF("\nMPU6050 Calibration:\n");
 
     ///////////////////////////////////
     // Get samples at temperature1
     ///////////////////////////////////
 
-    cliPrint("\nBegin 1st MPU6050 Measurements...\n");
+    cliPrintF("\nBegin 1st MPU6050 Measurements...\n");
+
     for (index = 0; index < numberOfSamples; index++)
     {
         readMPU6050();
@@ -76,7 +77,7 @@ void mpu6050Calibration(void)
         gyroBias1[ROLL ]     += rawGyro[ROLL ].value;
         gyroBias1[PITCH]     += rawGyro[PITCH].value;
         gyroBias1[YAW  ]     += rawGyro[YAW  ].value;
-        mpu6050Temperature1  += (float) (rawMPU6050Temperature.value) / 340.0f + 35.0f;
+        mpu6050Temperature1  += (float)(rawMPU6050Temperature.value) / 340.0f + 35.0f;
 
         delayMicroseconds(sampleRate);
     }
@@ -91,21 +92,22 @@ void mpu6050Calibration(void)
 
     cliPrintF("\nGyro Temperature Reading: %6.2f", mpu6050Temperature1);
 
-    cliPrint("\n\nEnd 1st MPU6050 Measurements\n");
+    cliPrintF("\n\nEnd 1st MPU6050 Measurements\n");
 
     ///////////////////////////////////
     // Time delay for temperature
     // Stabilization
     ///////////////////////////////////
 
-    cliPrint("\nWaiting for 10 minutes for MPU6050 temp to rise...\n");
+    cliPrintF("\nWaiting for 10 minutes for MPU6050 temp to rise...\n");
     delay(600000);    // Number of mSec in 10 minutes
 
     ///////////////////////////////////
     // Get samples at temperature2
     ///////////////////////////////////
 
-    cliPrint("\nBegin 2nd MPU6050 Measurements...\n");
+    cliPrintF("\nBegin 2nd MPU6050 Measurements...\n");
+
     for (index = 0; index < numberOfSamples; index++)
     {
         readMPU6050();
@@ -133,7 +135,7 @@ void mpu6050Calibration(void)
 
     cliPrintF("\nGyro Temperature Reading: %6.2f", mpu6050Temperature2);
 
-    cliPrint("\n\nEnd 2st MPU6050 Measurements\n");
+    cliPrintF("\n\nEnd 2st MPU6050 Measurements\n");
 
     ///////////////////////////////////
 
@@ -155,7 +157,7 @@ void mpu6050Calibration(void)
 
     ///////////////////////////////////
 
-    cliPrint("\nMPU6050 Calibration Complete.\n\n");
+    cliPrintF("\nMPU6050 Calibration Complete.\n\n");
 
     mpu6050Calibrating = false;
 }

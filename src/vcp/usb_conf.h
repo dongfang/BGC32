@@ -72,7 +72,7 @@
 // HJI #define IMR_MSK (CNTR_CTRM  | CNTR_WKUPM | CNTR_SUSPM | CNTR_ERRM  | CNTR_SOFM | CNTR_ESOFM | CNTR_RESETM )
 
 // Disable Suspend/Resume response completely                                       // HJI
- #define IMR_MSK (CNTR_CTRM  | CNTR_WKUPM | CNTR_ERRM  | CNTR_SOFM | CNTR_RESETM )  // HJI
+#define IMR_MSK (CNTR_CTRM  | CNTR_WKUPM | CNTR_ERRM  | CNTR_SOFM | CNTR_RESETM )  // HJI
 
 /*#define CTR_CALLBACK*/
 /*#define DOVR_CALLBACK*/

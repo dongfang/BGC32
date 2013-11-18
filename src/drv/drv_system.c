@@ -104,78 +104,88 @@ void SysTick_Handler(void)
 {
     uint32_t currentTime;
 
+#ifdef _DTIMING
+    LA1_ENABLE;
+#endif
+
     sysTickCycleCounter = *DWT_CYCCNT;
     sysTickUptime++;
 
     if ((systemReady        == true)  &&
-    	(mpu6050Calibrating == false)) // HJI && (magCalibrating     == false))
+            (mpu6050Calibrating == false)) // HJI && (magCalibrating     == false))
 
+    {
+        frameCounter++;
+
+        if (frameCounter > FRAME_COUNT)
+            frameCounter = 1;
+
+        ///////////////////////////////
+
+        currentTime = micros();
+        deltaTime1000Hz = currentTime - previous1000HzTime;
+        previous1000HzTime = currentTime;
+
+        ///////////////////////////////
+
+        if ((frameCounter % COUNT_500HZ) == 0)
         {
-            frameCounter++;
-            if (frameCounter > FRAME_COUNT)
-                frameCounter = 1;
+            frame_500Hz = true;
 
-            ///////////////////////////////
+            readMPU6050();
 
-            currentTime = micros();
-            deltaTime1000Hz = currentTime - previous1000HzTime;
-            previous1000HzTime = currentTime;
+            accelData500Hz[XAXIS] = rawAccel[XAXIS].value;
+            accelData500Hz[YAXIS] = rawAccel[YAXIS].value;
+            accelData500Hz[ZAXIS] = rawAccel[ZAXIS].value;
 
-            ///////////////////////////////
-
-            if ((frameCounter % COUNT_500HZ) == 0)
-            {
-                frame_500Hz = true;
-
-                readMPU6050();
-
-                accelData500Hz[XAXIS] = rawAccel[XAXIS].value;
-                accelData500Hz[YAXIS] = rawAccel[YAXIS].value;
-                accelData500Hz[ZAXIS] = rawAccel[ZAXIS].value;
-
-                gyroData500Hz[ROLL ] = rawGyro[ROLL ].value;
-                gyroData500Hz[PITCH] = rawGyro[PITCH].value;
-                gyroData500Hz[YAW  ] = rawGyro[YAW  ].value;
-            }
-
-            ///////////////////////////////
-
-            if ((frameCounter % COUNT_100HZ) == 0)
-            {
-                frame_100Hz = true;
-            }
-
-            ///////////////////////////////
-
-            if ((frameCounter % COUNT_50HZ) == 0)
-            {
-                frame_50Hz = true;
-            }
-
-            ///////////////////////////////
-
-            // HJI if (((frameCounter + 1) % COUNT_10HZ) == 0)
-            // HJI     newMagData = readMag();
-
-            if ((frameCounter % COUNT_10HZ) == 0)
-                frame_10Hz = true;
-
-            ///////////////////////////////
-
-            if ((frameCounter % COUNT_5HZ) == 0)
-                frame_5Hz = true;
-
-            ///////////////////////////////
-
-            if ((frameCounter % COUNT_1HZ) == 0)
-                frame_1Hz = true;
-
-            ///////////////////////////////////
-
-            executionTime1000Hz = micros() - currentTime;
-
-            ///////////////////////////////
+            gyroData500Hz[ROLL ] = rawGyro[ROLL ].value;
+            gyroData500Hz[PITCH] = rawGyro[PITCH].value;
+            gyroData500Hz[YAW  ] = rawGyro[YAW  ].value;
         }
+
+        ///////////////////////////////
+
+        if ((frameCounter % COUNT_100HZ) == 0)
+        {
+            frame_100Hz = true;
+        }
+
+        ///////////////////////////////
+
+        if ((frameCounter % COUNT_50HZ) == 0)
+        {
+            frame_50Hz = true;
+        }
+
+        ///////////////////////////////
+
+        // HJI if (((frameCounter + 1) % COUNT_10HZ) == 0)
+        // HJI     newMagData = readMag();
+
+        if ((frameCounter % COUNT_10HZ) == 0)
+            frame_10Hz = true;
+
+        ///////////////////////////////
+
+        if ((frameCounter % COUNT_5HZ) == 0)
+            frame_5Hz = true;
+
+        ///////////////////////////////
+
+        if ((frameCounter % COUNT_1HZ) == 0)
+            frame_1Hz = true;
+
+        ///////////////////////////////////
+
+        executionTime1000Hz = micros() - currentTime;
+
+        ///////////////////////////////
+    }
+
+#ifdef _DTIMING
+    LA1_DISABLE;
+#endif
+
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -197,7 +207,7 @@ uint32_t micros(void)
         cycle = *DWT_CYCCNT;
         oldCycle = sysTickCycleCounter;
     }
-    while ( __STREXW( timeMs , &sysTickUptime ) );
+    while (__STREXW(timeMs , &sysTickUptime));
 
     return (timeMs * 1000) + (cycle - oldCycle) / usTicks;
 }
@@ -211,13 +221,35 @@ uint32_t millis(void)
     return sysTickUptime;
 }
 
+#ifdef _DTIMING
+void timingSetup(void)
+{
+    GPIO_InitTypeDef GPIO_InitStructure;
+
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC,   ENABLE);
+
+    GPIO_StructInit(&GPIO_InitStructure);
+
+    // Init pins
+    GPIO_InitStructure.GPIO_Pin   = GPIO_Pin_2 | GPIO_Pin_3;
+    GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_Out_PP;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+
+    GPIO_Init(GPIOC, &GPIO_InitStructure);
+
+    LA2_DISABLE;
+    LA1_DISABLE;
+}
+#endif
+
+
 ///////////////////////////////////////////////////////////////////////////////
 // System Initialization
 ///////////////////////////////////////////////////////////////////////////////
 
 void systemInit(void)
 {
-	// Init cycle counter
+    // Init cycle counter
     cycleCounterInit();
 
     // SysTick
@@ -228,7 +260,11 @@ void systemInit(void)
                            RCC_APB2Periph_TIM1  | RCC_APB2Periph_TIM8, ENABLE);
 
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3  | RCC_APB1Periph_TIM4  |
-    		               RCC_APB1Periph_TIM5  | RCC_APB1Periph_TIM6, ENABLE);
+                           RCC_APB1Periph_TIM5  | RCC_APB1Periph_TIM6  | RCC_APB1Periph_I2C2, ENABLE);
+
+#ifdef _DTIMING
+    timingSetup();
+#endif
 
     ///////////////////////////////////////////////////////////////////////////
 
@@ -246,9 +282,26 @@ void systemInit(void)
 
     delay(10000);  // 10 seconds of 20 second delay for sensor stabilization
 
-    #if defined(__DATE__) && defined(__TIME__)
-        cliPrintF("\nBGC32 Firmware V%s, Build Date " __DATE__ " "__TIME__" \n", __BGC32_VERSION);
-    #endif
+    if (GetVCPConnectMode() != eVCPConnectReset)
+    {
+        cliPrintF("\r\nUSB startup delay...\r\n");
+        delay(3000);
+
+        if (GetVCPConnectMode() == eVCPConnectData)
+        {
+            cliPrintF("\r\nBGC32 firmware starting up, USB connected...\r\n");
+        }
+    }
+    else
+    {
+        cliPrintF("\r\nDelaying for usb/serial driver to settle\r\n");
+        delay(3000);
+        cliPrintF("\r\nBGC32 firmware starting up, serial active...\r\n");
+    }
+
+#if defined(__DATE__) && defined(__TIME__)
+    cliPrintF("\nBGC32 Firmware V%s, Build Date " __DATE__ " "__TIME__" \n", __BGC32_VERSION);
+#endif
 
     if ((RCC->CR & RCC_CR_HSERDY) != RESET)
     {
@@ -288,7 +341,8 @@ void delayMicroseconds(uint32_t us)
     uint32_t elapsed = 0;
     uint32_t lastCount = *DWT_CYCCNT;
 
-    for (;;) {
+    for (;;)
+    {
         register uint32_t current_count = *DWT_CYCCNT;
         uint32_t elapsed_us;
 
@@ -298,6 +352,7 @@ void delayMicroseconds(uint32_t us)
 
         // convert to microseconds
         elapsed_us = elapsed / usTicks;
+
         if (elapsed_us >= us)
             break;
 
@@ -392,3 +447,9 @@ void reboot(void)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+
+void _init(void) __attribute__((weak));
+void _init(void)
+{
+    ;
+}

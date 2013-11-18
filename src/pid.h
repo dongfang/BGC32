@@ -45,15 +45,16 @@
 #define D_STATE false
 
 // PID Variables
-typedef struct PIDdata {
-  float   B, P, I, D;
-  float   iTerm;
-  float   windupGuard;
-  float   lastDcalcValue;
-  float   lastDterm;
-  float   lastLastDterm;
-  uint8_t dErrorCalc;
-  uint8_t type;
+typedef struct PIDdata
+{
+    float   B, P, I, D;
+    float   iTerm;
+    float   windupGuard;
+    float   lastDcalcValue;
+    float   lastDterm;
+    float   lastLastDterm;
+    uint8_t dErrorCalc;
+    uint8_t type;
 } PIDdata_t;
 
 extern uint8_t holdIntegrators;

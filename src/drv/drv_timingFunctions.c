@@ -42,7 +42,7 @@
 
 void timingFunctionsInit(void)
 {
-	TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
+    TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
 
     // Output timers
 

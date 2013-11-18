@@ -160,7 +160,7 @@ void TIM8_UP_IRQHandler(void) // roll axis
 {
     TIM8->SR &= ~TIM_SR_UIF; // clear UIF flag
 
-    __disable_irq();
+    __disable_irq_nested();
     unsigned short cnt = TIM8->CNT;
     updateCounter(ROLL, cnt);
 
@@ -182,7 +182,8 @@ void TIM8_UP_IRQHandler(void) // roll axis
 
         TIM8->DIER &= ~TIM_DIER_UIE; // disable update interrupt
     }
-    __enable_irq();
+
+    __enable_irq_nested();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -193,7 +194,7 @@ void TIM1_UP_IRQHandler(void) // pitch axis
 {
     TIM1->SR &= ~TIM_SR_UIF; // clear UIF flag
 
-    __disable_irq();
+    __disable_irq_nested();
     unsigned short cnt = TIM1->CNT;
     updateCounter(PITCH, cnt);
 
@@ -215,7 +216,8 @@ void TIM1_UP_IRQHandler(void) // pitch axis
 
         TIM1->DIER &= ~TIM_DIER_UIE; // disable update interrupt
     }
-    __enable_irq();
+
+    __enable_irq_nested();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -228,7 +230,7 @@ void TIM5_IRQHandler(void) // yaw axis
     {
         TIM5->SR &= ~TIM_SR_UIF; // clear UIF flag
 
-        __disable_irq();
+        __disable_irq_nested();
         unsigned short cnt = TIM5->CNT;
         updateCounter(YAW, cnt);
 
@@ -259,7 +261,8 @@ void TIM5_IRQHandler(void) // yaw axis
 
             TIM5->DIER &= ~TIM_DIER_UIE;  // disable update interrupt
         }
-        __enable_irq();
+
+        __enable_irq_nested();
     }
 }
 
@@ -374,6 +377,44 @@ void setPWMFastTable(int *pwm, float angle, float power)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+//  Set PWM Via Table Lookup
+///////////////////////////////////////////////////////////////////////////////
+
+/*
+void setPWMFastTable(int *pwm, float angle, float power, uint8_t reverse)
+{
+    if (testPhase >= 0)
+    {
+        angle = testPhase;
+    }
+
+    int angleInt = (int)round(angle / M_TWOPI * SINARRAYSIZE);
+
+    angleInt = angleInt % SINARRAYSIZE;
+
+    if (angleInt < 0)
+    {
+        angleInt = SINARRAYSIZE + angleInt;
+    }
+
+    int iPower = 5 * (int)power;
+
+    if (reverse == false)
+    {
+        pwm[0] = (sinDataI16[ angleInt                               % SINARRAYSIZE] * iPower + SINARRAYSCALE / 2) / SINARRAYSCALE + PWM_PERIOD / 2;
+        pwm[1] = (sinDataI16[(angleInt +  1 * SINARRAYSIZE / 3)      % SINARRAYSIZE] * iPower + SINARRAYSCALE / 2) / SINARRAYSCALE + PWM_PERIOD / 2;
+        pwm[2] = (sinDataI16[(angleInt + (2 * SINARRAYSIZE + 1) / 3) % SINARRAYSIZE] * iPower + SINARRAYSCALE / 2) / SINARRAYSCALE + PWM_PERIOD / 2;
+    }
+    else
+    {
+        pwm[0] = -(sinDataI16[ angleInt                               % SINARRAYSIZE] * iPower + SINARRAYSCALE / 2) / SINARRAYSCALE + PWM_PERIOD / 2;
+        pwm[1] = -(sinDataI16[(angleInt -  1 * SINARRAYSIZE / 3)      % SINARRAYSIZE] * iPower + SINARRAYSCALE / 2) / SINARRAYSCALE + PWM_PERIOD / 2;
+        pwm[2] = -(sinDataI16[(angleInt - (2 * SINARRAYSIZE + 1) / 3) % SINARRAYSIZE] * iPower + SINARRAYSCALE / 2) / SINARRAYSCALE + PWM_PERIOD / 2;
+    }
+}
+*/
+
+///////////////////////////////////////////////////////////////////////////////
 //  Set PWM
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -388,11 +429,11 @@ void setPWM(int *pwm, float angle, float power)
 
 void setPWMData(int *target, int *pwm)
 {
-    __disable_irq();
+    __disable_irq_nested();
     target[0] = pwm[0];
     target[1] = pwm[1];
     target[2] = pwm[2];
-    __enable_irq();
+    __enable_irq_nested();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -426,10 +467,10 @@ void limitYawPWM(int *pwm)
 
 void activateIRQ(TIM_TypeDef *tim)
 {
-    __disable_irq();
+    __disable_irq_nested();
     tim->SR &= ~TIM_SR_UIF;   // clear UIF flag
     tim->DIER = TIM_DIER_UIE; // Enable update interrupt
-    __enable_irq();
+    __enable_irq_nested();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -524,13 +565,13 @@ void pwmMotorDriverInit(void)
 
     setupPWMIrq(TIM8_UP_IRQn);
 
-    __disable_irq();
+    __disable_irq_nested();
     {
         vu32 *tim8Enable = BB_PERIPH_ADDR(&(TIM8->CR1), 0);
         *tim8Enable = 1;
         TIM_CtrlPWMOutputs(TIM8, ENABLE);
     }
-    __enable_irq();
+    __enable_irq_nested();
 
 
     ///////////////////////////////////
@@ -555,13 +596,13 @@ void pwmMotorDriverInit(void)
 
     setupPWMIrq(TIM1_UP_IRQn);
 
-    __disable_irq();
+    __disable_irq_nested();
     {
         vu32 *tim1Enable = BB_PERIPH_ADDR(&(TIM1->CR1), 0);
         *tim1Enable = 1;
         TIM_CtrlPWMOutputs(TIM1, ENABLE);
     }
-    __enable_irq();
+    __enable_irq_nested();
 
 
     ///////////////////////////////////
@@ -585,7 +626,7 @@ void pwmMotorDriverInit(void)
 
     setupPWMIrq(TIM5_IRQn);
 
-    __disable_irq();
+    __disable_irq_nested();
     {
         vu32 *tim5Enable = BB_PERIPH_ADDR(&(TIM5->CR1), 0);
         vu32 *tim4Enable = BB_PERIPH_ADDR(&(TIM4->CR1), 0);
@@ -597,7 +638,7 @@ void pwmMotorDriverInit(void)
         TIM_CtrlPWMOutputs(TIM5, ENABLE);
         TIM_CtrlPWMOutputs(TIM4, ENABLE);
     }
-    __enable_irq();
+    __enable_irq_nested();
 
     ///////////////////////////////////
 

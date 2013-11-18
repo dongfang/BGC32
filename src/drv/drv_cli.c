@@ -38,13 +38,35 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 
-#define USB_TIMEOUT  50
+//#define USB_TIMEOUT  50
 
 tRingBuffer RingBufferUSBTX;
 
-int USBCallBackCalled = 0;
+static int USBCallBackCalled = 0;
 
-unsigned long lastCallbackTime;
+void printUSART(const char *fmt, ...)
+{
+    char buf[256];
+
+    va_list vlist;
+    va_start(vlist, fmt);
+
+    vsnprintf(buf, sizeof(buf) - 1, fmt, vlist);
+    USART_PutString((unsigned char *)buf);
+    va_end(vlist);
+}
+
+void printDirect(const char *fmt, ...)
+{
+    char buf[256];
+
+    va_list vlist;
+    va_start(vlist, fmt);
+
+    vsnprintf(buf, sizeof(buf) - 1, fmt, vlist);
+    USART_PutStringDirect((unsigned char *)buf);
+    va_end(vlist);
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -68,8 +90,20 @@ void USBPushTXData(void)
             len = RingBufferSize(rb) - rb->Read;
         }
 
-        len = CDC_Send_DATA(p, len);
+        if (len > 64)
+        {
+            len = 64;
+        }
+
+        packetSent = len;
+
+        // move read pointer before sending data to avoid race condition with endpoint interrupt
         rb->Read = (rb->Read + len) % RingBufferSize(rb);
+        CDC_Send_DATA(p, len);
+    }
+    else
+    {
+        packetSent = 0;
     }
 }
 
@@ -82,23 +116,49 @@ void USBPushTX(void)
         return; // transfer will be handled by next callback
     }
 
-    // something hangs, retrigger send
-    lastCallbackTime = millis();
+    //__disable_irq_nested();
     USBPushTXData();
+    //__enable_irq_nested();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // CLI Initialization
 ///////////////////////////////////////////////////////////////////////////////
 
+void EP1_IN_Callback(void)
+{
+    USBCallBackCalled = 1;
+    //__disable_irq_nested();
+    USBPushTXData();
+    //__enable_irq_nested();
+}
+
 void cliInit(void)
 {
-	Set_System();
-	Set_USBClock();
-	USB_Interrupts_Config();
-	USB_Init();
+    Set_System();
+    Usart4Init();
 
-	RingBufferInit(&RingBufferUSBTX, &USBPushTX);
+    printUSART("USART4 ready\n");
+
+    Set_USBClock();
+    USB_Interrupts_Config();
+    USB_Init();
+
+    RingBufferInit(&RingBufferUSBTX, &USBPushTX);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// CLI Print
+///////////////////////////////////////////////////////////////////////////////
+
+uint32_t cliPrint(const uint8_t *str, uint32_t len)
+{
+    if (usbIsConnected())
+    {
+        RingBufferPutBlock(&RingBufferUSBTX, (uint8_t *)str, len, 0);
+    }
+
+    return len;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -114,32 +174,18 @@ uint32_t cliAvailable(void)
 // CLI Read
 ///////////////////////////////////////////////////////////////////////////////
 
-uint8_t cliRead(void)
+uint32_t cliRead(uint8_t *recvBuf, uint32_t len)
 {
-    uint8_t buf[1];
+    int newBytes = cliAvailable();
 
-    uint32_t rxed = 0;
-
-    while (rxed < 1)
+    if ((int)len > newBytes)
     {
-        rxed += CDC_Receive_DATA((uint8_t*)buf + rxed, 1 - rxed);
+        len = newBytes;
     }
 
-    return buf[0];
-}
+    CDC_Receive_DATA(recvBuf, len);
 
-///////////////////////////////////////////////////////////////////////////////
-// CLI Print
-///////////////////////////////////////////////////////////////////////////////
-
-void cliPrint(char *str)
-{
-    uint32_t len;
-
-    len = strlen(str);
-
-	if (usbIsConnected())
-	    RingBufferPutBlock(&RingBufferUSBTX, (uint8_t *)str, len, 0);
+    return len;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -147,16 +193,47 @@ void cliPrint(char *str)
 // From Ala42
 ///////////////////////////////////////////////////////////////////////////////
 
-void cliPrintF(const char * fmt, ...)
+void cliPrintF(const char *fmt, ...)
 {
-	char buf[256];
+    char buf[256];
 
-	va_list  vlist;
-	va_start (vlist, fmt);
+    va_list  vlist;
+    va_start(vlist, fmt);
 
-	vsnprintf(buf, sizeof(buf), fmt, vlist);
-	cliPrint(buf);
-	va_end(vlist);
+    vsnprintf(buf, sizeof(buf) - 1, fmt, vlist);
+    cliPrint((uint8_t *)buf, strlen(buf));
+    va_end(vlist);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+
+void usbDsbISR(void)
+{
+    ;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+static int lastChar = -1;
+int getChar(void)
+{
+    if (lastChar < 0)
+    {
+        if (cliAvailable())
+        {
+            uint8_t c;
+            cliRead(&c, 1);
+            return (c);
+        }
+        else
+        {
+            return -1;
+        }
+    }
+    else
+    {
+        int c = lastChar;
+        lastChar = -1;
+        return (c);
+    }
+}

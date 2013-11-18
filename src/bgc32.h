@@ -40,7 +40,7 @@
 
 #define __BGC32_VERSION "1.0"
 
-//#define MARG
+#define MARG
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -76,17 +76,20 @@ extern float   testPhaseDelta;
 // Misc Type Definitions
 ///////////////////////////////////////////////////////////////////////////////
 
-typedef union {
+typedef union
+{
     int16_t value;
     uint8_t bytes[2];
 } int16andUint8_t;
 
-typedef union {
+typedef union
+{
     int32_t value;
     uint8_t bytes[4];
 } int32andUint8_t;
 
-typedef union {
+typedef union
+{
     uint16_t value;
     uint8_t bytes[2];
 } uint16andUint8_t;
@@ -183,10 +186,10 @@ typedef struct eepromConfig_t
     uint8_t yawRateCmdInput;
 
     float   gimbalRollRate;
-	float   gimbalPitchRate;
-	float   gimbalYawRate;
+    float   gimbalPitchRate;
+    float   gimbalYawRate;
 
-	float   gimbalRollLeftLimit;
+    float   gimbalRollLeftLimit;
     float   gimbalRollRightLimit;
     float   gimbalPitchDownLimit;
     float   gimbalPitchUpLimit;

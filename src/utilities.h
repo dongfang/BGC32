@@ -36,6 +36,13 @@
 
 #pragma once
 
+#ifdef _DTIMING
+#define LA2_ENABLE       GPIO_SetBits(GPIOC,   GPIO_Pin_2)
+#define LA2_DISABLE      GPIO_ResetBits(GPIOC, GPIO_Pin_2)
+#define LA1_ENABLE       GPIO_SetBits(GPIOC,   GPIO_Pin_3)
+#define LA1_DISABLE      GPIO_ResetBits(GPIOC, GPIO_Pin_3)
+#endif
+
 ///////////////////////////////////////////////////////////////////////////////
 // Constrain
 ///////////////////////////////////////////////////////////////////////////////
@@ -109,4 +116,4 @@ float standardRadianFormat(float angle);
 // String to Float Conversion
 ////////////////////////////////////////////////////////////////////////////////
 
-float stringToFloat(const char *p);
+float stringToFloat(const uint8_t *p);

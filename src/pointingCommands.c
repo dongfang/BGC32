@@ -57,9 +57,9 @@ void processPointingCommands(void)
 
     if (rcActive == true)
     {
-		// Read receiver commands
+        // Read receiver commands
         for (channel = 0; channel < 3; channel++)
-           rxCommand[channel] = (float)rxRead(channel);
+            rxCommand[channel] = (float)rxRead(channel);
 
         rxCommand[ROLL]  -= eepromConfig.midCommand;                  // Roll Range    -1000:1000
         rxCommand[PITCH] -= eepromConfig.midCommand;                  // Pitch Range   -1000:1000
@@ -68,27 +68,28 @@ void processPointingCommands(void)
 
     // Set past command in detent values
     for (channel = 0; channel < 3; channel++)
-    	previousCommandInDetent[channel] = commandInDetent[channel];
+        previousCommandInDetent[channel] = commandInDetent[channel];
 
     // Apply deadbands and set detent discretes
     for (channel = 0; channel < 3; channel++)
     {
-    	if ((rxCommand[channel] <= DEADBAND) && (rxCommand[channel] >= -DEADBAND))
+        if ((rxCommand[channel] <= DEADBAND) && (rxCommand[channel] >= -DEADBAND))
         {
             rxCommand[channel] = 0;
-  	        commandInDetent[channel] = true;
-  	    }
+            commandInDetent[channel] = true;
+        }
         else
-  	    {
-  	        commandInDetent[channel] = false;
-  	        if (rxCommand[channel] > 0)
-  	        {
-  		        rxCommand[channel] = (rxCommand[channel] - DEADBAND) * DEADBAND_SLOPE;
-  	        }
-  	        else
-  	        {
-  	            rxCommand[channel] = (rxCommand[channel] + DEADBAND) * DEADBAND_SLOPE;
-  	        }
+        {
+            commandInDetent[channel] = false;
+
+            if (rxCommand[channel] > 0)
+            {
+                rxCommand[channel] = (rxCommand[channel] - DEADBAND) * DEADBAND_SLOPE;
+            }
+            else
+            {
+                rxCommand[channel] = (rxCommand[channel] + DEADBAND) * DEADBAND_SLOPE;
+            }
         }
     }
 
@@ -110,22 +111,22 @@ void processPointingCommands(void)
 
         pointingCmd[ROLL] = firstOrderFilter(pointingCmd[ROLL], &firstOrderFilters[ROLL_RATE_POINTING_50HZ_LOWPASS]);
     }
-	else
-	{
+    else
+    {
         if (rxCommand[ROLL] >= 0.0f)
             pointingCmd[ROLL] = rxCommand[ROLL] * eepromConfig.gimbalRollRightLimit;
         else
             pointingCmd[ROLL] = rxCommand[ROLL] * eepromConfig.gimbalRollLeftLimit;
 
         pointingCmd[ROLL] = firstOrderFilter(pointingCmd[ROLL], &firstOrderFilters[ROLL_ATT_POINTING_50HZ_LOWPASS]);
-	}
+    }
 
     pointingCmd[ROLL] = constrain(pointingCmd[ROLL], -eepromConfig.gimbalYawLeftLimit, eepromConfig.gimbalRollRightLimit);
 
-	///////////////////////////////////
+    ///////////////////////////////////
 
-	if (eepromConfig.pitchRateCmdInput == true)
-	{
+    if (eepromConfig.pitchRateCmdInput == true)
+    {
         if ((rxCommand[PITCH] >= 0.0f) && (pointingCmd[PITCH] <=  eepromConfig.gimbalPitchUpLimit))
             pointingCmd[PITCH] += rxCommand[PITCH] * eepromConfig.gimbalPitchRate * 0.02f;  // Constant DT of 0.02 good enough here
 
@@ -133,9 +134,9 @@ void processPointingCommands(void)
             pointingCmd[PITCH] += rxCommand[PITCH] * eepromConfig.gimbalPitchRate * 0.02f;  // Constant DT of 0.02 good enough here
 
         pointingCmd[PITCH] = firstOrderFilter(pointingCmd[PITCH], &firstOrderFilters[PITCH_RATE_POINTING_50HZ_LOWPASS]);
-}
-	else
-	{
+    }
+    else
+    {
         if (rxCommand[PITCH] >= 0.0f)
             pointingCmd[PITCH] = rxCommand[PITCH] * eepromConfig.gimbalPitchUpLimit;
 
@@ -143,14 +144,14 @@ void processPointingCommands(void)
             pointingCmd[PITCH] = rxCommand[PITCH] * eepromConfig.gimbalPitchDownLimit;
 
         pointingCmd[PITCH] = firstOrderFilter(pointingCmd[PITCH], &firstOrderFilters[PITCH_ATT_POINTING_50HZ_LOWPASS]);
-	}
+    }
 
-	pointingCmd[PITCH] = constrain(pointingCmd[PITCH], -eepromConfig.gimbalPitchDownLimit, eepromConfig.gimbalPitchUpLimit);
+    pointingCmd[PITCH] = constrain(pointingCmd[PITCH], -eepromConfig.gimbalPitchDownLimit, eepromConfig.gimbalPitchUpLimit);
 
-	///////////////////////////////////
+    ///////////////////////////////////
 
-	if (eepromConfig.yawRateCmdInput == true)
-	{
+    if (eepromConfig.yawRateCmdInput == true)
+    {
         if ((rxCommand[YAW] >= 0.0f) && (pointingCmd[YAW] <=  eepromConfig.gimbalYawRightLimit))
             pointingCmd[YAW] += rxCommand[YAW] * eepromConfig.gimbalYawRate * 0.02f;  // Constant DT of 0.02 good enough here
 
@@ -159,8 +160,8 @@ void processPointingCommands(void)
 
         pointingCmd[YAW] = firstOrderFilter(pointingCmd[YAW], &firstOrderFilters[YAW_RATE_POINTING_50HZ_LOWPASS]);
     }
-	else
-	{
+    else
+    {
         if (rxCommand[YAW] >= 0.0f)
             pointingCmd[YAW] = rxCommand[YAW] * eepromConfig.gimbalYawRightLimit;
 
@@ -170,9 +171,9 @@ void processPointingCommands(void)
         pointingCmd[YAW] = firstOrderFilter(pointingCmd[YAW], &firstOrderFilters[YAW_ATT_POINTING_50HZ_LOWPASS]);
     }
 
-	pointingCmd[YAW] = constrain(pointingCmd[YAW], -eepromConfig.gimbalYawLeftLimit, eepromConfig.gimbalYawRightLimit);
+    pointingCmd[YAW] = constrain(pointingCmd[YAW], -eepromConfig.gimbalYawLeftLimit, eepromConfig.gimbalYawRightLimit);
 
-	///////////////////////////////////
+    ///////////////////////////////////
 }
 
 ///////////////////////////////////////////////////////////////////////////////

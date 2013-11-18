@@ -61,13 +61,6 @@ float step        = 0.0f;
 // Yaw AutoPan
 ///////////////////////////////////////////////////////////////////////////////
 
-//  Inputs:
-//    motorPos is electrical degrees
-//    setpoint is electrical degrees
-//
-//  Outputs:
-//    autoPan is electrical degrees
-
 float autoPan(float motorPos, float setpoint)
 {
     if (motorPos < centerPoint - YAP_DEADBAND)
@@ -97,27 +90,27 @@ float autoPan(float motorPos, float setpoint)
 
 void computeMotorCommands(float dt)
 {
-	holdIntegrators = false;
+    holdIntegrators = false;
 
-	///////////////////////////////////
+    ///////////////////////////////////
 
-	if (eepromConfig.rollEnabled == true)
-	{
-	    pidCmd[ROLL] = updatePID(pointingCmd[ROLL] * mechanical2electricalDegrees[ROLL],
-	                             -sensors.attitude500Hz[ROLL] * mechanical2electricalDegrees[ROLL],
-	                             dt, holdIntegrators, &eepromConfig.PID[ROLL_PID]);
+    if (eepromConfig.rollEnabled == true)
+    {
+        pidCmd[ROLL] = updatePID(pointingCmd[ROLL] * mechanical2electricalDegrees[ROLL],
+                                 -sensors.attitude500Hz[ROLL] * mechanical2electricalDegrees[ROLL],
+                                 dt, holdIntegrators, &eepromConfig.PID[ROLL_PID]);
 
-	    outputRate[ROLL] = pidCmd[ROLL] - pidCmdPrev[ROLL];
+        outputRate[ROLL] = pidCmd[ROLL] - pidCmdPrev[ROLL];
 
-	    if (outputRate[ROLL] > eepromConfig.rateLimit)
-	        pidCmd[ROLL] = pidCmdPrev[ROLL] + eepromConfig.rateLimit;
+        if (outputRate[ROLL] > eepromConfig.rateLimit)
+            pidCmd[ROLL] = pidCmdPrev[ROLL] + eepromConfig.rateLimit;
 
-	    if (outputRate[ROLL] < -eepromConfig.rateLimit)
-	        pidCmd[ROLL] = pidCmdPrev[ROLL] - eepromConfig.rateLimit;
+        if (outputRate[ROLL] < -eepromConfig.rateLimit)
+            pidCmd[ROLL] = pidCmdPrev[ROLL] - eepromConfig.rateLimit;
 
-	    pidCmdPrev[ROLL] = pidCmd[ROLL];
+        pidCmdPrev[ROLL] = pidCmd[ROLL];
 
-	    setRollMotor(pidCmd[ROLL], (int)eepromConfig.rollPower);
+        setRollMotor(pidCmd[ROLL], (int)eepromConfig.rollPower);
     }
 
     ///////////////////////////////////
@@ -128,17 +121,17 @@ void computeMotorCommands(float dt)
                                   sensors.attitude500Hz[PITCH] * mechanical2electricalDegrees[PITCH],
                                   dt, holdIntegrators, &eepromConfig.PID[PITCH_PID]);
 
-	    outputRate[PITCH] = pidCmd[PITCH] - pidCmdPrev[PITCH];
+        outputRate[PITCH] = pidCmd[PITCH] - pidCmdPrev[PITCH];
 
-	    if (outputRate[PITCH] > eepromConfig.rateLimit)
-	        pidCmd[PITCH] = pidCmdPrev[PITCH] + eepromConfig.rateLimit;
+        if (outputRate[PITCH] > eepromConfig.rateLimit)
+            pidCmd[PITCH] = pidCmdPrev[PITCH] + eepromConfig.rateLimit;
 
-	    if (outputRate[PITCH] < -eepromConfig.rateLimit)
-	        pidCmd[PITCH] = pidCmdPrev[PITCH] - eepromConfig.rateLimit;
+        if (outputRate[PITCH] < -eepromConfig.rateLimit)
+            pidCmd[PITCH] = pidCmdPrev[PITCH] - eepromConfig.rateLimit;
 
-	    pidCmdPrev[PITCH] = pidCmd[PITCH];
+        pidCmdPrev[PITCH] = pidCmd[PITCH];
 
-	    setPitchMotor(pidCmd[PITCH], (int)eepromConfig.pitchPower);
+        setPitchMotor(pidCmd[PITCH], (int)eepromConfig.pitchPower);
     }
 
     ///////////////////////////////////
@@ -150,19 +143,19 @@ void computeMotorCommands(float dt)
         else
             yawCmd = -pointingCmd[YAW];
 
-        pidCmd[YAW] = updatePID( yawCmd * mechanical2electricalDegrees[YAW],
+        pidCmd[YAW] = updatePID(yawCmd * mechanical2electricalDegrees[YAW],
                                 sensors.attitude500Hz[YAW] * mechanical2electricalDegrees[YAW],
                                 dt, holdIntegrators, &eepromConfig.PID[YAW_PID]);
 
-	    outputRate[YAW] = pidCmd[YAW] - pidCmdPrev[YAW];
+        outputRate[YAW] = pidCmd[YAW] - pidCmdPrev[YAW];
 
-	    if (outputRate[YAW] > eepromConfig.rateLimit)
-	        pidCmd[YAW] = pidCmdPrev[YAW] + eepromConfig.rateLimit;
+        if (outputRate[YAW] > eepromConfig.rateLimit)
+            pidCmd[YAW] = pidCmdPrev[YAW] + eepromConfig.rateLimit;
 
-	    if (outputRate[YAW] < -eepromConfig.rateLimit)
-	        pidCmd[YAW] = pidCmdPrev[YAW] - eepromConfig.rateLimit;
+        if (outputRate[YAW] < -eepromConfig.rateLimit)
+            pidCmd[YAW] = pidCmdPrev[YAW] - eepromConfig.rateLimit;
 
-	    pidCmdPrev[YAW] = pidCmd[YAW];
+        pidCmdPrev[YAW] = pidCmd[YAW];
 
         setYawMotor(pidCmd[YAW], (int)eepromConfig.yawPower);
     }

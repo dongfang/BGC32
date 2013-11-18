@@ -46,50 +46,51 @@ uint8_t magCalibrating = false;
 
 void magCalibration(void)
 {
-	uint16_t calibrationCounter = 0;
-	uint16_t population[2][3];
+    uint16_t calibrationCounter = 0;
+    uint16_t population[2][3];
 
-	float    d[600][3];       // 600 Samples = 60 seconds of data at 10 Hz
-	float    sphereOrigin[3];
-	float    sphereRadius;
+    float    d[600][3];       // 600 Samples = 60 seconds of data at 10 Hz
+    float    sphereOrigin[3];
+    float    sphereRadius;
+    uint8_t     temp[1];
 
-	magCalibrating = true;
+    magCalibrating = true;
 
-	cliPrint("\nMagnetometer Calibration:\n\n");
+    cliPrintF("\nMagnetometer Calibration:\n\n");
 
-    cliPrint("Rotate magnetometer around all axes multiple times\n");
-    cliPrint("Must complete within 60 seconds....\n\n");
-    cliPrint("  Send a character when ready to begin and another when complete\n\n");
+    cliPrintF("Rotate magnetometer around all axes multiple times\n");
+    cliPrintF("Must complete within 60 seconds....\n\n");
+    cliPrintF("  Send a character when ready to begin and another when complete\n\n");
 
     while (cliAvailable() == false);
 
-    cliPrint("  Start rotations.....\n");
+    cliPrintF("  Start rotations.....\n");
 
-    cliRead();
+    cliRead(temp, 1);
 
     while ((cliAvailable() == false) && (calibrationCounter < 600))
-	{
-		if (readMag() == true)
-		{
-			d[calibrationCounter][XAXIS] = (float)rawMag[XAXIS].value * magScaleFactor[XAXIS];
-			d[calibrationCounter][YAXIS] = (float)rawMag[YAXIS].value * magScaleFactor[YAXIS];
-			d[calibrationCounter][ZAXIS] = (float)rawMag[ZAXIS].value * magScaleFactor[ZAXIS];
+    {
+        if (readMag() == true)
+        {
+            d[calibrationCounter][XAXIS] = (float)rawMag[XAXIS].value * magScaleFactor[XAXIS];
+            d[calibrationCounter][YAXIS] = (float)rawMag[YAXIS].value * magScaleFactor[YAXIS];
+            d[calibrationCounter][ZAXIS] = (float)rawMag[ZAXIS].value * magScaleFactor[ZAXIS];
 
-			calibrationCounter++;
-		}
+            calibrationCounter++;
+        }
 
-		delay(100);
-	}
+        delay(100);
+    }
 
-	cliPrintF("\n\nMagnetometer Bias Calculation, %3ld samples collected out of 600 max)\n", calibrationCounter);
+    cliPrintF("\n\nMagnetometer Bias Calculation, %3ld samples collected out of 600 max)\n", calibrationCounter);
 
-	sphereFit(d, calibrationCounter, 100, 0.0f, population, sphereOrigin, &sphereRadius);
+    sphereFit(d, calibrationCounter, 100, 0.0f, population, sphereOrigin, &sphereRadius);
 
-	eepromConfig.magBias[XAXIS] = sphereOrigin[XAXIS];
-	eepromConfig.magBias[YAXIS] = sphereOrigin[YAXIS];
-	eepromConfig.magBias[ZAXIS] = sphereOrigin[ZAXIS];
+    eepromConfig.magBias[XAXIS] = sphereOrigin[XAXIS];
+    eepromConfig.magBias[YAXIS] = sphereOrigin[YAXIS];
+    eepromConfig.magBias[ZAXIS] = sphereOrigin[ZAXIS];
 
-	magCalibrating = false;
+    magCalibrating = false;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

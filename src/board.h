@@ -62,6 +62,7 @@
 
 #include "bgc32.h"
 
+#include "drv_irq.h"
 #include "drv_cli.h"
 #include "drv_gpio.h"
 #include "drv_i2c.h"
@@ -69,6 +70,7 @@
 #include "drv_rc.h"
 #include "drv_system.h"
 #include "drv_timingFunctions.h"
+#include "drv_usart.h"
 #include "ringbuffer.h"
 
 #include "hmc5883.h"

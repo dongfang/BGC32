@@ -16,8 +16,8 @@
   *
   *        http://www.st.com/software_license_agreement_liberty_v2
   *
-  * Unless required by applicable law or agreed to in writing, software 
-  * distributed under the License is distributed on an "AS IS" BASIS, 
+  * Unless required by applicable law or agreed to in writing, software
+  * distributed under the License is distributed on an "AS IS" BASIS,
   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   * See the License for the specific language governing permissions and
   * limitations under the License.
@@ -32,9 +32,9 @@
 
 /* Includes ------------------------------------------------------------------*/
 #if defined (STM32F10X_MD) || defined (STM32F10X_HD)
- #include "stm32f10x.h"
+#include "stm32f10x.h"
 #elif defined (STM32F30X)
- #include "stm32f30x.h"
+#include "stm32f30x.h"
 #endif
 
 /* Exported types ------------------------------------------------------------*/

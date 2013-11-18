@@ -34,10 +34,10 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 /*
- * 	fasttrig.h
+ *  fasttrig.h
  *
- *	Created on: Aug 10, 2013
- *		Author: ala42
+ *  Created on: Aug 10, 2013
+ *      Author: ala42
  */
 
 #ifndef FASTTRIG_H_

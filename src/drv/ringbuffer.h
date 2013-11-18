@@ -14,7 +14,7 @@
 typedef struct
 {
     volatile int Read, Write, Overrun;
-    unsigned char Buffer[512];
+    unsigned char Buffer[1024];
     void (*CallBack)(void);
 
 } tRingBuffer;

@@ -72,9 +72,9 @@ void initFirstOrderFilter(void)
     a = 2.0f * eepromConfig.pitchAttitude500HzLowPassTau * 500.0f;
 
     firstOrderFilters[PITCH_ATTITUDE_500HZ_LOWPASS].gx1 = 1.0f / (1.0f + a);
-	firstOrderFilters[PITCH_ATTITUDE_500HZ_LOWPASS].gx2 = 1.0f / (1.0f + a);
-	firstOrderFilters[PITCH_ATTITUDE_500HZ_LOWPASS].gx3 = (1.0f - a) / (1.0f + a);
-	firstOrderFilters[PITCH_ATTITUDE_500HZ_LOWPASS].previousInput  = 0.0f;
+    firstOrderFilters[PITCH_ATTITUDE_500HZ_LOWPASS].gx2 = 1.0f / (1.0f + a);
+    firstOrderFilters[PITCH_ATTITUDE_500HZ_LOWPASS].gx3 = (1.0f - a) / (1.0f + a);
+    firstOrderFilters[PITCH_ATTITUDE_500HZ_LOWPASS].previousInput  = 0.0f;
     firstOrderFilters[PITCH_ATTITUDE_500HZ_LOWPASS].previousOutput = 0.0f;
 
     ///////////////////////////////////
@@ -82,9 +82,9 @@ void initFirstOrderFilter(void)
     a = 2.0f * eepromConfig.yawAttitude500HzLowPassTau * 500.0f;
 
     firstOrderFilters[YAW_ATTITUDE_500HZ_LOWPASS].gx1 = 1.0f / (1.0f + a);
-	firstOrderFilters[YAW_ATTITUDE_500HZ_LOWPASS].gx2 = 1.0f / (1.0f + a);
-	firstOrderFilters[YAW_ATTITUDE_500HZ_LOWPASS].gx3 = (1.0f - a) / (1.0f + a);
-	firstOrderFilters[YAW_ATTITUDE_500HZ_LOWPASS].previousInput  = 0.0f;
+    firstOrderFilters[YAW_ATTITUDE_500HZ_LOWPASS].gx2 = 1.0f / (1.0f + a);
+    firstOrderFilters[YAW_ATTITUDE_500HZ_LOWPASS].gx3 = (1.0f - a) / (1.0f + a);
+    firstOrderFilters[YAW_ATTITUDE_500HZ_LOWPASS].previousInput  = 0.0f;
     firstOrderFilters[YAW_ATTITUDE_500HZ_LOWPASS].previousOutput = 0.0f;
 
     ///////////////////////////////////
@@ -92,9 +92,9 @@ void initFirstOrderFilter(void)
     a = 2.0f * eepromConfig.rollRatePointingCmd50HzLowPassTau * 50.0f;
 
     firstOrderFilters[ROLL_RATE_POINTING_50HZ_LOWPASS].gx1 = 1.0f / (1.0f + a);
-	firstOrderFilters[ROLL_RATE_POINTING_50HZ_LOWPASS].gx2 = 1.0f / (1.0f + a);
-	firstOrderFilters[ROLL_RATE_POINTING_50HZ_LOWPASS].gx3 = (1.0f - a) / (1.0f + a);
-	firstOrderFilters[ROLL_RATE_POINTING_50HZ_LOWPASS].previousInput  = 0.0f;
+    firstOrderFilters[ROLL_RATE_POINTING_50HZ_LOWPASS].gx2 = 1.0f / (1.0f + a);
+    firstOrderFilters[ROLL_RATE_POINTING_50HZ_LOWPASS].gx3 = (1.0f - a) / (1.0f + a);
+    firstOrderFilters[ROLL_RATE_POINTING_50HZ_LOWPASS].previousInput  = 0.0f;
     firstOrderFilters[ROLL_RATE_POINTING_50HZ_LOWPASS].previousOutput = 0.0f;
 
     ///////////////////////////////////
@@ -102,9 +102,9 @@ void initFirstOrderFilter(void)
     a = 2.0f * eepromConfig.pitchRatePointingCmd50HzLowPassTau * 50.0f;
 
     firstOrderFilters[PITCH_RATE_POINTING_50HZ_LOWPASS].gx1 = 1.0f / (1.0f + a);
-	firstOrderFilters[PITCH_RATE_POINTING_50HZ_LOWPASS].gx2 = 1.0f / (1.0f + a);
-	firstOrderFilters[PITCH_RATE_POINTING_50HZ_LOWPASS].gx3 = (1.0f - a) / (1.0f + a);
-	firstOrderFilters[PITCH_RATE_POINTING_50HZ_LOWPASS].previousInput  = 0.0f;
+    firstOrderFilters[PITCH_RATE_POINTING_50HZ_LOWPASS].gx2 = 1.0f / (1.0f + a);
+    firstOrderFilters[PITCH_RATE_POINTING_50HZ_LOWPASS].gx3 = (1.0f - a) / (1.0f + a);
+    firstOrderFilters[PITCH_RATE_POINTING_50HZ_LOWPASS].previousInput  = 0.0f;
     firstOrderFilters[PITCH_RATE_POINTING_50HZ_LOWPASS].previousOutput = 0.0f;
 
     ///////////////////////////////////
@@ -112,9 +112,9 @@ void initFirstOrderFilter(void)
     a = 2.0f * eepromConfig.yawRatePointingCmd50HzLowPassTau * 50.0f;
 
     firstOrderFilters[YAW_RATE_POINTING_50HZ_LOWPASS].gx1 = 1.0f / (1.0f + a);
-	firstOrderFilters[YAW_RATE_POINTING_50HZ_LOWPASS].gx2 = 1.0f / (1.0f + a);
-	firstOrderFilters[YAW_RATE_POINTING_50HZ_LOWPASS].gx3 = (1.0f - a) / (1.0f + a);
-	firstOrderFilters[YAW_RATE_POINTING_50HZ_LOWPASS].previousInput  = 0.0f;
+    firstOrderFilters[YAW_RATE_POINTING_50HZ_LOWPASS].gx2 = 1.0f / (1.0f + a);
+    firstOrderFilters[YAW_RATE_POINTING_50HZ_LOWPASS].gx3 = (1.0f - a) / (1.0f + a);
+    firstOrderFilters[YAW_RATE_POINTING_50HZ_LOWPASS].previousInput  = 0.0f;
     firstOrderFilters[YAW_RATE_POINTING_50HZ_LOWPASS].previousOutput = 0.0f;
 
     ///////////////////////////////////
@@ -132,9 +132,9 @@ void initFirstOrderFilter(void)
     a = 2.0f * eepromConfig.pitchAttPointingCmd50HzLowPassTau * 50.0f;
 
     firstOrderFilters[PITCH_ATT_POINTING_50HZ_LOWPASS].gx1 = 1.0f / (1.0f + a);
-	firstOrderFilters[PITCH_ATT_POINTING_50HZ_LOWPASS].gx2 = 1.0f / (1.0f + a);
-	firstOrderFilters[PITCH_ATT_POINTING_50HZ_LOWPASS].gx3 = (1.0f - a) / (1.0f + a);
-	firstOrderFilters[PITCH_ATT_POINTING_50HZ_LOWPASS].previousInput  = 0.0f;
+    firstOrderFilters[PITCH_ATT_POINTING_50HZ_LOWPASS].gx2 = 1.0f / (1.0f + a);
+    firstOrderFilters[PITCH_ATT_POINTING_50HZ_LOWPASS].gx3 = (1.0f - a) / (1.0f + a);
+    firstOrderFilters[PITCH_ATT_POINTING_50HZ_LOWPASS].previousInput  = 0.0f;
     firstOrderFilters[PITCH_ATT_POINTING_50HZ_LOWPASS].previousOutput = 0.0f;
 
     ///////////////////////////////////
@@ -142,9 +142,9 @@ void initFirstOrderFilter(void)
     a = 2.0f * eepromConfig.yawAttPointingCmd50HzLowPassTau * 50.0f;
 
     firstOrderFilters[YAW_ATT_POINTING_50HZ_LOWPASS].gx1 = 1.0f / (1.0f + a);
-	firstOrderFilters[YAW_ATT_POINTING_50HZ_LOWPASS].gx2 = 1.0f / (1.0f + a);
-	firstOrderFilters[YAW_ATT_POINTING_50HZ_LOWPASS].gx3 = (1.0f - a) / (1.0f + a);
-	firstOrderFilters[YAW_ATT_POINTING_50HZ_LOWPASS].previousInput  = 0.0f;
+    firstOrderFilters[YAW_ATT_POINTING_50HZ_LOWPASS].gx2 = 1.0f / (1.0f + a);
+    firstOrderFilters[YAW_ATT_POINTING_50HZ_LOWPASS].gx3 = (1.0f - a) / (1.0f + a);
+    firstOrderFilters[YAW_ATT_POINTING_50HZ_LOWPASS].previousInput  = 0.0f;
     firstOrderFilters[YAW_ATT_POINTING_50HZ_LOWPASS].previousOutput = 0.0f;
 
     ///////////////////////////////////

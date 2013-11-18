@@ -34,24 +34,24 @@
 /* Exported types ------------------------------------------------------------*/
 typedef enum _RESUME_STATE
 {
-  RESUME_EXTERNAL,
-  RESUME_INTERNAL,
-  RESUME_LATER,
-  RESUME_WAIT,
-  RESUME_START,
-  RESUME_ON,
-  RESUME_OFF,
-  RESUME_ESOF
+    RESUME_EXTERNAL,
+    RESUME_INTERNAL,
+    RESUME_LATER,
+    RESUME_WAIT,
+    RESUME_START,
+    RESUME_ON,
+    RESUME_OFF,
+    RESUME_ESOF
 } RESUME_STATE;
 
 typedef enum _DEVICE_STATE
 {
-  UNCONNECTED,
-  ATTACHED,
-  POWERED,
-  SUSPENDED,
-  ADDRESSED,
-  CONFIGURED
+    UNCONNECTED,
+    ATTACHED,
+    POWERED,
+    SUSPENDED,
+    ADDRESSED,
+    CONFIGURED
 } DEVICE_STATE;
 
 /* Exported constants --------------------------------------------------------*/
