@@ -177,7 +177,6 @@ void cliCom(void)
     if ((cliAvailable() && !validCliCommand))
     {
         cliQuery = getChar();
-        //cliRead(cliQuery, 1);
     }
 
     validCliCommand = false;
@@ -188,25 +187,25 @@ void cliCom(void)
 
         case 'a': // Rate PIDs
             cliPrintF("\nRoll Rate PID:  %9.4f, %9.4f, %9.4f, %9.4f, %9.4f, %s\n", eepromConfig.PID[ROLL_PID].B,
-                      eepromConfig.PID[ROLL_PID].P,
-                      eepromConfig.PID[ROLL_PID].I,
-                      eepromConfig.PID[ROLL_PID].D,
-                      eepromConfig.PID[ROLL_PID].windupGuard,
-                      eepromConfig.PID[ROLL_PID].dErrorCalc ? "Error" : "State");
+                                                                                   eepromConfig.PID[ROLL_PID].P,
+                                                                                   eepromConfig.PID[ROLL_PID].I,
+                                                                                   eepromConfig.PID[ROLL_PID].D,
+                                                                                   eepromConfig.PID[ROLL_PID].windupGuard,
+                                                                                   eepromConfig.PID[ROLL_PID].dErrorCalc ? "Error" : "State");
 
             cliPrintF("Pitch Rate PID: %9.4f, %9.4f, %9.4f, %9.4f, %9.4f, %s\n",   eepromConfig.PID[PITCH_PID].B,
-                      eepromConfig.PID[PITCH_PID].P,
-                      eepromConfig.PID[PITCH_PID].I,
-                      eepromConfig.PID[PITCH_PID].D,
-                      eepromConfig.PID[PITCH_PID].windupGuard,
-                      eepromConfig.PID[PITCH_PID].dErrorCalc ? "Error" : "State");
+                                                                                   eepromConfig.PID[PITCH_PID].P,
+                                                                                   eepromConfig.PID[PITCH_PID].I,
+                                                                                   eepromConfig.PID[PITCH_PID].D,
+                                                                                   eepromConfig.PID[PITCH_PID].windupGuard,
+                                                                                   eepromConfig.PID[PITCH_PID].dErrorCalc ? "Error" : "State");
 
             cliPrintF("Yaw Rate PID:   %9.4f, %9.4f, %9.4f, %9.4f, %9.4f, %s\n",   eepromConfig.PID[YAW_PID].B,
-                      eepromConfig.PID[YAW_PID].P,
-                      eepromConfig.PID[YAW_PID].I,
-                      eepromConfig.PID[YAW_PID].D,
-                      eepromConfig.PID[YAW_PID].windupGuard,
-                      eepromConfig.PID[YAW_PID].dErrorCalc ? "Error" : "State");
+                                                                                   eepromConfig.PID[YAW_PID].P,
+                                                                                   eepromConfig.PID[YAW_PID].I,
+                                                                                   eepromConfig.PID[YAW_PID].D,
+                                                                                   eepromConfig.PID[YAW_PID].windupGuard,
+                                                                                   eepromConfig.PID[YAW_PID].dErrorCalc ? "Error" : "State");
             cliQuery = 'x';
             break;
 
@@ -214,25 +213,25 @@ void cliCom(void)
 
         case 'b': // Loop Delta Times
             cliPrintF("%7ld, %7ld, %7ld, %7ld, %7ld, %7ld, %7ld\n", deltaTime1000Hz,
-                      deltaTime500Hz,
-                      deltaTime100Hz,
-                      deltaTime50Hz,
-                      deltaTime10Hz,
-                      deltaTime5Hz,
-                      deltaTime1Hz);
+                                                                    deltaTime500Hz,
+                                                                    deltaTime100Hz,
+                                                                    deltaTime50Hz,
+                                                                    deltaTime10Hz,
+                                                                    deltaTime5Hz,
+                                                                    deltaTime1Hz);
             break;
 
             ///////////////////////////////
 
         case 'c': // Loop Execution Times
             cliPrintF("%7ld, %7ld, %7ld, %7ld, %7ld, %7ld, %7ld, %7ld\n", executionTime1000Hz,
-                      executionTime500Hz,
-                      executionTime100Hz,
-                      executionTime50Hz,
-                      executionTime10Hz,
-                      executionTime5Hz,
-                      executionTime1Hz,
-                      i2cGetErrorCounter());
+                                                                          executionTime500Hz,
+                                                                          executionTime100Hz,
+                                                                          executionTime50Hz,
+                                                                          executionTime10Hz,
+                                                                          executionTime5Hz,
+                                                                          executionTime1Hz,
+                                                                          i2cGetErrorCounter());
             break;
 
             ///////////////////////////////
@@ -256,33 +255,36 @@ void cliCom(void)
 
         case 'e': // 500 Hz Accels
             cliPrintF("%9.4f, %9.4f, %9.4f\n", sensors.accel500Hz[XAXIS],
-                      sensors.accel500Hz[YAXIS],
-                      sensors.accel500Hz[ZAXIS]);
+                                               sensors.accel500Hz[YAXIS],
+                                               sensors.accel500Hz[ZAXIS]);
             break;
 
             ///////////////////////////////
 
         case 'f': // 500 Hz Gyros
             cliPrintF("%9.4f, %9.4f, %9.4f, %9.4f\n", sensors.gyro500Hz[ROLL ] * R2D,
-                      sensors.gyro500Hz[PITCH] * R2D,
-                      sensors.gyro500Hz[YAW  ] * R2D,
-                      mpu6050Temperature);
+                                                      sensors.gyro500Hz[PITCH] * R2D,
+                                                      sensors.gyro500Hz[YAW  ] * R2D,
+                                                      mpu6050Temperature);
             break;
 
             ///////////////////////////////
 
         case 'g': // 10 Hz Mag Data
             cliPrintF("%9.4f, %9.4f, %9.4f\n", sensors.mag10Hz[XAXIS],
-                      sensors.mag10Hz[YAXIS],
-                      sensors.mag10Hz[ZAXIS]);
+                                               sensors.mag10Hz[YAXIS],
+                                               sensors.mag10Hz[ZAXIS]);
             break;
 
             ///////////////////////////////
 
         case 'h': // Attitudes
-            cliPrintF("%9.4f, %9.4f, %9.4f\n", sensors.attitude500Hz[ROLL ] * R2D,
-                      sensors.attitude500Hz[PITCH] * R2D,
-                      sensors.attitude500Hz[YAW  ] * R2D);
+            cliPrintF("%9.4f, %9.4f, %9.4f, %9.4f, %9.4f, %9.4f\n", sensors.evvgcCFAttitude500Hz[ROLL]  * R2D,
+                                                                    sensors.margAttitude500Hz[ROLL]     * R2D,
+                                                                    sensors.evvgcCFAttitude500Hz[PITCH] * R2D,
+                                                                    sensors.margAttitude500Hz[PITCH]    * R2D,
+                                                                    sensors.evvgcCFAttitude500Hz[YAW]   * R2D,
+                                                                    sensors.margAttitude500Hz[YAW]      * R2D);
             break;
 
             ///////////////////////////////
@@ -395,13 +397,14 @@ void cliCom(void)
 
         case 'u': // PID Outputs
             cliPrintF("%12.4f, %12.4f, %12.4f\n", pidCmd[ROLL],
-                      pidCmd[PITCH],
-                      pidCmd[YAW]);
+                                                  pidCmd[PITCH],
+                                                  pidCmd[YAW]);
             break;
 
             ///////////////////////////////
 
         case 'v': // Version
+
 #if defined(__DATE__) && defined(__TIME__)
             cliPrintF("\nBGC32 Firmware V%s, Build Date " __DATE__ " "__TIME__" \n", __BGC32_VERSION);
 #endif
@@ -608,9 +611,9 @@ void cliCom(void)
             eepromConfig.rollRatePointingCmd50HzLowPassTau = readFloatCLI();
             eepromConfig.rollAttPointingCmd50HzLowPassTau  = readFloatCLI();
 
-            initFirstOrderFilter();
-            firstOrderFilters[ROLL_ATTITUDE_500HZ_LOWPASS ].previousInput  = sensors.attitude500Hz[ROLL ];
-            firstOrderFilters[ROLL_ATTITUDE_500HZ_LOWPASS ].previousOutput = sensors.attitude500Hz[ROLL ];
+            //initFirstOrderFilter();
+            //firstOrderFilters[ROLL_ATTITUDE_500HZ_LOWPASS ].previousInput  = sensors.evvgcCFAttitude500Hz[ROLL ];
+            //firstOrderFilters[ROLL_ATTITUDE_500HZ_LOWPASS ].previousOutput = sensors.evvgcCFAttitude500Hz[ROLL ];
 
             cliPrintF("\nRoll Filter Time Constants Received....\n");
 
@@ -641,9 +644,9 @@ void cliCom(void)
             eepromConfig.pitchRatePointingCmd50HzLowPassTau = readFloatCLI();
             eepromConfig.pitchAttPointingCmd50HzLowPassTau  = readFloatCLI();
 
-            initFirstOrderFilter();
-            firstOrderFilters[PITCH_ATTITUDE_500HZ_LOWPASS].previousInput  = sensors.attitude500Hz[PITCH];
-            firstOrderFilters[PITCH_ATTITUDE_500HZ_LOWPASS].previousOutput = sensors.attitude500Hz[PITCH];
+            //initFirstOrderFilter();
+            //firstOrderFilters[PITCH_ATTITUDE_500HZ_LOWPASS].previousInput  = sensors.evvgcCFAttitude500Hz[PITCH];
+            //firstOrderFilters[PITCH_ATTITUDE_500HZ_LOWPASS].previousOutput = sensors.evvgcCFAttitude500Hz[PITCH];
 
             cliPrintF("\nPitch Filter Time Constants Received....\n");
 
@@ -658,9 +661,9 @@ void cliCom(void)
             eepromConfig.yawRatePointingCmd50HzLowPassTau = readFloatCLI();
             eepromConfig.yawAttPointingCmd50HzLowPassTau  = readFloatCLI();
 
-            initFirstOrderFilter();
-            firstOrderFilters[YAW_ATTITUDE_500HZ_LOWPASS  ].previousInput  = sensors.attitude500Hz[YAW  ];
-            firstOrderFilters[YAW_ATTITUDE_500HZ_LOWPASS  ].previousOutput = sensors.attitude500Hz[YAW  ];
+            //initFirstOrderFilter();
+            //firstOrderFilters[YAW_ATTITUDE_500HZ_LOWPASS  ].previousInput  = sensors.evvgcCFAttitude500Hz[YAW  ];
+            //firstOrderFilters[YAW_ATTITUDE_500HZ_LOWPASS  ].previousOutput = sensors.evvgcCFAttitude500Hz[YAW  ];
 
             cliPrintF("\nYaw Filter Time Constants Received....\n");
 
@@ -763,7 +766,7 @@ void cliCom(void)
             cliPrintF("'g' 10 hz Mag Data                 'G' Not Used\n");
             cliPrintF("'h' Attitudes                      'H' Not Used\n");
             cliPrintF("'i' Gimbal Axis Enable Flags       'I' Set Gimbal Axis Enable Flags IR;P;Y\n");
-            cliPrintF("'j' Gimbal Axis Power Settings     'J' Set Gimbal Axis Power Levels HR;P;Y\n");
+            cliPrintF("'j' Gimbal Axis Power Settings     'J' Set Gimbal Axis Power Levels JR;P;Y\n");
             cliPrintF("'k' Gimbal Rate Limit              'K' Set Gimbal Rate Limit\n");
             cliPrintF("'l' Gimbal IMU Orientation         'L' Set Gimbal IMU Orientation   LX, X = 1 thru 4\n");
             cliPrintF("\n");
@@ -773,7 +776,6 @@ void cliCom(void)
             while (cliAvailable() == false);
 
             cliQuery = getChar();
-            //cliRead(cliQuery, 1);
 
             if (cliQuery != ' ')
             {
@@ -802,7 +804,6 @@ void cliCom(void)
             while (cliAvailable() == false);
 
             cliQuery = getChar();
-            //cliRead(cliQuery, 1);
 
             if (cliQuery != ' ')
             {

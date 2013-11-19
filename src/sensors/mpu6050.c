@@ -128,7 +128,7 @@ int16andUint8_t rawMPU6050Temperature;
 
 ///////////////////////////////////////
 
-int16_t orientationMatrix[4];
+int16_t orientationMatrix[9];
 
 ///////////////////////////////////////////////////////////////////////////////
 // MPU6050 Initialization
@@ -166,11 +166,11 @@ void readMPU6050(void)
 
     uint8_t I2C2_Buffer_Rx[14];
 
-    int16_t straightAccelData[2];
-    int16_t rotatedAccelData[2];
+    int16_t straightAccelData[3];
+    int16_t rotatedAccelData[3];
 
-    int16_t straightGyroData[2];
-    int16_t rotatedGyroData[2];
+    int16_t straightGyroData[3];
+    int16_t rotatedGyroData[3];
 
     i2cRead(MPU6050_ADDRESS, MPU6050_ACCEL_XOUT_H, 14, I2C2_Buffer_Rx);
 
@@ -191,16 +191,16 @@ void readMPU6050(void)
     rawGyro[YAW  ].bytes[1]        = I2C2_Buffer_Rx[12];
     rawGyro[YAW  ].bytes[0]        = I2C2_Buffer_Rx[13];
 
-    for (axis = 0; axis < 2; axis++)
+    for (axis = 0; axis < 3; axis++)
     {
         straightAccelData[axis] = rawAccel[axis].value;
         straightGyroData[axis]  = rawGyro[axis].value;
     }
 
-    matrixMultiply(2, 2, 1, rotatedAccelData, orientationMatrix, straightAccelData);
-    matrixMultiply(2, 2, 1, rotatedGyroData,  orientationMatrix, straightGyroData);
+    matrixMultiply(3, 3, 1, rotatedAccelData, orientationMatrix, straightAccelData);
+    matrixMultiply(3, 3, 1, rotatedGyroData,  orientationMatrix, straightGyroData);
 
-    for (axis = 0; axis < 2; axis++)
+    for (axis = 0; axis < 3; axis++)
     {
         rawAccel[axis].value = rotatedAccelData[axis];
         rawGyro[axis].value  = rotatedGyroData[axis];
@@ -274,39 +274,112 @@ void orientIMU(void)
 {
     switch (eepromConfig.imuOrientation)
     {
-        case 1: // Dot Front/Left
+        case 1: // Dot Front/Left/Top
             orientationMatrix[0] =  1;
             orientationMatrix[1] =  0;
             orientationMatrix[2] =  0;
-            orientationMatrix[3] =  1;
+            orientationMatrix[3] =  0;
+            orientationMatrix[4] =  1;
+            orientationMatrix[5] =  0;
+            orientationMatrix[6] =  0;
+            orientationMatrix[7] =  0;
+            orientationMatrix[8] =  1;
             break;
 
-        case 2: // Dot Front/Right
+        case 2: // Dot Front/Right/Top
             orientationMatrix[0] =  0;
             orientationMatrix[1] = -1;
-            orientationMatrix[2] =  1;
-            orientationMatrix[3] =  0;
+            orientationMatrix[2] =  0;
+            orientationMatrix[3] =  1;
+            orientationMatrix[4] =  0;
+            orientationMatrix[5] =  0;
+            orientationMatrix[6] =  0;
+            orientationMatrix[7] =  0;
+            orientationMatrix[8] =  1;
             break;
 
-        case 3: // Dot Back/Right
+        case 3: // Dot Back/Right/Top
             orientationMatrix[0] = -1;
             orientationMatrix[1] =  0;
             orientationMatrix[2] =  0;
-            orientationMatrix[3] = -1;
+            orientationMatrix[3] =  0;
+            orientationMatrix[4] = -1;
+            orientationMatrix[5] =  0;
+            orientationMatrix[6] =  0;
+            orientationMatrix[7] =  0;
+            orientationMatrix[8] =  1;
             break;
 
-        case 4: // Dot Back/Left
+        case 4: // Dot Back/Left/Top
             orientationMatrix[0] =  0;
             orientationMatrix[1] =  1;
-            orientationMatrix[2] = -1;
-            orientationMatrix[3] =  0;
+            orientationMatrix[2] =  0;
+            orientationMatrix[3] = -1;
+            orientationMatrix[4] =  0;
+            orientationMatrix[5] =  0;
+            orientationMatrix[6] =  0;
+            orientationMatrix[7] =  0;
+            orientationMatrix[8] =  1;
             break;
 
-        default: // Dot Front/Left
-            orientationMatrix[0] = 1;
-            orientationMatrix[1] = 0;
-            orientationMatrix[2] = 0;
-            orientationMatrix[3] = 1;
+        case 5: // Dot Front/Left/Bottom
+            orientationMatrix[0] =  0;
+            orientationMatrix[1] =  1;
+            orientationMatrix[2] =  0;
+            orientationMatrix[3] =  1;
+            orientationMatrix[4] =  0;
+            orientationMatrix[5] =  0;
+            orientationMatrix[6] =  0;
+            orientationMatrix[7] =  0;
+            orientationMatrix[8] = -1;
+            break;
+
+        case 6: // Dot Front/Right/Bottom
+            orientationMatrix[0] =  1;
+            orientationMatrix[1] =  0;
+            orientationMatrix[2] =  0;
+            orientationMatrix[3] =  0;
+            orientationMatrix[4] =  1;
+            orientationMatrix[5] =  0;
+            orientationMatrix[6] =  0;
+            orientationMatrix[7] =  0;
+            orientationMatrix[8] = -1;
+            break;
+
+        case 7: // Dot Back/Right/Bottom
+            orientationMatrix[0] =  0;
+            orientationMatrix[1] =  1;
+            orientationMatrix[2] =  0;
+            orientationMatrix[3] =  1;
+            orientationMatrix[4] =  0;
+            orientationMatrix[5] =  0;
+            orientationMatrix[6] =  0;
+            orientationMatrix[7] =  0;
+            orientationMatrix[8] = -1;
+            break;
+
+        case 8: // Dot Back/Left/Bottom
+            orientationMatrix[0] =  1;
+            orientationMatrix[1] =  0;
+            orientationMatrix[2] =  0;
+            orientationMatrix[3] =  0;
+            orientationMatrix[4] =  1;
+            orientationMatrix[5] =  0;
+            orientationMatrix[6] =  0;
+            orientationMatrix[7] =  0;
+            orientationMatrix[8] = -1;
+            break;
+
+        default: // Dot Front/Left/Top
+            orientationMatrix[0] =  1;
+            orientationMatrix[1] =  0;
+            orientationMatrix[2] =  0;
+            orientationMatrix[3] =  0;
+            orientationMatrix[4] =  1;
+            orientationMatrix[5] =  0;
+            orientationMatrix[6] =  0;
+            orientationMatrix[7] =  0;
+            orientationMatrix[8] =  1;
             break;
     }
 }

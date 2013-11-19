@@ -55,9 +55,7 @@ int main(void)
 
     systemInit();
 
-#ifndef MARG
     initOrientation();
-#endif
 
     systemReady = true;
 
@@ -123,25 +121,23 @@ int main(void)
 
             dt500Hz = (float)timerValue * 0.0000005f;  // For integrations in 500 Hz loop
 
-            sensors.accel500Hz[XAXIS] = ((float)accelData500Hz[XAXIS] - accelTCBias[XAXIS]) * ACCEL_SCALE_FACTOR;
-            sensors.accel500Hz[YAXIS] = ((float)accelData500Hz[YAXIS] - accelTCBias[YAXIS]) * ACCEL_SCALE_FACTOR;
+            sensors.accel500Hz[XAXIS] =  ((float)accelData500Hz[XAXIS] - accelTCBias[XAXIS]) * ACCEL_SCALE_FACTOR;
+            sensors.accel500Hz[YAXIS] =  ((float)accelData500Hz[YAXIS] - accelTCBias[YAXIS]) * ACCEL_SCALE_FACTOR;
             sensors.accel500Hz[ZAXIS] = -((float)accelData500Hz[ZAXIS] - accelTCBias[ZAXIS]) * ACCEL_SCALE_FACTOR;
 
-            sensors.gyro500Hz[ROLL ] = ((float)gyroData500Hz[ROLL ] - gyroRTBias[ROLL ] - gyroTCBias[ROLL ]) * GYRO_SCALE_FACTOR;
-            sensors.gyro500Hz[PITCH] = ((float)gyroData500Hz[PITCH] - gyroRTBias[PITCH] - gyroTCBias[PITCH]) * GYRO_SCALE_FACTOR;
+            sensors.gyro500Hz[ROLL ] =  ((float)gyroData500Hz[ROLL ] - gyroRTBias[ROLL ] - gyroTCBias[ROLL ]) * GYRO_SCALE_FACTOR;
+            sensors.gyro500Hz[PITCH] =  ((float)gyroData500Hz[PITCH] - gyroRTBias[PITCH] - gyroTCBias[PITCH]) * GYRO_SCALE_FACTOR;
             sensors.gyro500Hz[YAW  ] = -((float)gyroData500Hz[YAW  ] - gyroRTBias[YAW  ] - gyroTCBias[YAW  ]) * GYRO_SCALE_FACTOR;
 
-#ifdef MARG
             MargAHRSupdate(sensors.gyro500Hz[ROLL],   sensors.gyro500Hz[PITCH],  sensors.gyro500Hz[YAW],
                            sensors.accel500Hz[XAXIS], sensors.accel500Hz[YAXIS], sensors.accel500Hz[ZAXIS],
                            sensors.mag10Hz[XAXIS],    sensors.mag10Hz[YAXIS],    sensors.mag10Hz[ZAXIS],
                            false,  //magDataUpdate,
                            dt500Hz);
 
-            magDataUpdate = false;
-#else
-            getOrientation(accAngleSmooth, sensors.attitude500Hz, sensors.accel500Hz, sensors.gyro500Hz, dt500Hz);
-#endif
+            //magDataUpdate = false;
+
+            getOrientation(accAngleSmooth, sensors.evvgcCFAttitude500Hz, sensors.accel500Hz, sensors.gyro500Hz, dt500Hz);
 
             //sensors.attitude500Hz[ROLL ] = firstOrderFilter(sensors.attitude500Hz[ROLL ], &firstOrderFilters[ROLL_ATTITUDE_500HZ_LOWPASS ]);
             //sensors.attitude500Hz[PITCH] = firstOrderFilter(sensors.attitude500Hz[PITCH], &firstOrderFilters[PITCH_ATTITUDE_500HZ_LOWPASS]);
@@ -150,6 +146,7 @@ int main(void)
             computeMotorCommands(dt500Hz);
 
             executionTime500Hz = micros() - currentTime;
+
 #ifdef _DTIMING
             LA2_DISABLE;
 #endif

@@ -62,10 +62,10 @@
 
 #include "bgc32.h"
 
-#include "drv_irq.h"
 #include "drv_cli.h"
 #include "drv_gpio.h"
 #include "drv_i2c.h"
+#include "drv_irq.h"
 #include "drv_pwmMotors.h"
 #include "drv_rc.h"
 #include "drv_system.h"

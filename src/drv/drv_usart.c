@@ -4,18 +4,21 @@
  *  Created on: Jun 26, 2013
  *      Author: Denis aka caat
  */
-#include "stm32f10x_gpio.h"
-#include "stm32f10x_usart.h"
-#include "drv_usart.h"
-//#include "utils.h"
-#include "ringbuffer.h"
-#include "drv_irq.h"
+///////////////////////////////////////////////////////////////////////////////
+
+#include "board.h"
+
+///////////////////////////////////////////////////////////////////////////////
 
 static tRingBuffer RingBufferUART4TX;
 static tRingBuffer RingBufferUART4RX;
 unsigned int IrqCntUart4;
 
+///////////////////////////////////////////////////////////////////////////////
+
 void InitUart4Buffer(void);
+
+///////////////////////////////////////////////////////////////////////////////
 
 void InitUart4BufferIRQ(void)
 {
@@ -31,6 +34,8 @@ void InitUart4BufferIRQ(void)
     NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
     NVIC_Init(&NVIC_InitStructure);
 }
+
+///////////////////////////////////////////////////////////////////////////////
 
 void Usart4Init(void)
 {
@@ -74,26 +79,36 @@ void Usart4Init(void)
     InitUart4BufferIRQ();
 }
 
+///////////////////////////////////////////////////////////////////////////////
+
 int USART_GetChar(void)
 {
     return RingBufferGet(&RingBufferUART4RX);
 }
+
+///////////////////////////////////////////////////////////////////////////////
 
 int USART_Peek(void)
 {
     return RingBufferPeek(&RingBufferUART4RX);
 }
 
+///////////////////////////////////////////////////////////////////////////////
+
 int USART_Available(void)
 {
     return RingBufferFillLevel(&RingBufferUART4RX);
 }
+
+///////////////////////////////////////////////////////////////////////////////
 
 void USART_Flush(void)
 {
     while (RingBufferFillLevel(&RingBufferUART4TX) != 0)
         ;
 }
+
+///////////////////////////////////////////////////////////////////////////////
 
 void USART_PutCharDirect(uint8_t ch)
 {
@@ -102,12 +117,16 @@ void USART_PutCharDirect(uint8_t ch)
     UART4->DR = ch;
 }
 
+///////////////////////////////////////////////////////////////////////////////
+
 void USART_PutChar(uint8_t ch)
 {
     //while (!(UART4->SR & USART_SR_TXE));
     //  UART4->DR = ch;
     RingBufferPut(&RingBufferUART4TX, ch, 1);
 }
+
+///////////////////////////////////////////////////////////////////////////////
 
 void USART_PutStringDirect(uint8_t *str)
 {
@@ -117,6 +136,8 @@ void USART_PutStringDirect(uint8_t *str)
         str++;
     }
 }
+
+///////////////////////////////////////////////////////////////////////////////
 
 void USART_PutString(uint8_t *str)
 {
@@ -135,6 +156,8 @@ void UART4EnableTxInterrupt(void)
 {
     USART_ITConfig(UART4, USART_IT_TXE, ENABLE);
 }
+
+///////////////////////////////////////////////////////////////////////////////
 
 void UART4_IRQHandler(void) //UART4 Interrupt handler implementation
 {
@@ -191,8 +214,12 @@ void UART4_IRQHandler(void) //UART4 Interrupt handler implementation
     }
 }
 
+///////////////////////////////////////////////////////////////////////////////
+
 void InitUart4Buffer(void)
 {
     RingBufferInit(&RingBufferUART4TX, &UART4EnableTxInterrupt);
     RingBufferInit(&RingBufferUART4RX, 0L);
 }
+
+///////////////////////////////////////////////////////////////////////////////

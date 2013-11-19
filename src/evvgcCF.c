@@ -33,9 +33,9 @@ void initOrientation()
         delay(2);
     }
 
-    sensors.attitude500Hz[PITCH] = accAngleSmooth[PITCH];
-    sensors.attitude500Hz[ROLL ] = accAngleSmooth[ROLL ];
-    sensors.attitude500Hz[YAW  ] = 0.0f;
+    sensors.evvgcCFAttitude500Hz[PITCH] = accAngleSmooth[PITCH];
+    sensors.evvgcCFAttitude500Hz[ROLL ] = accAngleSmooth[ROLL ];
+    sensors.evvgcCFAttitude500Hz[YAW  ] = 0.0f;
 
     //firstOrderFilters[ROLL_ATTITUDE_500HZ_LOWPASS ].previousInput  = sensors.attitude500Hz[ROLL ];
     //firstOrderFilters[ROLL_ATTITUDE_500HZ_LOWPASS ].previousOutput = sensors.attitude500Hz[ROLL ];
