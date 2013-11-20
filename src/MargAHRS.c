@@ -128,12 +128,12 @@ void MargAHRSinit(float ax, float ay, float az, float mx, float my, float mz)
     q2q3 = q2 * q3;
     q3q3 = q3 * q3;
 
-    //firstOrderFilters[ROLL_ATTITUDE_500HZ_LOWPASS ].previousInput  = initialRoll;
-    //firstOrderFilters[ROLL_ATTITUDE_500HZ_LOWPASS ].previousOutput = initialRoll;
-    //firstOrderFilters[PITCH_ATTITUDE_500HZ_LOWPASS].previousInput  = initialPitch;
-    //firstOrderFilters[PITCH_ATTITUDE_500HZ_LOWPASS].previousOutput = initialPitch;
-    //firstOrderFilters[YAW_ATTITUDE_500HZ_LOWPASS  ].previousInput  = initialHdg;
-    //firstOrderFilters[YAW_ATTITUDE_500HZ_LOWPASS  ].previousOutput = initialHdg;
+    firstOrderFilters[ROLL_ATTITUDE_500HZ_LOWPASS ].previousInput  = initialRoll;
+    firstOrderFilters[ROLL_ATTITUDE_500HZ_LOWPASS ].previousOutput = initialRoll;
+    firstOrderFilters[PITCH_ATTITUDE_500HZ_LOWPASS].previousInput  = initialPitch;
+    firstOrderFilters[PITCH_ATTITUDE_500HZ_LOWPASS].previousOutput = initialPitch;
+    firstOrderFilters[YAW_ATTITUDE_500HZ_LOWPASS  ].previousInput  = initialHdg;
+    firstOrderFilters[YAW_ATTITUDE_500HZ_LOWPASS  ].previousOutput = initialHdg;
 }
 
 //====================================================================================================

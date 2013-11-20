@@ -229,11 +229,13 @@ void USB_Interrupts_Config(void)
 * Input          : None.
 * Return         : Status
 *******************************************************************************/
+/*
 void USB_Cable_Config(FunctionalState NewState)
 {
 
 }
 
+*/
 /*******************************************************************************
 * Function Name  : Get_SerialNum.
 * Description    : Create the serial number string descriptor.
@@ -328,7 +330,6 @@ uint32_t CDC_Receive_DATA(uint8_t *recvBuf, uint32_t len)
     {
         len = receiveLength;
     }
-
 
     for (i = 0; i < len; i++)
     {

@@ -139,9 +139,9 @@ int main(void)
 
             getOrientation(accAngleSmooth, sensors.evvgcCFAttitude500Hz, sensors.accel500Hz, sensors.gyro500Hz, dt500Hz);
 
-            //sensors.attitude500Hz[ROLL ] = firstOrderFilter(sensors.attitude500Hz[ROLL ], &firstOrderFilters[ROLL_ATTITUDE_500HZ_LOWPASS ]);
-            //sensors.attitude500Hz[PITCH] = firstOrderFilter(sensors.attitude500Hz[PITCH], &firstOrderFilters[PITCH_ATTITUDE_500HZ_LOWPASS]);
-            //sensors.attitude500Hz[YAW  ] = firstOrderFilter(sensors.attitude500Hz[YAW  ], &firstOrderFilters[YAW_ATTITUDE_500HZ_LOWPASS  ]);
+            //sensors.margAttitude500Hz[ROLL ] = firstOrderFilter(sensors.margAttitude500Hz[ROLL ], &firstOrderFilters[ROLL_ATTITUDE_500HZ_LOWPASS ]);
+            //sensors.margAttitude500Hz[PITCH] = firstOrderFilter(sensors.margAttitude500Hz[PITCH], &firstOrderFilters[PITCH_ATTITUDE_500HZ_LOWPASS]);
+            //sensors.margAttitude500Hz[YAW  ] = firstOrderFilter(sensors.margAttitude500Hz[YAW  ], &firstOrderFilters[YAW_ATTITUDE_500HZ_LOWPASS  ]);
 
             computeMotorCommands(dt500Hz);
 

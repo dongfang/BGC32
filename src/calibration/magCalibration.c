@@ -52,7 +52,6 @@ void magCalibration(void)
     float    d[600][3];       // 600 Samples = 60 seconds of data at 10 Hz
     float    sphereOrigin[3];
     float    sphereRadius;
-    uint8_t     temp[1];
 
     magCalibrating = true;
 
@@ -66,7 +65,7 @@ void magCalibration(void)
 
     cliPrintF("  Start rotations.....\n");
 
-    cliRead(temp, 1);
+    getChar();
 
     while ((cliAvailable() == false) && (calibrationCounter < 600))
     {

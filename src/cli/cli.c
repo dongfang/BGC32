@@ -611,9 +611,9 @@ void cliCom(void)
             eepromConfig.rollRatePointingCmd50HzLowPassTau = readFloatCLI();
             eepromConfig.rollAttPointingCmd50HzLowPassTau  = readFloatCLI();
 
-            //initFirstOrderFilter();
-            //firstOrderFilters[ROLL_ATTITUDE_500HZ_LOWPASS ].previousInput  = sensors.evvgcCFAttitude500Hz[ROLL ];
-            //firstOrderFilters[ROLL_ATTITUDE_500HZ_LOWPASS ].previousOutput = sensors.evvgcCFAttitude500Hz[ROLL ];
+            initFirstOrderFilter();
+            firstOrderFilters[ROLL_ATTITUDE_500HZ_LOWPASS ].previousInput  = sensors.margAttitude500Hz[ROLL ];
+            firstOrderFilters[ROLL_ATTITUDE_500HZ_LOWPASS ].previousOutput = sensors.margAttitude500Hz[ROLL ];
 
             cliPrintF("\nRoll Filter Time Constants Received....\n");
 
@@ -644,9 +644,9 @@ void cliCom(void)
             eepromConfig.pitchRatePointingCmd50HzLowPassTau = readFloatCLI();
             eepromConfig.pitchAttPointingCmd50HzLowPassTau  = readFloatCLI();
 
-            //initFirstOrderFilter();
-            //firstOrderFilters[PITCH_ATTITUDE_500HZ_LOWPASS].previousInput  = sensors.evvgcCFAttitude500Hz[PITCH];
-            //firstOrderFilters[PITCH_ATTITUDE_500HZ_LOWPASS].previousOutput = sensors.evvgcCFAttitude500Hz[PITCH];
+            initFirstOrderFilter();
+            firstOrderFilters[PITCH_ATTITUDE_500HZ_LOWPASS].previousInput  = sensors.margAttitude500Hz[PITCH];
+            firstOrderFilters[PITCH_ATTITUDE_500HZ_LOWPASS].previousOutput = sensors.margAttitude500Hz[PITCH];
 
             cliPrintF("\nPitch Filter Time Constants Received....\n");
 
@@ -661,9 +661,9 @@ void cliCom(void)
             eepromConfig.yawRatePointingCmd50HzLowPassTau = readFloatCLI();
             eepromConfig.yawAttPointingCmd50HzLowPassTau  = readFloatCLI();
 
-            //initFirstOrderFilter();
-            //firstOrderFilters[YAW_ATTITUDE_500HZ_LOWPASS  ].previousInput  = sensors.evvgcCFAttitude500Hz[YAW  ];
-            //firstOrderFilters[YAW_ATTITUDE_500HZ_LOWPASS  ].previousOutput = sensors.evvgcCFAttitude500Hz[YAW  ];
+            initFirstOrderFilter();
+            firstOrderFilters[YAW_ATTITUDE_500HZ_LOWPASS  ].previousInput  = sensors.margAttitude500Hz[YAW  ];
+            firstOrderFilters[YAW_ATTITUDE_500HZ_LOWPASS  ].previousOutput = sensors.margAttitude500Hz[YAW  ];
 
             cliPrintF("\nYaw Filter Time Constants Received....\n");
 

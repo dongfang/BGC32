@@ -25,7 +25,6 @@
   ******************************************************************************
   */
 
-
 /* Includes ------------------------------------------------------------------*/
 #include "usb_lib.h"
 #include "usb_conf.h"
@@ -66,7 +65,7 @@ RESULT PowerOn(void)
     uint16_t wRegVal;
 
     /*** cable plugged-in ? ***/
-    USB_Cable_Config(ENABLE);
+    //USB_Cable_Config(ENABLE);
 
     /*** CNTR_PWDN = 0 ***/
     wRegVal = CNTR_FRES;
@@ -98,7 +97,7 @@ RESULT PowerOff()
     /* clear interrupt status register */
     _SetISTR(0);
     /* Disable the Pull-Up*/
-    USB_Cable_Config(DISABLE);
+    //USB_Cable_Config(DISABLE);
     /* switch-off device */
     _SetCNTR(CNTR_FRES + CNTR_PDWN);
     /* sw variables reset */

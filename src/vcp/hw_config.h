@@ -47,7 +47,7 @@ void Set_USBClock(void);
 void Enter_LowPowerMode(void);
 void Leave_LowPowerMode(void);
 void USB_Interrupts_Config(void);
-void USB_Cable_Config(FunctionalState NewState);
+//void USB_Cable_Config(FunctionalState NewState);
 void Get_SerialNum(void);
 uint32_t CDC_Send_DATA(uint8_t *ptrBuffer, int sendLength);  // HJI
 uint32_t CDC_Receive_DATA(uint8_t *recvBuf, uint32_t len);       // HJI
@@ -60,6 +60,7 @@ typedef enum
     eVCPConnectData,
     eVCPConnectNoData
 } tVCPConnectMode;
+
 void SetVCPConnectMode(tVCPConnectMode mode);
 
 tVCPConnectMode GetVCPConnectMode(void);

@@ -324,9 +324,9 @@ void orientIMU(void)
 
         case 5: // Dot Front/Left/Bottom
             orientationMatrix[0] =  0;
-            orientationMatrix[1] =  1;
+            orientationMatrix[1] = -1;
             orientationMatrix[2] =  0;
-            orientationMatrix[3] =  1;
+            orientationMatrix[3] = -1;
             orientationMatrix[4] =  0;
             orientationMatrix[5] =  0;
             orientationMatrix[6] =  0;
@@ -339,7 +339,7 @@ void orientIMU(void)
             orientationMatrix[1] =  0;
             orientationMatrix[2] =  0;
             orientationMatrix[3] =  0;
-            orientationMatrix[4] =  1;
+            orientationMatrix[4] = -1;
             orientationMatrix[5] =  0;
             orientationMatrix[6] =  0;
             orientationMatrix[7] =  0;
@@ -359,7 +359,7 @@ void orientIMU(void)
             break;
 
         case 8: // Dot Back/Left/Bottom
-            orientationMatrix[0] =  1;
+            orientationMatrix[0] = -1;
             orientationMatrix[1] =  0;
             orientationMatrix[2] =  0;
             orientationMatrix[3] =  0;
