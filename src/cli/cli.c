@@ -361,19 +361,19 @@ void cliCom(void)
             ///////////////////////////////
 
         case 'q': // Filter Time Constants
-            cliPrintF("\n       Attitude TC    Rate Cmd TC    Att Cmd TC\n");
+            cliPrintF("\n         Accel TC       Rate Cmd TC    Att Cmd TC\n");
 
-            cliPrintF("Roll:    %5.2f           %5.2f          %5.2f\n", eepromConfig.rollAttitude500HzLowPassTau,
-                      eepromConfig.rollRatePointingCmd50HzLowPassTau,
-                      eepromConfig.rollAttPointingCmd50HzLowPassTau);
+            cliPrintF("Roll/Y:    %5.2f           %5.2f          %5.2f\n", eepromConfig.accelY500HzLowPassTau,
+                                                                           eepromConfig.rollRatePointingCmd50HzLowPassTau,
+                                                                           eepromConfig.rollAttPointingCmd50HzLowPassTau);
 
-            cliPrintF("Pitch:   %5.2f           %5.2f          %5.2f\n", eepromConfig.pitchAttitude500HzLowPassTau,
-                      eepromConfig.pitchRatePointingCmd50HzLowPassTau,
-                      eepromConfig.pitchAttPointingCmd50HzLowPassTau);
+            cliPrintF("Pitch/X:   %5.2f           %5.2f          %5.2f\n", eepromConfig.accelX500HzLowPassTau,
+                                                                           eepromConfig.pitchRatePointingCmd50HzLowPassTau,
+                                                                           eepromConfig.pitchAttPointingCmd50HzLowPassTau);
 
-            cliPrintF("Yaw:     %5.2f           %5.2f          %5.2f\n", eepromConfig.yawAttitude500HzLowPassTau,
-                      eepromConfig.yawRatePointingCmd50HzLowPassTau,
-                      eepromConfig.yawAttPointingCmd50HzLowPassTau);
+            cliPrintF("Yaw/Z:     %5.2f           %5.2f          %5.2f\n", eepromConfig.accelZ500HzLowPassTau,
+                                                                           eepromConfig.yawRatePointingCmd50HzLowPassTau,
+                                                                           eepromConfig.yawAttPointingCmd50HzLowPassTau);
             cliQuery = 'x';
             break;
 
@@ -607,13 +607,13 @@ void cliCom(void)
             ///////////////////////////////
 
         case 'Q': // Read Roll Filter Time Constants
-            eepromConfig.rollAttitude500HzLowPassTau       = readFloatCLI();
+            eepromConfig.accelY500HzLowPassTau             = readFloatCLI();
             eepromConfig.rollRatePointingCmd50HzLowPassTau = readFloatCLI();
             eepromConfig.rollAttPointingCmd50HzLowPassTau  = readFloatCLI();
 
             initFirstOrderFilter();
-            firstOrderFilters[ROLL_ATTITUDE_500HZ_LOWPASS ].previousInput  = sensors.margAttitude500Hz[ROLL ];
-            firstOrderFilters[ROLL_ATTITUDE_500HZ_LOWPASS ].previousOutput = sensors.margAttitude500Hz[ROLL ];
+            firstOrderFilters[ACCEL_Y_500HZ_LOWPASS ].previousInput  = sensors.accel500Hz[YAXIS];
+            firstOrderFilters[ACCEL_Y_500HZ_LOWPASS ].previousOutput = sensors.accel500Hz[YAXIS];
 
             cliPrintF("\nRoll Filter Time Constants Received....\n");
 
@@ -640,13 +640,13 @@ void cliCom(void)
             ///////////////////////////////
 
         case 'T': // Read Pitch Filter Time Constants
-            eepromConfig.pitchAttitude500HzLowPassTau       = readFloatCLI();
+            eepromConfig.accelX500HzLowPassTau              = readFloatCLI();
             eepromConfig.pitchRatePointingCmd50HzLowPassTau = readFloatCLI();
             eepromConfig.pitchAttPointingCmd50HzLowPassTau  = readFloatCLI();
 
             initFirstOrderFilter();
-            firstOrderFilters[PITCH_ATTITUDE_500HZ_LOWPASS].previousInput  = sensors.margAttitude500Hz[PITCH];
-            firstOrderFilters[PITCH_ATTITUDE_500HZ_LOWPASS].previousOutput = sensors.margAttitude500Hz[PITCH];
+            firstOrderFilters[ACCEL_X_500HZ_LOWPASS].previousInput  = sensors.accel500Hz[XAXIS];
+            firstOrderFilters[ACCEL_X_500HZ_LOWPASS].previousOutput = sensors.accel500Hz[XAXIS];
 
             cliPrintF("\nPitch Filter Time Constants Received....\n");
 
@@ -657,13 +657,13 @@ void cliCom(void)
             ///////////////////////////////
 
         case 'U': // Read Yaw Filter Time Constants
-            eepromConfig.yawAttitude500HzLowPassTau       = readFloatCLI();
+            eepromConfig.accelZ500HzLowPassTau            = readFloatCLI();
             eepromConfig.yawRatePointingCmd50HzLowPassTau = readFloatCLI();
             eepromConfig.yawAttPointingCmd50HzLowPassTau  = readFloatCLI();
 
             initFirstOrderFilter();
-            firstOrderFilters[YAW_ATTITUDE_500HZ_LOWPASS  ].previousInput  = sensors.margAttitude500Hz[YAW  ];
-            firstOrderFilters[YAW_ATTITUDE_500HZ_LOWPASS  ].previousOutput = sensors.margAttitude500Hz[YAW  ];
+            firstOrderFilters[ACCEL_Z_500HZ_LOWPASS  ].previousInput  = sensors.accel500Hz[ZAXIS];
+            firstOrderFilters[ACCEL_Z_500HZ_LOWPASS  ].previousOutput = sensors.accel500Hz[ZAXIS];
 
             cliPrintF("\nYaw Filter Time Constants Received....\n");
 

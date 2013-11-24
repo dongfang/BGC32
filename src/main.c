@@ -129,6 +129,12 @@ int main(void)
             sensors.gyro500Hz[PITCH] =  ((float)gyroData500Hz[PITCH] - gyroRTBias[PITCH] - gyroTCBias[PITCH]) * GYRO_SCALE_FACTOR;
             sensors.gyro500Hz[YAW  ] = -((float)gyroData500Hz[YAW  ] - gyroRTBias[YAW  ] - gyroTCBias[YAW  ]) * GYRO_SCALE_FACTOR;
 
+            getOrientation(accAngleSmooth, sensors.evvgcCFAttitude500Hz, sensors.accel500Hz, sensors.gyro500Hz, dt500Hz);
+
+            sensors.accel500Hz[ROLL ] = firstOrderFilter(sensors.accel500Hz[ROLL ], &firstOrderFilters[ACCEL_X_500HZ_LOWPASS ]);
+            sensors.accel500Hz[PITCH] = firstOrderFilter(sensors.accel500Hz[PITCH], &firstOrderFilters[ACCEL_Y_500HZ_LOWPASS]);
+            sensors.accel500Hz[YAW  ] = firstOrderFilter(sensors.accel500Hz[YAW  ], &firstOrderFilters[ACCEL_Z_500HZ_LOWPASS  ]);
+
             MargAHRSupdate(sensors.gyro500Hz[ROLL],   sensors.gyro500Hz[PITCH],  sensors.gyro500Hz[YAW],
                            sensors.accel500Hz[XAXIS], sensors.accel500Hz[YAXIS], sensors.accel500Hz[ZAXIS],
                            sensors.mag10Hz[XAXIS],    sensors.mag10Hz[YAXIS],    sensors.mag10Hz[ZAXIS],
@@ -136,12 +142,6 @@ int main(void)
                            dt500Hz);
 
             //magDataUpdate = false;
-
-            getOrientation(accAngleSmooth, sensors.evvgcCFAttitude500Hz, sensors.accel500Hz, sensors.gyro500Hz, dt500Hz);
-
-            //sensors.margAttitude500Hz[ROLL ] = firstOrderFilter(sensors.margAttitude500Hz[ROLL ], &firstOrderFilters[ROLL_ATTITUDE_500HZ_LOWPASS ]);
-            //sensors.margAttitude500Hz[PITCH] = firstOrderFilter(sensors.margAttitude500Hz[PITCH], &firstOrderFilters[PITCH_ATTITUDE_500HZ_LOWPASS]);
-            //sensors.margAttitude500Hz[YAW  ] = firstOrderFilter(sensors.margAttitude500Hz[YAW  ], &firstOrderFilters[YAW_ATTITUDE_500HZ_LOWPASS  ]);
 
             computeMotorCommands(dt500Hz);
 

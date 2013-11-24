@@ -195,9 +195,9 @@ typedef struct eepromConfig_t
     float   gimbalYawLeftLimit;
     float   gimbalYawRightLimit;
 
-    float   rollAttitude500HzLowPassTau;
-    float   pitchAttitude500HzLowPassTau;
-    float   yawAttitude500HzLowPassTau;
+    float   accelX500HzLowPassTau;
+    float   accelY500HzLowPassTau;
+    float   accelZ500HzLowPassTau;
 
     float   rollRatePointingCmd50HzLowPassTau;
     float   pitchRatePointingCmd50HzLowPassTau;

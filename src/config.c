@@ -45,7 +45,7 @@
 // use the last KB for sensor config storage
 #define FLASH_WRITE_EEPROM_CONFIG_ADDR  (0x08000000 + (uint32_t)FLASH_PAGE_SIZE * (FLASH_PAGE_COUNT - 1))
 
-static uint8_t checkNewEEPROMConf = 9;
+static uint8_t checkNewEEPROMConf = 10;
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -228,17 +228,17 @@ void checkFirstTime(bool eepromReset)
         eepromConfig.gimbalYawLeftLimit   = 75.0f * D2R;
         eepromConfig.gimbalYawRightLimit  = 75.0f * D2R;
 
-        eepromConfig.rollAttitude500HzLowPassTau        = 0.0f;
-        eepromConfig.pitchAttitude500HzLowPassTau       = 0.0f;
-        eepromConfig.yawAttitude500HzLowPassTau         = 0.0f;
+        eepromConfig.accelX500HzLowPassTau = 0.1f;
+        eepromConfig.accelY500HzLowPassTau = 0.1f;
+        eepromConfig.accelZ500HzLowPassTau = 0.1f;
 
         eepromConfig.rollRatePointingCmd50HzLowPassTau  = 0.0f;
         eepromConfig.pitchRatePointingCmd50HzLowPassTau = 0.0f;
         eepromConfig.yawRatePointingCmd50HzLowPassTau   = 0.0f;
 
-        eepromConfig.rollAttPointingCmd50HzLowPassTau   = 0.25f;
-        eepromConfig.pitchAttPointingCmd50HzLowPassTau  = 0.25f;
-        eepromConfig.yawAttPointingCmd50HzLowPassTau    = 0.25f;
+        eepromConfig.rollAttPointingCmd50HzLowPassTau  = 0.25f;
+        eepromConfig.pitchAttPointingCmd50HzLowPassTau = 0.25f;
+        eepromConfig.yawAttPointingCmd50HzLowPassTau   = 0.25f;
 
         writeEEPROM();
     }

@@ -59,33 +59,33 @@ void initFirstOrderFilter(void)
 {
     float a;
 
-    a = 2.0f * eepromConfig.rollAttitude500HzLowPassTau * 500.0f;
+    a = 2.0f * eepromConfig.accelX500HzLowPassTau * 500.0f;
 
-    firstOrderFilters[ROLL_ATTITUDE_500HZ_LOWPASS].gx1 = 1.0f / (1.0f + a);
-    firstOrderFilters[ROLL_ATTITUDE_500HZ_LOWPASS].gx2 = 1.0f / (1.0f + a);
-    firstOrderFilters[ROLL_ATTITUDE_500HZ_LOWPASS].gx3 = (1.0f - a) / (1.0f + a);
-    firstOrderFilters[ROLL_ATTITUDE_500HZ_LOWPASS].previousInput  = 0.0f;
-    firstOrderFilters[ROLL_ATTITUDE_500HZ_LOWPASS].previousOutput = 0.0f;
-
-    ///////////////////////////////////
-
-    a = 2.0f * eepromConfig.pitchAttitude500HzLowPassTau * 500.0f;
-
-    firstOrderFilters[PITCH_ATTITUDE_500HZ_LOWPASS].gx1 = 1.0f / (1.0f + a);
-    firstOrderFilters[PITCH_ATTITUDE_500HZ_LOWPASS].gx2 = 1.0f / (1.0f + a);
-    firstOrderFilters[PITCH_ATTITUDE_500HZ_LOWPASS].gx3 = (1.0f - a) / (1.0f + a);
-    firstOrderFilters[PITCH_ATTITUDE_500HZ_LOWPASS].previousInput  = 0.0f;
-    firstOrderFilters[PITCH_ATTITUDE_500HZ_LOWPASS].previousOutput = 0.0f;
+    firstOrderFilters[ACCEL_X_500HZ_LOWPASS].gx1 = 1.0f / (1.0f + a);
+    firstOrderFilters[ACCEL_X_500HZ_LOWPASS].gx2 = 1.0f / (1.0f + a);
+    firstOrderFilters[ACCEL_X_500HZ_LOWPASS].gx3 = (1.0f - a) / (1.0f + a);
+    firstOrderFilters[ACCEL_X_500HZ_LOWPASS].previousInput  = 0.0f;
+    firstOrderFilters[ACCEL_X_500HZ_LOWPASS].previousOutput = 0.0f;
 
     ///////////////////////////////////
 
-    a = 2.0f * eepromConfig.yawAttitude500HzLowPassTau * 500.0f;
+    a = 2.0f * eepromConfig.accelY500HzLowPassTau * 500.0f;
 
-    firstOrderFilters[YAW_ATTITUDE_500HZ_LOWPASS].gx1 = 1.0f / (1.0f + a);
-    firstOrderFilters[YAW_ATTITUDE_500HZ_LOWPASS].gx2 = 1.0f / (1.0f + a);
-    firstOrderFilters[YAW_ATTITUDE_500HZ_LOWPASS].gx3 = (1.0f - a) / (1.0f + a);
-    firstOrderFilters[YAW_ATTITUDE_500HZ_LOWPASS].previousInput  = 0.0f;
-    firstOrderFilters[YAW_ATTITUDE_500HZ_LOWPASS].previousOutput = 0.0f;
+    firstOrderFilters[ACCEL_Y_500HZ_LOWPASS].gx1 = 1.0f / (1.0f + a);
+    firstOrderFilters[ACCEL_Y_500HZ_LOWPASS].gx2 = 1.0f / (1.0f + a);
+    firstOrderFilters[ACCEL_Y_500HZ_LOWPASS].gx3 = (1.0f - a) / (1.0f + a);
+    firstOrderFilters[ACCEL_Y_500HZ_LOWPASS].previousInput  = 0.0f;
+    firstOrderFilters[ACCEL_Y_500HZ_LOWPASS].previousOutput = 0.0f;
+
+    ///////////////////////////////////
+
+    a = 2.0f * eepromConfig.accelZ500HzLowPassTau * 500.0f;
+
+    firstOrderFilters[ACCEL_Z_500HZ_LOWPASS].gx1 = 1.0f / (1.0f + a);
+    firstOrderFilters[ACCEL_Z_500HZ_LOWPASS].gx2 = 1.0f / (1.0f + a);
+    firstOrderFilters[ACCEL_Z_500HZ_LOWPASS].gx3 = (1.0f - a) / (1.0f + a);
+    firstOrderFilters[ACCEL_Z_500HZ_LOWPASS].previousInput  = -9.8065f;
+    firstOrderFilters[ACCEL_Z_500HZ_LOWPASS].previousOutput = -9.8065f;
 
     ///////////////////////////////////
 
