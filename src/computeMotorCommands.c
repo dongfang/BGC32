@@ -42,43 +42,115 @@ float outputRate[3];
 
 float pidCmd[3];
 
-float pidCmdPrev[3] = {0.0f, 0.0f, 0.0f};
+float pidCmdPrev[3] = { 0.0f, 0.0f, 0.0f };
 
-float yawCmd;
-
-#define YAP_DEADBAND     2.00f  // in radians with respect to one motor pole, actual angle is (DEADBAND / numberPoles) * R2D
+#define AP_DEADBAND      2.00f  // in radians with respect to one motor pole, actual angle is (DEADBAND / numberPoles) * R2D
 #define MOTORPOS2SETPNT  0.35f  // scaling factor for how fast it should move
 #define AUTOPANSMOOTH   40.00f
 
-float centerPoint = 0.0f;
-float stepSmooth  = 0.0f;
-float step        = 0.0f;
+float centerPoint[3] = { 0.0f, 0.0f, 0.0f };
+float stepSmooth[3]  = { 0.0f, 0.0f, 0.0f };
+float step[3]        = { 0.0f, 0.0f, 0.0f };
+
+uint8_t autoPanFirstPass[3] = { true, true, true };
+
+///////////////////////////////////////////////////////////////////////////////
+// Roll AutoPan
+///////////////////////////////////////////////////////////////////////////////
+
+float rollAutoPan(float motorPos, float setpoint)
+{
+    if (autoPanFirstPass[ROLL] == true)
+    {
+		centerPoint[ROLL] = motorPos;
+        autoPanFirstPass[ROLL] = false;
+	}
+
+    if (motorPos < centerPoint[ROLL] - AP_DEADBAND)
+    {
+        centerPoint[ROLL] = AP_DEADBAND;
+        step[ROLL] = MOTORPOS2SETPNT * motorPos; //  dampening
+    }
+    else if (motorPos > centerPoint[ROLL] + AP_DEADBAND)
+    {
+        centerPoint[ROLL] = -AP_DEADBAND;
+        step[ROLL] = MOTORPOS2SETPNT * motorPos; //  dampening
+    }
+    else
+    {
+        step[ROLL] = 0.0f;
+        centerPoint[ROLL] = 0.0f;
+    }
+
+    stepSmooth[ROLL] = (stepSmooth[ROLL] * (AUTOPANSMOOTH - 1.0f) + step[ROLL]) / AUTOPANSMOOTH;
+
+    return (setpoint -= stepSmooth[ROLL]);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// Pitch AutoPan
+///////////////////////////////////////////////////////////////////////////////
+
+float pitchAutoPan(float motorPos, float setpoint)
+{
+    if (autoPanFirstPass[PITCH] == true)
+    {
+		centerPoint[PITCH] = motorPos;
+        autoPanFirstPass[PITCH] = false;
+	}
+
+    if (motorPos < centerPoint[PITCH] - AP_DEADBAND)
+    {
+        centerPoint[PITCH] = AP_DEADBAND;
+        step[PITCH] = MOTORPOS2SETPNT * motorPos; //  dampening
+    }
+    else if (motorPos > centerPoint[PITCH] + AP_DEADBAND)
+    {
+        centerPoint[PITCH] = -AP_DEADBAND;
+        step[PITCH] = MOTORPOS2SETPNT * motorPos; //  dampening
+    }
+    else
+    {
+        step[PITCH] = 0.0f;
+        centerPoint[PITCH] = 0.0f;
+    }
+
+    stepSmooth[PITCH] = (stepSmooth[PITCH] * (AUTOPANSMOOTH - 1.0f) + step[PITCH]) / AUTOPANSMOOTH;
+
+    return (setpoint -= stepSmooth[PITCH]);
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 // Yaw AutoPan
 ///////////////////////////////////////////////////////////////////////////////
 
-float autoPan(float motorPos, float setpoint)
+float yawAutoPan(float motorPos, float setpoint)
 {
-    if (motorPos < centerPoint - YAP_DEADBAND)
+    if (autoPanFirstPass[YAW] == true)
     {
-        centerPoint = YAP_DEADBAND;
-        step = MOTORPOS2SETPNT * motorPos; //  dampening
+		centerPoint[YAW] = motorPos;
+        autoPanFirstPass[YAW] = false;
+	}
+
+    if (motorPos < centerPoint[YAW] - AP_DEADBAND)
+    {
+        centerPoint[YAW] = AP_DEADBAND;
+        step[YAW] = MOTORPOS2SETPNT * motorPos; //  dampening
     }
-    else if (motorPos > centerPoint + YAP_DEADBAND)
+    else if (motorPos > centerPoint[YAW] + AP_DEADBAND)
     {
-        centerPoint = -YAP_DEADBAND;
-        step = MOTORPOS2SETPNT * motorPos; //  dampening
+        centerPoint[YAW] = -AP_DEADBAND;
+        step[YAW] = MOTORPOS2SETPNT * motorPos; //  dampening
     }
     else
     {
-        step = 0.0f;
-        centerPoint = 0.0f;
+        step[YAW] = 0.0f;
+        centerPoint[YAW] = 0.0f;
     }
 
-    stepSmooth = (stepSmooth * (AUTOPANSMOOTH - 1.0f) + step) / AUTOPANSMOOTH;
+    stepSmooth[YAW] = (stepSmooth[YAW] * (AUTOPANSMOOTH - 1.0f) + step[YAW]) / AUTOPANSMOOTH;
 
-    return (setpoint -= stepSmooth);
+    return (setpoint -= stepSmooth[YAW]);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -87,72 +159,153 @@ float autoPan(float motorPos, float setpoint)
 
 void computeMotorCommands(float dt)
 {
-    holdIntegrators = false;
+	float rollCmdDiv2, pitchCmdDiv2, yawCmdDiv2;
+
+	float cosRollCmdDiv2,  sinRollCmdDiv2;
+	float cosPitchCmdDiv2, sinPitchCmdDiv2;
+	float cosYawCmdDiv2,   sinYawCmdDiv2;
+
+	float qRef[4];
+
+	float qMeasConjugate[4];
+
+	float qError[4];
+
+	float normR;
+
+	float qError0Squared, qError1Squared, qError2Squared, qError3Squared;
+
+	float axisError[3];
+
+	holdIntegrators = false;
+
+	///////////////////////////////////
+
+	rollCmdDiv2  = pointingCmd[ROLL ] / 2.0f;
+	pitchCmdDiv2 = pointingCmd[PITCH] / 2.0f;
+	yawCmdDiv2   = pointingCmd[YAW  ] / 2.0f;
+
+	cosRollCmdDiv2  = cosf(rollCmdDiv2);
+	sinRollCmdDiv2  = sinf(rollCmdDiv2);
+
+	cosPitchCmdDiv2 = cosf(pitchCmdDiv2);
+	sinPitchCmdDiv2 = sinf(pitchCmdDiv2);
+
+	cosYawCmdDiv2   = cosf(yawCmdDiv2);
+	sinYawCmdDiv2   = sinf(yawCmdDiv2);
+
+	qRef[0] = ( cosRollCmdDiv2 * cosPitchCmdDiv2 * cosYawCmdDiv2 ) +
+    		  ( sinRollCmdDiv2 * sinPitchCmdDiv2 * sinYawCmdDiv2 );
+
+    qRef[1] = ( sinRollCmdDiv2 * cosPitchCmdDiv2 * cosYawCmdDiv2 ) -
+  		      ( cosRollCmdDiv2 * sinPitchCmdDiv2 * sinYawCmdDiv2 );
+
+    qRef[2] = ( cosRollCmdDiv2 * sinPitchCmdDiv2 * cosYawCmdDiv2 ) +
+  		      ( sinRollCmdDiv2 * cosPitchCmdDiv2 * sinYawCmdDiv2 );
+
+    qRef[3] = ( cosRollCmdDiv2 * cosPitchCmdDiv2 * sinYawCmdDiv2 ) -
+  		      ( sinRollCmdDiv2 * sinPitchCmdDiv2 * cosYawCmdDiv2 );
+
+    qMeasConjugate[0] =  qMeas[0];
+
+    qMeasConjugate[1] = -qMeas[1];
+
+    qMeasConjugate[2] = -qMeas[2];
+
+    qMeasConjugate[3] = -qMeas[3];
+
+    qError[0] = qRef[0] * qMeasConjugate[0] - qRef[1] * qMeasConjugate[1] -
+    		    qRef[2] * qMeasConjugate[2] - qRef[3] * qMeasConjugate[3];
+
+    qError[1] = qRef[0] * qMeasConjugate[1] + qRef[1] * qMeasConjugate[0] +
+    		    qRef[2] * qMeasConjugate[3] - qRef[3] * qMeasConjugate[2];
+
+    qError[2] = qRef[0] * qMeasConjugate[2] - qRef[1] * qMeasConjugate[3] +
+    		    qRef[2] * qMeasConjugate[0] + qRef[3] * qMeasConjugate[1];
+
+    qError[3] = qRef[0] * qMeasConjugate[3] + qRef[1] * qMeasConjugate[2] -
+    		    qRef[2] * qMeasConjugate[1] + qRef[3] * qMeasConjugate[0];
+
+    // normalize quaternion
+    normR = 1.0f / sqrt(qError[0] * qError[0] + qError[1] * qError[1] + qError[2] * qError[2] + qError[3] * qError[3]);
+
+    qError[0] *= normR;
+    qError[1] *= normR;
+    qError[2] *= normR;
+    qError[3] *= normR;
+
+    qError0Squared = qError[0] * qError[0];
+
+    qError1Squared = qError[1] * qError[1];
+
+    qError2Squared = qError[2] * qError[2];
+
+    qError3Squared = qError[3] * qError[3];
+
+    axisError[ROLL ] = atan2f(2.0f * (qError[0] * qError[1] + qError[2] * qError[3]),
+    		                  qError0Squared - qError1Squared - qError2Squared + qError3Squared);
+
+    axisError[PITCH] = asinf(2.0f * (qError[0] * qError[2] - qError[3] * qError[1]));
+
+    axisError[YAW  ] = atan2f(2.0f * (qError[0] * qError[3] + qError[1] * qError[2]),
+    		                  qError0Squared + qError1Squared - qError2Squared - qError3Squared);
 
     ///////////////////////////////////
 
-    if (eepromConfig.rollEnabled == true)
-    {
-        pidCmd[ROLL] = updatePID(pointingCmd[ROLL] * mechanical2electricalDegrees[ROLL],
-                                 -sensors.margAttitude500Hz[ROLL] * mechanical2electricalDegrees[ROLL],
-                                 dt, holdIntegrators, &eepromConfig.PID[ROLL_PID]);
+	if (eepromConfig.rollEnabled == true)
+	{
+        pidCmd[ROLL] = updatePID(0.0f, axisError[ROLL] * mechanical2electricalDegrees[ROLL],
+	                             dt, holdIntegrators, &eepromConfig.PID[ROLL_PID]);
 
-        outputRate[ROLL] = pidCmd[ROLL] - pidCmdPrev[ROLL];
+	    outputRate[ROLL] = pidCmd[ROLL] - pidCmdPrev[ROLL];
 
-        if (outputRate[ROLL] > eepromConfig.rateLimit)
-            pidCmd[ROLL] = pidCmdPrev[ROLL] + eepromConfig.rateLimit;
+	    if (outputRate[ROLL] > eepromConfig.rateLimit)
+	        pidCmd[ROLL] = pidCmdPrev[ROLL] + eepromConfig.rateLimit;
 
-        if (outputRate[ROLL] < -eepromConfig.rateLimit)
-            pidCmd[ROLL] = pidCmdPrev[ROLL] - eepromConfig.rateLimit;
+	    if (outputRate[ROLL] < -eepromConfig.rateLimit)
+	        pidCmd[ROLL] = pidCmdPrev[ROLL] - eepromConfig.rateLimit;
 
-        pidCmdPrev[ROLL] = pidCmd[ROLL];
+	    pidCmdPrev[ROLL] = pidCmd[ROLL];
 
-        setRollMotor(pidCmd[ROLL], (int)eepromConfig.rollPower);
+	    setRollMotor(pidCmd[ROLL], (int)eepromConfig.rollPower);
     }
 
     ///////////////////////////////////
 
     if (eepromConfig.pitchEnabled == true)
     {
-        pidCmd[PITCH] = updatePID(pointingCmd[PITCH] * mechanical2electricalDegrees[PITCH],
-                                  sensors.margAttitude500Hz[PITCH] * mechanical2electricalDegrees[PITCH],
+        pidCmd[PITCH] = updatePID(axisError[PITCH] * mechanical2electricalDegrees[PITCH], 0.0f,
                                   dt, holdIntegrators, &eepromConfig.PID[PITCH_PID]);
 
-        outputRate[PITCH] = pidCmd[PITCH] - pidCmdPrev[PITCH];
+	    outputRate[PITCH] = pidCmd[PITCH] - pidCmdPrev[PITCH];
 
-        if (outputRate[PITCH] > eepromConfig.rateLimit)
-            pidCmd[PITCH] = pidCmdPrev[PITCH] + eepromConfig.rateLimit;
+	    if (outputRate[PITCH] > eepromConfig.rateLimit)
+	        pidCmd[PITCH] = pidCmdPrev[PITCH] + eepromConfig.rateLimit;
 
-        if (outputRate[PITCH] < -eepromConfig.rateLimit)
-            pidCmd[PITCH] = pidCmdPrev[PITCH] - eepromConfig.rateLimit;
+	    if (outputRate[PITCH] < -eepromConfig.rateLimit)
+	        pidCmd[PITCH] = pidCmdPrev[PITCH] - eepromConfig.rateLimit;
 
-        pidCmdPrev[PITCH] = pidCmd[PITCH];
+	    pidCmdPrev[PITCH] = pidCmd[PITCH];
 
-        setPitchMotor(pidCmd[PITCH], (int)eepromConfig.pitchPower);
+	    setPitchMotor(pidCmd[PITCH], (int)eepromConfig.pitchPower);
     }
 
     ///////////////////////////////////
 
     if (eepromConfig.yawEnabled == true)
     {
-        if (eepromConfig.yawAutoPanEnabled == true)
-            yawCmd = autoPan(pidCmd[YAW], yawCmd * mechanical2electricalDegrees[YAW]) * electrical2mechanicalDegrees[YAW];
-        else
-            yawCmd = -pointingCmd[YAW];
-
-        pidCmd[YAW] = updatePID(yawCmd * mechanical2electricalDegrees[YAW],
-                                sensors.margAttitude500Hz[YAW] * mechanical2electricalDegrees[YAW],
+        pidCmd[YAW] = updatePID(axisError[YAW] * mechanical2electricalDegrees[YAW], 0.0f,
                                 dt, holdIntegrators, &eepromConfig.PID[YAW_PID]);
 
-        outputRate[YAW] = pidCmd[YAW] - pidCmdPrev[YAW];
+	    outputRate[YAW] = pidCmd[YAW] - pidCmdPrev[YAW];
 
-        if (outputRate[YAW] > eepromConfig.rateLimit)
-            pidCmd[YAW] = pidCmdPrev[YAW] + eepromConfig.rateLimit;
+	    if (outputRate[YAW] > eepromConfig.rateLimit)
+	        pidCmd[YAW] = pidCmdPrev[YAW] + eepromConfig.rateLimit;
 
-        if (outputRate[YAW] < -eepromConfig.rateLimit)
-            pidCmd[YAW] = pidCmdPrev[YAW] - eepromConfig.rateLimit;
+	    if (outputRate[YAW] < -eepromConfig.rateLimit)
+	        pidCmd[YAW] = pidCmdPrev[YAW] - eepromConfig.rateLimit;
 
-        pidCmdPrev[YAW] = pidCmd[YAW];
+	    pidCmdPrev[YAW] = pidCmd[YAW];
 
         setYawMotor(pidCmd[YAW], (int)eepromConfig.yawPower);
     }

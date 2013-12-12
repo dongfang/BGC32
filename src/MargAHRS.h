@@ -19,7 +19,7 @@
 
 extern float accConfidenceDecay;
 
-extern float q0, q1, q2, q3;  // quaternion elements representing the estimated orientation
+extern float qMeas[4];  // quaternion elements representing the estimated orientation
 
 // auxiliary variables to reduce number of repeated operations
 extern float q0q0, q0q1, q0q2, q0q3;

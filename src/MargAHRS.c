@@ -41,7 +41,7 @@ float exMagInt = 0.0f, eyMagInt = 0.0f, ezMagInt = 0.0f; // mag integral error
 
 float kpAcc, kiAcc;
 
-float q0 = 1.0f, q1 = 0.0f, q2 = 0.0f, q3 = 0.0f;
+float qMeas[4] = { 1.0f, 0.0f, 0.0f, 0.0f };
 
 // auxiliary variables to reduce number of repeated operations
 float q0q0, q0q1, q0q2, q0q3;
@@ -62,17 +62,17 @@ float accConfidence      = 1.0f;
 
 void calculateAccConfidence(float accMag)
 {
-    // G.K. Egan (C) computes confidence in accelerometers when
-    // aircraft is being accelerated over and above that due to gravity
+	// G.K. Egan (C) computes confidence in accelerometers when
+	// aircraft is being accelerated over and above that due to gravity
 
-    static float accMagP = 1.0f;
+	static float accMagP = 1.0f;
 
-    accMag /= accelOneG;  // HJI Added to convert MPS^2 to G's
+	accMag /= accelOneG;  // HJI Added to convert MPS^2 to G's
 
-    accMag  = HardFilter(accMagP, accMag);
-    accMagP = accMag;
+	accMag  = HardFilter(accMagP, accMag);
+	accMagP = accMag;
 
-    accConfidence = constrain(1.0f - (accConfidenceDecay * sqrt(fabs(accMag - 1.0f))), 0.0f, 1.0f);
+	accConfidence = constrain(1.0f - (accConfidenceDecay * sqrt(fabs(accMag - 1.0f))), 0.0f, 1.0f);
 }
 
 //----------------------------------------------------------------------------------------------------
@@ -89,7 +89,7 @@ void MargAHRSinit(float ax, float ay, float az, float mx, float my, float mz)
     float initialHdg, cosHeading, sinHeading;
 
     initialRoll  = atan2(-ay, -az);
-    initialPitch = atan2(ax, -az);
+    initialPitch = atan2( ax, -az);
 
     cosRoll  = cosf(initialRoll);
     sinRoll  = sinf(initialRoll);
@@ -111,27 +111,22 @@ void MargAHRSinit(float ax, float ay, float az, float mx, float my, float mz)
     cosHeading = cosf(initialHdg * 0.5f);
     sinHeading = sinf(initialHdg * 0.5f);
 
-    // q0 = cosRoll * cosPitch * cosHeading + sinRoll * sinPitch * sinHeading;
-    // q1 = sinRoll * cosPitch * cosHeading - cosRoll * sinPitch * sinHeading;
-    // q2 = cosRoll * sinPitch * cosHeading + sinRoll * cosPitch * sinHeading;
-    // q3 = cosRoll * cosPitch * sinHeading - sinRoll * sinPitch * cosHeading;
+    qMeas[0] = cosRoll * cosPitch * cosHeading + sinRoll * sinPitch * sinHeading;
+    qMeas[1] = sinRoll * cosPitch * cosHeading - cosRoll * sinPitch * sinHeading;
+    qMeas[2] = cosRoll * sinPitch * cosHeading + sinRoll * cosPitch * sinHeading;
+    qMeas[3] = cosRoll * cosPitch * sinHeading - sinRoll * sinPitch * cosHeading;
 
-    q0 = cosPitch * cosRoll * cosHeading + sinPitch * sinRoll * sinHeading;
-    q1 = sinPitch * cosRoll * cosHeading - cosPitch * sinRoll * sinHeading;
-    q2 = cosPitch * sinRoll * cosHeading + sinPitch * cosRoll * sinHeading;
-    q3 = cosPitch * cosRoll * sinHeading - sinPitch * sinRoll * cosHeading;
-
-    // auxiliary variables to reduce number of repeated operations, for 1st pass
-    q0q0 = q0 * q0;
-    q0q1 = q0 * q1;
-    q0q2 = q0 * q2;
-    q0q3 = q0 * q3;
-    q1q1 = q1 * q1;
-    q1q2 = q1 * q2;
-    q1q3 = q1 * q3;
-    q2q2 = q2 * q2;
-    q2q3 = q2 * q3;
-    q3q3 = q3 * q3;
+    // Auxiliary variables to reduce number of repeated operations, for 1st pass
+    q0q0 = qMeas[0] * qMeas[0];
+    q0q1 = qMeas[0] * qMeas[1];
+    q0q2 = qMeas[0] * qMeas[2];
+    q0q3 = qMeas[0] * qMeas[3];
+    q1q1 = qMeas[1] * qMeas[1];
+    q1q2 = qMeas[1] * qMeas[2];
+    q1q3 = qMeas[1] * qMeas[3];
+    q2q2 = qMeas[2] * qMeas[2];
+    q2q3 = qMeas[2] * qMeas[3];
+    q3q3 = qMeas[3] * qMeas[3];
 }
 
 //====================================================================================================
@@ -167,7 +162,7 @@ void MargAHRSupdate(float gx, float gy, float gz,
 
         if (norm != 0.0f)
         {
-            calculateAccConfidence(norm);
+			calculateAccConfidence(norm);
             kpAcc = eepromConfig.KpAcc * accConfidence;
             kiAcc = eepromConfig.KiAcc * accConfidence;
 
@@ -182,8 +177,8 @@ void MargAHRSupdate(float gx, float gy, float gz,
             vz = q0q0 - q1q1 - q2q2 + q3q3;
 
             // error is sum of cross product between reference direction
-            // of fields and direction measured by sensors
-            exAcc = vy * az - vz * ay;
+		    // of fields and direction measured by sensors
+		    exAcc = vy * az - vz * ay;
             eyAcc = vz * ax - vx * az;
             ezAcc = vx * ay - vy * ax;
 
@@ -193,15 +188,15 @@ void MargAHRSupdate(float gx, float gy, float gz,
 
             if (kiAcc > 0.0f)
             {
-                exAccInt += exAcc * kiAcc;
+		    	exAccInt += exAcc * kiAcc;
                 eyAccInt += eyAcc * kiAcc;
                 ezAccInt += ezAcc * kiAcc;
 
                 gx += exAccInt;
                 gy += eyAccInt;
                 gz += ezAccInt;
-            }
-        }
+		    }
+	    }
 
         //-------------------------------------------
 
@@ -236,69 +231,60 @@ void MargAHRSupdate(float gx, float gy, float gz,
             eyMag = mz * wx - mx * wz;
             ezMag = mx * wy - my * wx;
 
-            // use un-extrapolated old values between magnetometer updates
-            // dubious as dT does not apply to the magnetometer calculation so
-            // time scaling is embedded in KpMag and KiMag
-            gx += exMag * eepromConfig.KpMag;
-            gy += eyMag * eepromConfig.KpMag;
-            gz += ezMag * eepromConfig.KpMag;
+			// use un-extrapolated old values between magnetometer updates
+			// dubious as dT does not apply to the magnetometer calculation so
+			// time scaling is embedded in KpMag and KiMag
+			gx += exMag * eepromConfig.KpMag;
+			gy += eyMag * eepromConfig.KpMag;
+			gz += ezMag * eepromConfig.KpMag;
 
-            if (eepromConfig.KiMag > 0.0f)
-            {
-                exMagInt += exMag * eepromConfig.KiMag;
-                eyMagInt += eyMag * eepromConfig.KiMag;
-                ezMagInt += ezMag * eepromConfig.KiMag;
+			if (eepromConfig.KiMag > 0.0f)
+			{
+				exMagInt += exMag * eepromConfig.KiMag;
+				eyMagInt += eyMag * eepromConfig.KiMag;
+				ezMagInt += ezMag * eepromConfig.KiMag;
 
-                gx += exMagInt;
-                gy += eyMagInt;
-                gz += ezMagInt;
-            }
+				gx += exMagInt;
+				gy += eyMagInt;
+				gz += ezMagInt;
+			}
         }
 
         //-------------------------------------------
 
         // integrate quaternion rate
-        // q0i = (-q1 * gx - q2 * gy - q3 * gz) * halfT;
-        // q1i = ( q0 * gx + q2 * gz - q3 * gy) * halfT;
-        // q2i = ( q0 * gy - q1 * gz + q3 * gx) * halfT;
-        // q3i = ( q0 * gz + q1 * gy - q2 * gx) * halfT;
-
-        q0i = (-q1 * gy - q2 * gx - q3 * gz) * halfT;
-        q1i = ( q0 * gy + q2 * gz - q3 * gx) * halfT;
-        q2i = ( q0 * gx - q1 * gz + q3 * gy) * halfT;
-        q3i = ( q0 * gz + q1 * gx - q2 * gy) * halfT;
-
-        q0 += q0i;
-        q1 += q1i;
-        q2 += q2i;
-        q3 += q3i;
+        q0i = (-qMeas[1] * gx - qMeas[2] * gy - qMeas[3] * gz) * halfT;
+        q1i = ( qMeas[0] * gx + qMeas[2] * gz - qMeas[3] * gy) * halfT;
+        q2i = ( qMeas[0] * gy - qMeas[1] * gz + qMeas[3] * gx) * halfT;
+        q3i = ( qMeas[0] * gz + qMeas[1] * gy - qMeas[2] * gx) * halfT;
+        qMeas[0] += q0i;
+        qMeas[1] += q1i;
+        qMeas[2] += q2i;
+        qMeas[3] += q3i;
 
         // normalize quaternion
-        normR = 1.0f / sqrt(q0 * q0 + q1 * q1 + q2 * q2 + q3 * q3);
-        q0 *= normR;
-        q1 *= normR;
-        q2 *= normR;
-        q3 *= normR;
+        normR = 1.0f / sqrt(qMeas[0] * qMeas[0] + qMeas[1] * qMeas[1] + qMeas[2] * qMeas[2] + qMeas[3] * qMeas[3]);
+
+        qMeas[0] *= normR;
+        qMeas[1] *= normR;
+        qMeas[2] *= normR;
+        qMeas[3] *= normR;
 
         // auxiliary variables to reduce number of repeated operations
-        q0q0 = q0 * q0;
-        q0q1 = q0 * q1;
-        q0q2 = q0 * q2;
-        q0q3 = q0 * q3;
-        q1q1 = q1 * q1;
-        q1q2 = q1 * q2;
-        q1q3 = q1 * q3;
-        q2q2 = q2 * q2;
-        q2q3 = q2 * q3;
-        q3q3 = q3 * q3;
+        q0q0 = qMeas[0] * qMeas[0];
+        q0q1 = qMeas[0] * qMeas[1];
+        q0q2 = qMeas[0] * qMeas[2];
+        q0q3 = qMeas[0] * qMeas[3];
+        q1q1 = qMeas[1] * qMeas[1];
+        q1q2 = qMeas[1] * qMeas[2];
+        q1q3 = qMeas[1] * qMeas[3];
+        q2q2 = qMeas[2] * qMeas[2];
+        q2q3 = qMeas[2] * qMeas[3];
+        q3q3 = qMeas[3] * qMeas[3];
 
-        // sensors.margAttitude500Hz[ROLL ] = atan2f(2.0f * (q0q1 + q2q3), q0q0 - q1q1 - q2q2 + q3q3);
-        // sensors.margAttitude500Hz[PITCH] = -asinf(2.0f * (q1q3 - q0q2));
-        // sensors.margAttitude500Hz[YAW  ] = atan2f(2.0f * (q1q2 + q0q3), q0q0 + q1q1 - q2q2 - q3q3);
-
-        sensors.margAttitude500Hz[PITCH] = atan2f(2.0f * (q0q1 + q2q3), q0q0 - q1q1 - q2q2 + q3q3);
-        sensors.margAttitude500Hz[ROLL ] =  asinf(2.0f * (q0q2 - q1q3));
-        sensors.margAttitude500Hz[YAW  ] = atan2f(2.0f * (q1q2 + q0q3), q0q0 + q1q1 - q2q2 - q3q3);
+        sensors.margAttitude500Hz[ROLL ] = atan2f( 2.0f * (q0q1 + q2q3), q0q0 - q1q1 - q2q2 + q3q3 );
+		sensors.margAttitude500Hz[PITCH] =  asinf( 2.0f * (q0q2 - q1q3) );
+		sensors.margAttitude500Hz[YAW  ] = atan2f( 2.0f * (q1q2 + q0q3), q0q0 + q1q1 - q2q2 - q3q3 );
     }
 }
 
