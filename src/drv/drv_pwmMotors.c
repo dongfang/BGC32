@@ -1,35 +1,32 @@
 /*
-  Sept 2013
 
-  bgc32 Rev -
+BGC32 from FocusFlight, a new alternative firmware
+for the EvvGC controller
 
-  Copyright (c) 2013 John Ihlein.  All rights reserved.
+Original work Copyright (c) 2013 John Ihlein
+                                 Alan K. Adamson
 
-  Open Source STM32 Based Brushless Gimbal Controller Software
+This file is part of BGC32.
 
-  Includes code and/or ideas from:
+Includes code and/or ideas from:
 
-  1)AeroQuad
-  2)BaseFlight
-  3)CH Robotics
-  4)MultiWii
-  5)S.O.H. Madgwick
-  6)UAVX
+  1)BaseFlight
+  2)EvvGC
+  2)S.O.H. Madgwick
 
-  Designed to run on the EvvGC Brushless Gimbal Controller Board
+BGC32 is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-  This program is free software: you can redistribute it and/or modify
-  it under the terms of the GNU General Public License as published by
-  the Free Software Foundation, either version 3 of the License, or
-  (at your option) any later version.
+BGC32 is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
 
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-  GNU General Public License for more details.
+You should have received a copy of the GNU General Public License
+along with EvvGC. If not, see <http://www.gnu.org/licenses/>.
 
-  You should have received a copy of the GNU General Public License
-  along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
 ///////////////////////////////////////////////////////////////////////////////

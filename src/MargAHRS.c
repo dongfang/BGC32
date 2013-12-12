@@ -111,12 +111,17 @@ void MargAHRSinit(float ax, float ay, float az, float mx, float my, float mz)
     cosHeading = cosf(initialHdg * 0.5f);
     sinHeading = sinf(initialHdg * 0.5f);
 
-    q0 = cosRoll * cosPitch * cosHeading + sinRoll * sinPitch * sinHeading;
-    q1 = sinRoll * cosPitch * cosHeading - cosRoll * sinPitch * sinHeading;
-    q2 = cosRoll * sinPitch * cosHeading + sinRoll * cosPitch * sinHeading;
-    q3 = cosRoll * cosPitch * sinHeading - sinRoll * sinPitch * cosHeading;
+    // q0 = cosRoll * cosPitch * cosHeading + sinRoll * sinPitch * sinHeading;
+    // q1 = sinRoll * cosPitch * cosHeading - cosRoll * sinPitch * sinHeading;
+    // q2 = cosRoll * sinPitch * cosHeading + sinRoll * cosPitch * sinHeading;
+    // q3 = cosRoll * cosPitch * sinHeading - sinRoll * sinPitch * cosHeading;
 
-    // auxillary variables to reduce number of repeated operations, for 1st pass
+    q0 = cosPitch * cosRoll * cosHeading + sinPitch * sinRoll * sinHeading;
+    q1 = sinPitch * cosRoll * cosHeading - cosPitch * sinRoll * sinHeading;
+    q2 = cosPitch * sinRoll * cosHeading + sinPitch * cosRoll * sinHeading;
+    q3 = cosPitch * cosRoll * sinHeading - sinPitch * sinRoll * cosHeading;
+
+    // auxiliary variables to reduce number of repeated operations, for 1st pass
     q0q0 = q0 * q0;
     q0q1 = q0 * q1;
     q0q2 = q0 * q2;
@@ -253,16 +258,22 @@ void MargAHRSupdate(float gx, float gy, float gz,
         //-------------------------------------------
 
         // integrate quaternion rate
-        q0i = (-q1 * gx - q2 * gy - q3 * gz) * halfT;
-        q1i = (q0 * gx + q2 * gz - q3 * gy) * halfT;
-        q2i = (q0 * gy - q1 * gz + q3 * gx) * halfT;
-        q3i = (q0 * gz + q1 * gy - q2 * gx) * halfT;
+        // q0i = (-q1 * gx - q2 * gy - q3 * gz) * halfT;
+        // q1i = ( q0 * gx + q2 * gz - q3 * gy) * halfT;
+        // q2i = ( q0 * gy - q1 * gz + q3 * gx) * halfT;
+        // q3i = ( q0 * gz + q1 * gy - q2 * gx) * halfT;
+
+        q0i = (-q1 * gy - q2 * gx - q3 * gz) * halfT;
+        q1i = ( q0 * gy + q2 * gz - q3 * gx) * halfT;
+        q2i = ( q0 * gx - q1 * gz + q3 * gy) * halfT;
+        q3i = ( q0 * gz + q1 * gx - q2 * gy) * halfT;
+
         q0 += q0i;
         q1 += q1i;
         q2 += q2i;
         q3 += q3i;
 
-        // normalise quaternion
+        // normalize quaternion
         normR = 1.0f / sqrt(q0 * q0 + q1 * q1 + q2 * q2 + q3 * q3);
         q0 *= normR;
         q1 *= normR;
@@ -281,8 +292,12 @@ void MargAHRSupdate(float gx, float gy, float gz,
         q2q3 = q2 * q3;
         q3q3 = q3 * q3;
 
-        sensors.margAttitude500Hz[ROLL ] = atan2f(2.0f * (q0q1 + q2q3), q0q0 - q1q1 - q2q2 + q3q3);
-        sensors.margAttitude500Hz[PITCH] = -asinf(2.0f * (q1q3 - q0q2));
+        // sensors.margAttitude500Hz[ROLL ] = atan2f(2.0f * (q0q1 + q2q3), q0q0 - q1q1 - q2q2 + q3q3);
+        // sensors.margAttitude500Hz[PITCH] = -asinf(2.0f * (q1q3 - q0q2));
+        // sensors.margAttitude500Hz[YAW  ] = atan2f(2.0f * (q1q2 + q0q3), q0q0 + q1q1 - q2q2 - q3q3);
+
+        sensors.margAttitude500Hz[PITCH] = atan2f(2.0f * (q0q1 + q2q3), q0q0 - q1q1 - q2q2 + q3q3);
+        sensors.margAttitude500Hz[ROLL ] =  asinf(2.0f * (q0q2 - q1q3));
         sensors.margAttitude500Hz[YAW  ] = atan2f(2.0f * (q1q2 + q0q3), q0q0 + q1q1 - q2q2 - q3q3);
     }
 }
